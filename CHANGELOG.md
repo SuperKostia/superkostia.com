@@ -6,7 +6,18 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 ## [Unreleased]
 
-Rien en cours pour l'instant.
+Phase 2 en cours — chunks 2b (marquee + ticker + easter eggs) et 2c (curseur custom) à venir.
+
+## [0.2.0] — 2026-04-21 — Phase 2a : home statique brutaliste
+
+### Ajouté
+- `DisplayTitle` : h1 display en `8-12vw`, tire une variation au hasard parmi 5 au mount côté client ("Kostia fait trop de choses", "a trop d'onglets ouverts", "parle à des IA toute la journée", "n'arrive pas à choisir", "monte cinq boîtes à la fois"), mot-clé en accent jaune acide rotaté.
+- `Intro` : pavé secondaire monospace / 1re personne, ton direct.
+- `Portes` : 4 cartes d'entrée (Projets / Laboratoire / Écrits / À propos) avec numéros `02-05`, hover qui bascule la carte en jaune acide plein et fait glisser la flèche `ArrowUpRight`.
+- Nouvelle home : grille 8/4 sur desktop (title + intro), stack sur mobile, portes en 1/2/4 cols selon breakpoint.
+
+### Changé
+- `app/page.tsx` n'utilise plus `PageShell` (la home ne veut pas du même header de page que les index).
 
 ## [0.1.0] — 2026-04-21 — Phase 1 : squelette
 

@@ -39,14 +39,20 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 
 ## Phase 2 — Home expérientielle
 
-- [ ] Grille 12 colonnes cassée, composition magazine (§5.1)
-- [ ] Titres display animés, variations aléatoires au reload
+### Chunk 2a — statique brutaliste
+- [x] Composition en deux blocs (8/4) sur desktop, stack sur mobile
+- [x] `DisplayTitle` : titre display énorme (taille viewport), variation aléatoire au mount, accent inline rotaté
+- [x] `Intro` : pavé manuscrit / monospace, 1re personne, 3 lignes courtes
+- [x] `Portes` : 4 cartes d'entrée (Projets · Laboratoire · Écrits · À propos) avec hover jaune acide plein et flèche qui bouge
+
+### Chunk 2b — vivant
 - [ ] Marquee projets `featured: true` (pause au hover)
-- [ ] Quatre portes d'entrée interactives (2×2 ou 4×1)
-- [ ] Ticker stats Supabase en bas de page
+- [ ] Ticker bas de page (mock d'abord, Supabase en Phase 4)
 - [ ] Easter egg : Konami code (tremblement 5s)
 - [ ] Easter egg : 10 clics logo → révèle `/colophon`
-- [ ] Curseur custom desktop
+
+### Chunk 2c — curseur
+- [ ] Curseur custom desktop contextuel ("lire", "ouvrir", "écouter"), pointer fin uniquement, respect `prefers-reduced-motion`
 
 ## Phase 3 — Contenu
 

@@ -1,34 +1,20 @@
-import { PageShell } from "@/components/layout/PageShell";
-import { Tag } from "@/components/ui/Tag";
+import { DisplayTitle } from "@/components/home/DisplayTitle";
+import { Intro } from "@/components/home/Intro";
+import { Portes } from "@/components/home/Portes";
 
 export default function Home() {
   return (
-    <PageShell
-      eyebrow="superkostia · phase 1"
-      title={
-        <>
-          Terrain
-          <br />
-          <span className="inline-block bg-[color:var(--color-accent)] px-2 text-[color:var(--color-accent-fg)] -rotate-1">
-            en&nbsp;cours
-          </span>
-          <br />
-          de chantier.
-        </>
-      }
-      intro={
-        <p>
-          Le squelette est posé : header sticky, menu mobile plein écran, footer,
-          pipeline MDX, pages vides. La home expérientielle (§5 du cahier des
-          charges) arrive en Phase 2.
-        </p>
-      }
-    >
-      <div className="flex flex-wrap items-center gap-3">
-        <Tag tone="accent">phase 1 · squelette</Tag>
-        <Tag>navigation posée</Tag>
-        <Tag>MDX lu depuis content/</Tag>
-      </div>
-    </PageShell>
+    <div className="flex flex-col">
+      <section className="grid grid-cols-1 gap-0 border-b-2 border-[color:var(--color-border)] lg:grid-cols-12">
+        <div className="flex min-h-[60vh] items-center px-6 py-10 sm:px-10 lg:col-span-8 lg:min-h-[75vh] lg:py-16">
+          <DisplayTitle />
+        </div>
+        <div className="border-t-2 border-[color:var(--color-border)] lg:col-span-4 lg:border-l-2 lg:border-t-0">
+          <Intro />
+        </div>
+      </section>
+
+      <Portes />
+    </div>
   );
 }
