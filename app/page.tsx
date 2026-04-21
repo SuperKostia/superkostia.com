@@ -1,6 +1,8 @@
 import { DisplayTitle } from "@/components/home/DisplayTitle";
 import { Intro } from "@/components/home/Intro";
 import { Portes } from "@/components/home/Portes";
+import { Marquee } from "@/components/home/Marquee";
+import { Ticker } from "@/components/home/Ticker";
 
 export default function Home() {
   return (
@@ -14,7 +16,11 @@ export default function Home() {
         </div>
       </section>
 
+      <Marquee />
+
       <Portes />
+
+      <Ticker />
     </div>
   );
 }

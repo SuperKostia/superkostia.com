@@ -46,10 +46,10 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 - [x] `Portes` : 4 cartes d'entrée (Projets · Laboratoire · Écrits · À propos) avec hover jaune acide plein et flèche qui bouge
 
 ### Chunk 2b — vivant
-- [ ] Marquee projets `featured: true` (pause au hover)
-- [ ] Ticker bas de page (mock d'abord, Supabase en Phase 4)
-- [ ] Easter egg : Konami code (tremblement 5s)
-- [ ] Easter egg : 10 clics logo → révèle `/colophon`
+- [x] Marquee projets `featured: true` (pause au hover, CSS pur, respect `prefers-reduced-motion`)
+- [x] Ticker bas de home (Athènes live via `Intl` + `useSyncExternalStore`, dernier projet lu au build, 2 placeholders pour Phase 4)
+- [x] Easter egg : Konami code (tremblement body + tous ses descendants, 5s, respect `prefers-reduced-motion`)
+- [x] Easter egg : 10 clics logo → révèle bouton `→ colophon` à côté du logo dans le header
 
 ### Chunk 2c — curseur
 - [ ] Curseur custom desktop contextuel ("lire", "ouvrir", "écouter"), pointer fin uniquement, respect `prefers-reduced-motion`

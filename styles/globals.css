@@ -78,3 +78,80 @@ body {
   background: var(--color-accent);
   color: var(--color-accent-fg);
 }
+
+/* ---- Animations utilitaires ---- */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- Marquee & ticker ---- */
+
+.marquee {
+  overflow: hidden;
+  width: 100%;
+}
+
+.marquee__track {
+  animation: marquee-scroll 35s linear infinite;
+  will-change: transform;
+}
+
+.marquee__track--slow {
+  animation-duration: 60s;
+}
+
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+  }
+}
+
+/* ---- Konami shake — §5.2 ---- */
+
+body.konami-shake {
+  animation: konami-shake 120ms ease-in-out infinite;
+}
+
+body.konami-shake * {
+  animation: konami-shake-soft 180ms ease-in-out infinite;
+}
+
+@keyframes konami-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-2px, 1px) rotate(-0.3deg); }
+  50% { transform: translate(2px, -1px) rotate(0.3deg); }
+  75% { transform: translate(-1px, 2px) rotate(-0.2deg); }
+}
+
+@keyframes konami-shake-soft {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(1px, -1px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.konami-shake,
+  body.konami-shake * {
+    animation: none;
+  }
+}

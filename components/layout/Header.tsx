@@ -2,17 +2,13 @@ import NextLink from "next/link";
 import { PRIMARY_NAV } from "./nav";
 import { ThemeToggle } from "./ThemeToggle";
 import { MobileMenu } from "./MobileMenu";
+import { Logo } from "./Logo";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)]/95 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--color-bg)]/75">
       <div className="flex items-center justify-between gap-4 px-6 py-3 sm:px-10 lg:px-12">
-        <NextLink
-          href="/"
-          className="font-[family-name:var(--font-space-grotesk)] text-xl font-black uppercase tracking-tight"
-        >
-          superkostia
-        </NextLink>
+        <Logo />
 
         <nav className="hidden md:block" aria-label="Navigation principale">
           <ul className="flex items-center gap-6">

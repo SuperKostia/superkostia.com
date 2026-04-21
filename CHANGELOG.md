@@ -6,7 +6,22 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 ## [Unreleased]
 
-Phase 2 en cours — chunks 2b (marquee + ticker + easter eggs) et 2c (curseur custom) à venir.
+Phase 2 en cours — chunk 2c (curseur custom desktop) à venir.
+
+## [0.2.1] — 2026-04-21 — Phase 2b : home vivante
+
+### Ajouté
+- `Marquee` (Server Component) : bandeau horizontal infini des projets `featured: true`, CSS pur, pause au hover, respect `prefers-reduced-motion`.
+- `Ticker` (Server Component) + `AthensClock` (Client Component) : bandeau bas de home avec 4 pills — heure Athènes (Intl + `useSyncExternalStore`, update toutes les 30 s), dernier projet ajouté (lu au build), placeholders `—` pour visiteurs et dernier commentaire (branchement Supabase en Phase 4).
+- `KonamiListener` : écoute ↑↑↓↓←→←→BA, déclenche une classe `konami-shake` sur `body` pendant 5 s (tremblement léger du body + descendants, coupé par `prefers-reduced-motion`).
+- `Logo` (Client Component) : compteur de clics, révèle un petit bouton `→ colophon` à côté du logo après 10 clics (cf. CDC §5.2).
+- Contenu de démo : 3 projets `featured: true` supplémentaires (Axiom Academic, Dictée Géante de Dubaï, Wedding Patmos) pour nourrir la marquee.
+
+### Changé
+- Home composée avec : Hero (DisplayTitle + Intro) → Marquee → Portes → Ticker.
+- `styles/globals.css` : animations `marquee-scroll`, `konami-shake`, `konami-shake-soft`, `fade-in` + variantes `.marquee__track--slow`.
+- `Header` : le `NextLink` logo devient le nouveau composant `Logo`.
+- Root layout : `KonamiListener` monté au top du `<body>`.
 
 ## [0.2.0] — 2026-04-21 — Phase 2a : home statique brutaliste
 
