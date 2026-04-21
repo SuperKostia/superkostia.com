@@ -1,3 +1,4 @@
+import NextLink from "next/link";
 import { getProjets } from "@/lib/mdx";
 
 export async function Marquee() {
@@ -15,9 +16,9 @@ export async function Marquee() {
     >
       <div className="marquee__track flex min-w-[200%]">
         {items.map((p, i) => (
-          <a
+          <NextLink
             key={`${p.frontmatter.slug}-${i}`}
-            href="/projets"
+            href={`/projets/${p.frontmatter.slug}`}
             className="group flex shrink-0 items-center gap-4 border-r-2 border-[color:var(--color-bg)]/30 px-8 py-4"
           >
             <span className="font-mono text-xs uppercase tracking-[0.2em] opacity-60">
@@ -26,7 +27,7 @@ export async function Marquee() {
             <span className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase tracking-tight group-hover:text-[color:var(--color-accent)]">
               {p.frontmatter.title}
             </span>
-          </a>
+          </NextLink>
         ))}
       </div>
     </section>

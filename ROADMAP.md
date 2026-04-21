@@ -56,12 +56,27 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 
 ## Phase 3 — Contenu
 
+### Chunk 3a — rendu MDX + detail pages
+- [x] `next-mdx-remote/rsc` branché (compile MDX au build côté server)
+- [x] Composants MDX custom : `<Stack>`, `<Links>`, `<Quote>`, `<Gallery>`, `<VideoEmbed>` (`<CodeBlock>` déjà couvert via `pre`/`code` shared components)
+- [x] `components/mdx/MDXContent.tsx` : renderer RSC qui câble shared + custom
+- [x] `/projets/[slug]` : header meta (type/statut/année/tags) + titre énorme + MDX body, `generateStaticParams`
+- [x] `/hobbies/[slug]` : header + MDX body, `accent` frontmatter override des tokens CSS
+- [x] `/ecrits/[slug]` : date + temps de lecture + MDX body
+- [x] Cartes des index `/projets`, `/hobbies`, `/ecrits` linkées vers leurs detail pages, avec `data-cursor` sur les links
+
+### Chunk 3b — filtres + recherche
 - [ ] `/projets` : grille + filtres (type/tag/année/statut) + recherche client-side
-- [ ] `/projets/[slug]` : rendu MDX + composants `<Stack>`, `<Links>`, `<Gallery>`, `<Quote>`, `<CodeBlock>`, `<VideoEmbed>`
-- [ ] `/hobbies` index + `/hobbies/[slug]` avec DA par hobby (§7.3)
-- [ ] **`/hobbies/photographie` — univers visuel totalement à part** (cf. décision `#002`)
-- [ ] `/ecrits` + article type
-- [ ] `/a-propos`
+
+### Chunk 3c — rupture DA photo (décision #002)
+- [ ] `app/hobbies/photographie/layout.tsx` qui override les tokens CSS
+- [ ] `app/hobbies/photographie/page.tsx` : layout dédié, galerie, lightbox plein écran, flèches clavier, EXIF optionnel
+
+### Chunk 3d — /a-propos étoffée
+- [ ] Bio longue, 1re personne, switch EN possible plus tard
+- [ ] Section "ce que je fais en ce moment" (MDX dédié)
+- [ ] Section "ce qui m'obsède"
+- [ ] Timeline non-linéaire (capsules thématiques)
 
 ## Phase 4 — Laboratoire
 

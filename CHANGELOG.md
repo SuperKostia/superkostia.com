@@ -6,7 +6,26 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 ## [Unreleased]
 
-Phase 2 complète. Prochaine étape : Phase 3 (contenu — `/projets/[slug]`, `/hobbies/[slug]`, `/ecrits/[slug]`, `/a-propos` étoffée).
+Phase 3 en cours — chunks 3b (filtres `/projets`), 3c (rupture DA `/hobbies/photographie`), 3d (`/a-propos` étoffée) à venir.
+
+## [0.3.0] — 2026-04-21 — Phase 3a : rendu MDX + detail pages
+
+### Ajouté
+- `next-mdx-remote@^6` (dep justifiée : compile MDX au build côté Server Component, évite le double build via `@next/mdx`).
+- `components/mdx/MDXContent.tsx` : renderer RSC qui câble les shared + custom components sur `<MDXRemote source=...>`.
+- Composants MDX custom : `<Stack items=[...] />`, `<Links items=[...] />`, `<Quote attribution=... >...</Quote>`, `<Gallery images=[...] />`, `<VideoEmbed src=... title=... />`. Tous avec guards défensifs (`items = []` + short-circuit).
+- `/projets/[slug]` : page détail avec eyebrow (type + statut + année + tags), titre display, summary, MDX body. `generateStaticParams` pré-rend tous les projets au build.
+- `/hobbies/[slug]` : page détail, supporte `accent` dans le frontmatter pour override localement le token `--color-accent`.
+- `/ecrits/[slug]` : page article avec date + temps de lecture + MDX body.
+- Index `/projets`, `/hobbies`, `/ecrits` : cartes/lignes rendues cliquables vers leur detail page, avec `data-cursor="ouvrir"` ou `data-cursor="lire"` pour le label du curseur custom.
+
+### Changé
+- `axiom-hub.mdx` et `bienvenue.mdx` enrichis pour démontrer `<Stack>`, `<Links>`, `<Quote>`.
+- `Marquee` : `<a href="/projets">` remplacé par `NextLink href={/projets/${slug}}` — chaque tuile pointe maintenant vers le bon projet.
+
+### Notes techniques
+- La compilation MDX échoue silencieusement sur certaines formes JSX multi-lignes avec objets. Forcer du single-line (`<Links items={[{...}]} />`) règle le problème. Les guards `items = []` évitent un crash de build en cas de syntaxe MDX foireuse.
+- 17 pages statiques pré-rendues au build : home + 7 stubs + 4 projets + 1 hobby + 1 écrit + _not-found.
 
 ## [0.2.2] — 2026-04-21 — Phase 2c : curseur custom desktop
 
