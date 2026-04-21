@@ -7,6 +7,36 @@ import type { Photo, Series } from "@/lib/photos";
 import { ExifLine } from "./ExifLine";
 import { cn } from "@/lib/utils";
 
+const PILE_SIZE = 14;
+const PILE_REARRANGE_MS = 3500;
+
+type PileLayout = {
+  top: number;
+  left: number;
+  rotate: number;
+  z: number;
+  width: number;
+};
+
+function generatePileLayouts(count: number): PileLayout[] {
+  return Array.from({ length: count }, () => ({
+    top: 8 + Math.random() * 78,
+    left: 6 + Math.random() * 84,
+    rotate: (Math.random() - 0.5) * 22,
+    z: Math.floor(Math.random() * 100),
+    width: 150 + Math.random() * 90,
+  }));
+}
+
+function shuffle<T>(array: T[]): T[] {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 type PhotoGalleryProps = {
   series: Series[];
 };
@@ -17,14 +47,7 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
     [series],
   );
 
-  const [heroIndex, setHeroIndex] = useState<number | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (allPhotos.length === 0) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setHeroIndex(Math.floor(Math.random() * allPhotos.length));
-  }, [allPhotos.length]);
 
   useEffect(() => {
     if (lightboxIndex === null) return;
@@ -61,35 +84,12 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
     return <EmptyState />;
   }
 
-  const hero = heroIndex !== null ? allPhotos[heroIndex] : null;
-
   return (
     <>
-      <section className="relative h-[90vh] w-full overflow-hidden bg-[color:var(--photo-bg)]">
-        {hero ? (
-          <button
-            type="button"
-            onClick={() =>
-              setLightboxIndex(allPhotos.findIndex((p) => p.src === hero.src))
-            }
-            aria-label={`Ouvrir ${hero.alt}`}
-            data-cursor="ouvrir"
-            className="group relative block h-full w-full"
-            suppressHydrationWarning
-          >
-            <Image
-              src={hero.src}
-              alt={hero.alt}
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-          </button>
-        ) : (
-          <div className="h-full w-full" suppressHydrationWarning />
-        )}
-      </section>
+      <PhotoPile
+        photos={allPhotos}
+        onOpen={(globalIndex) => setLightboxIndex(globalIndex)}
+      />
 
       {series.map((s) => (
         <section
@@ -263,6 +263,91 @@ function Lightbox({
         </p>
       </footer>
     </div>
+  );
+}
+
+type PhotoPileProps = {
+  photos: Photo[];
+  onOpen: (globalIndex: number) => void;
+};
+
+function PhotoPile({ photos, onOpen }: PhotoPileProps) {
+  const [sample, setSample] = useState<Photo[]>([]);
+  const [layouts, setLayouts] = useState<PileLayout[]>([]);
+
+  useEffect(() => {
+    const picked = shuffle(photos).slice(0, Math.min(PILE_SIZE, photos.length));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSample(picked);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLayouts(generatePileLayouts(picked.length));
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    const id = window.setInterval(() => {
+      setLayouts(generatePileLayouts(picked.length));
+    }, PILE_REARRANGE_MS);
+
+    return () => window.clearInterval(id);
+  }, [photos]);
+
+  if (sample.length === 0 || layouts.length === 0) {
+    return (
+      <section
+        aria-hidden
+        className="relative h-[85vh] w-full overflow-hidden bg-[color:var(--photo-bg)] sm:h-[90vh]"
+      />
+    );
+  }
+
+  return (
+    <section
+      aria-label="Mosaïque aléatoire"
+      className="relative h-[85vh] w-full overflow-hidden bg-[color:var(--photo-bg)] sm:h-[90vh]"
+    >
+      {sample.map((photo, i) => {
+        const layout = layouts[i];
+        if (!layout) return null;
+        const globalIndex = photos.findIndex((p) => p.src === photo.src);
+        return (
+          <button
+            key={photo.src}
+            type="button"
+            onClick={() => onOpen(globalIndex)}
+            aria-label={`Ouvrir ${photo.alt}`}
+            data-cursor="ouvrir"
+            className="group absolute block origin-center"
+            style={{
+              top: `${layout.top}%`,
+              left: `${layout.left}%`,
+              width: `${layout.width}px`,
+              zIndex: layout.z,
+              transform: `translate(-50%, -50%) rotate(${layout.rotate}deg)`,
+              transition:
+                "top 1400ms cubic-bezier(0.16, 1, 0.3, 1), left 1400ms cubic-bezier(0.16, 1, 0.3, 1), transform 1400ms cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          >
+            <div
+              className="relative aspect-[4/5] w-full bg-white p-2 shadow-[6px_6px_0_rgba(0,0,0,0.15)] transition-transform duration-300 ease-out group-hover:scale-110"
+              style={{
+                transform: "rotate(0deg)",
+              }}
+            >
+              <div className="relative h-full w-full overflow-hidden">
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  sizes="240px"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </button>
+        );
+      })}
+    </section>
   );
 }
 

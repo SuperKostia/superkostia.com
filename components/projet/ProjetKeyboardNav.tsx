@@ -81,7 +81,7 @@ export function ProjetKeyboardNav({
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed bottom-6 right-6 z-30 animate-[fade-in_400ms_ease-out] border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-3 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-fg)] shadow-[var(--shadow-hard-sm)]"
+      className="pointer-events-none fixed bottom-6 right-6 z-30 hidden animate-[fade-in_400ms_ease-out] border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-3 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-fg)] shadow-[var(--shadow-hard-sm)] md:[@media(pointer:fine)]:inline-flex md:[@media(pointer:fine)]:items-center"
     >
       <span className="inline-block w-8 text-center animate-[keynav-arrows_1.4s_ease-in-out_infinite]">
         ← →
