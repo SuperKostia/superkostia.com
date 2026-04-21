@@ -20,11 +20,34 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://superkostia.com"),
   title: {
     default: "superkostia",
     template: "%s — superkostia",
   },
-  description: "Le terrain de jeu public de Kostia.",
+  description: "Le terrain de jeu public de Kostia — projets, hobbies, laboratoire, écrits.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    url: "/",
+    siteName: "superkostia",
+    title: "superkostia",
+    description:
+      "Le terrain de jeu public de Kostia — projets, hobbies, laboratoire, écrits.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "superkostia",
+    description:
+      "Le terrain de jeu public de Kostia — projets, hobbies, laboratoire, écrits.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

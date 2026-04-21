@@ -38,9 +38,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const projet = await getProjetBySlug(slug);
   if (!projet) return {};
+  const { frontmatter } = projet;
+  const url = `/projets/${slug}`;
   return {
-    title: projet.frontmatter.title,
-    description: projet.frontmatter.summary,
+    title: frontmatter.title,
+    description: frontmatter.summary,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: frontmatter.title,
+      description: frontmatter.summary,
+      tags: frontmatter.tags,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: frontmatter.title,
+      description: frontmatter.summary,
+    },
   };
 }
 

@@ -18,9 +18,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const ecrit = await getEcritBySlug(slug);
   if (!ecrit) return {};
+  const { frontmatter } = ecrit;
+  const url = `/ecrits/${slug}`;
   return {
-    title: ecrit.frontmatter.title,
-    description: ecrit.frontmatter.summary,
+    title: frontmatter.title,
+    description: frontmatter.summary,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: frontmatter.title,
+      description: frontmatter.summary,
+      publishedTime: frontmatter.date,
+      tags: frontmatter.tags,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: frontmatter.title,
+      description: frontmatter.summary,
+    },
   };
 }
 
