@@ -30,12 +30,12 @@ export function Press({ items = [], label = "Presse" }: PressProps) {
               data-cursor="lire"
               className="group flex h-full items-center gap-4 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-4 shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
             >
-              <div className="relative h-12 w-24 shrink-0 overflow-hidden bg-white">
+              <div className="relative h-14 w-28 shrink-0 overflow-hidden bg-white">
                 <Image
                   src={item.logo}
                   alt={item.name}
                   fill
-                  sizes="96px"
+                  sizes="112px"
                   className="object-contain p-1"
                 />
               </div>
@@ -49,11 +49,15 @@ export function Press({ items = [], label = "Presse" }: PressProps) {
                   </p>
                 ) : null}
               </div>
+              <span className="hidden shrink-0 items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard-sm)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 sm:inline-flex">
+                Lire l&apos;article
+                <ArrowUpRight size={14} strokeWidth={2.5} aria-hidden />
+              </span>
               <ArrowUpRight
-                size={14}
+                size={18}
                 strokeWidth={2.5}
                 aria-hidden
-                className="shrink-0 text-[color:var(--color-muted)] group-hover:text-[color:var(--color-fg)]"
+                className="shrink-0 text-[color:var(--color-fg)] sm:hidden"
               />
             </a>
           </li>
