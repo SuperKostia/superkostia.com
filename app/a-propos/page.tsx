@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
-import { ArrowUpRight } from "lucide-react";
+import type { ComponentType, SVGProps } from "react";
+import {
+  ArrowUpRight,
+  Flame,
+  House,
+  MapPin,
+  Users,
+  Wrench,
+} from "lucide-react";
 import { Tag } from "@/components/ui/Tag";
 import { cn } from "@/lib/utils";
 import { getNomadsProfile } from "@/lib/nomads";
@@ -286,6 +294,7 @@ export default async function AProposPage() {
         <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
           <Capsule
             index="A"
+            icon={MapPin}
             title="Villes qui m'ont formé"
             items={[
               { label: "Moscou" },
@@ -298,6 +307,7 @@ export default async function AProposPage() {
 
           <Capsule
             index="B"
+            icon={Wrench}
             title="Outils qui m'ont transformé"
             accent
             items={[
@@ -310,6 +320,7 @@ export default async function AProposPage() {
 
           <Capsule
             index="C"
+            icon={Flame}
             title="Ratages qui m'ont servi"
             items={[
               {
@@ -321,6 +332,7 @@ export default async function AProposPage() {
 
           <Capsule
             index="D"
+            icon={Users}
             title="Rencontres qui m'ont tiré"
             items={[
               { label: "Arthur", note: "Russie · entrepreneur en série" },
@@ -338,6 +350,7 @@ export default async function AProposPage() {
 
           <Capsule
             index="E"
+            icon={House}
             title="Pays habités"
             items={[
               { label: "Moscou", note: "plus de dix ans" },
@@ -385,12 +398,20 @@ export default async function AProposPage() {
 type CapsuleProps = {
   index: string;
   title: string;
+  icon: ComponentType<SVGProps<SVGSVGElement> & { size?: number; strokeWidth?: number }>;
   items: Array<{ label: string; note?: string }>;
   footer?: string;
   accent?: boolean;
 };
 
-function Capsule({ index, title, items, footer, accent }: CapsuleProps) {
+function Capsule({
+  index,
+  title,
+  icon: Icon,
+  items,
+  footer,
+  accent,
+}: CapsuleProps) {
   return (
     <article
       className={cn(
@@ -400,10 +421,24 @@ function Capsule({ index, title, items, footer, accent }: CapsuleProps) {
           : "bg-[color:var(--color-bg)]",
       )}
     >
-      <header className="flex items-baseline gap-3">
+      <div className="flex items-center justify-between">
+        <span
+          className={cn(
+            "inline-flex h-10 w-10 items-center justify-center border-2 border-current",
+            accent
+              ? "bg-[color:var(--color-accent-fg)] text-[color:var(--color-accent)]"
+              : "bg-[color:var(--color-fg)] text-[color:var(--color-bg)]",
+          )}
+          aria-hidden
+        >
+          <Icon size={20} strokeWidth={2.25} />
+        </span>
         <span className="font-mono text-xs uppercase tracking-[0.2em] opacity-60">
           {index}
         </span>
+      </div>
+
+      <header>
         <h3 className="font-[family-name:var(--font-space-grotesk)] text-xl font-black uppercase leading-tight tracking-tight sm:text-2xl">
           {title}
         </h3>
