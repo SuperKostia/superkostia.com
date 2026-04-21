@@ -361,14 +361,18 @@ export default async function AProposPage() {
             </blockquote>
             <div className="flex flex-col gap-3 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-6 shadow-[var(--shadow-hard-sm)]">
               <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-                Règles que je me suis données
+                Ma règle
               </p>
               <p className="font-[family-name:var(--font-space-grotesk)] text-xl leading-snug">
-                Respecter mes limites en{" "}
+                <span className="inline-block bg-[color:var(--color-accent)] px-1.5 text-[color:var(--color-accent-fg)] -rotate-1">
+                  No limit
+                </span>
+                . Le maximum en{" "}
                 <strong className="font-black">travail</strong>,{" "}
                 <strong className="font-black">créativité</strong>,{" "}
                 <strong className="font-black">découverte</strong>,{" "}
-                <strong className="font-black">rencontre</strong>.
+                <strong className="font-black">rencontre</strong>. Tout le
+                temps.
               </p>
             </div>
           </div>
