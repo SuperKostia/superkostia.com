@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "compress:photos": "node scripts/compress-photos.mjs"
+    "compress:photos": "node scripts/compress-photos.mjs",
+    "screenshot:projets": "node scripts/screenshot-projets.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
@@ -30,6 +31,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "playwright": "^1.59.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -1,10 +1,29 @@
 import type { Metadata } from "next";
+import fs from "node:fs/promises";
+import path from "node:path";
 import NextLink from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Tag } from "@/components/ui/Tag";
 import { MDXContent } from "@/components/mdx/MDXContent";
+import { ProjetHero } from "@/components/projet/ProjetHero";
 import { getProjets, getProjetBySlug } from "@/lib/mdx";
+
+async function hasScreenshot(slug: string): Promise<boolean> {
+  const file = path.join(
+    process.cwd(),
+    "public",
+    "images",
+    "projets",
+    `${slug}.jpg`,
+  );
+  try {
+    await fs.access(file);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function generateStaticParams() {
   const projets = await getProjets();
@@ -31,6 +50,8 @@ export default async function ProjetDetailPage({ params }: PageProps) {
   if (!projet) notFound();
 
   const { frontmatter, body } = projet;
+  const primaryLink = frontmatter.links?.[0];
+  const showHero = Boolean(primaryLink?.url) && (await hasScreenshot(slug));
 
   return (
     <article className="px-6 py-10 sm:px-10 lg:px-12">
@@ -60,6 +81,14 @@ export default async function ProjetDetailPage({ params }: PageProps) {
           {frontmatter.summary}
         </p>
       </header>
+
+      {showHero && primaryLink ? (
+        <ProjetHero
+          title={frontmatter.title}
+          url={primaryLink.url}
+          screenshotSrc={`/images/projets/${slug}.jpg`}
+        />
+      ) : null}
 
       <MDXContent source={body} />
     </article>

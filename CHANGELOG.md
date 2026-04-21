@@ -6,7 +6,27 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 ## [Unreleased]
 
-Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos` + photos réelles pour `/hobbies/photographie`.
+Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
+
+## [0.3.3] — 2026-04-21 — Screenshots projets + CTA + vrais projets
+
+### Ajouté
+- `scripts/screenshot-projets.mjs` + `npm run screenshot:projets` : lit les MDX de `content/projets/`, capture via Playwright + Chromium headless (viewport 1440×900) la home de chaque projet qui a un `links[0].url`. Sauve dans `public/images/projets/<slug>.jpg` en qualité 85. Skip si déjà présent, `--force` pour re-shoot.
+- `components/projet/ProjetHero.tsx` : carte cliquable brutaliste (screenshot dans un cadre bordure 2 px + shadow-hard, légère rotation -0.5°), pied avec hostname mono + CTA accent "Voir le site ↗". Hover : lift + retour à 0° de rotation.
+- `/projets/[slug]/page.tsx` : rend `<ProjetHero>` automatiquement si un screenshot existe ET qu'un `links[0].url` est défini. Fallback silencieux sinon.
+- 4 premiers screenshots capturés : mercatofirst, bookeeper, guide-etudes-superieures, wedding-patmos.
+- `content/projets/mercatofirst.mdx`, `bookeeper.mdx`, `guide-etudes-superieures.mdx` : 3 nouveaux projets réels avec vrais liens et descriptions tirées des sites live.
+- `wedding-patmos.mdx` corrigé : vrai URL `https://wedding.lifeispatmos.com/`, mention Emma + été 2026.
+
+### Corrigé
+- Mix-up important : MercatoFirst (CRM agents foot) et BooKeeper (marketplace keepers) étaient inversés dans la première version de `/a-propos`. Les deux phares sont désormais côte à côte avec les bonnes descriptions et liens sortants. Sauvegardé en mémoire projet pour ne pas refaire l'erreur.
+
+### Contenu
+- Premier dépôt de 16 photos réelles dans `/photographie/{patmos,voyages,australie}` (3 autres dossiers vides prêts : grece, paysages, portraits). Compression auto : 2.97 Mb → 1.24 Mb.
+- Nouveau dossier photo : `australie`.
+
+### Deps
+- `playwright` en devDep pour les screenshots (pas bundlé côté client, pas requis au build Vercel).
 
 ## [0.3.2] — 2026-04-21 — Phase 3d : /a-propos étoffée
 
