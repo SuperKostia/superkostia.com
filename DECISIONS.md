@@ -60,6 +60,21 @@ Format :
 
 ---
 
+## #005 — Hobbies dans la nav principale, Contact dans le footer
+
+**Date** : 2026-04-21.
+**Statut** : Acceptée.
+
+**Contexte.** Le CDC §8.1 prescrit "5 entrées max (Projets, Laboratoire, Écrits, À propos, Contact)" dans le header — et omet **Hobbies**, alors même que `/hobbies` est une section première classe dans l'arborescence §4.1 et détaille 4 univers distincts (§7.3). Côté home (§5.1), les 4 "portes d'entrée" listées sont Projets/Laboratoire/Écrits/À propos, donc Hobbies n'a aucune entrée de navigation visible. C'est très vraisemblablement un oubli.
+
+**Décision.** Header principal = **Projets · Hobbies · Laboratoire · Écrits · À propos** (5 entrées, plafond respecté). Contact est déplacé dans le footer, aux côtés de Colophon et d'un lien GitHub.
+
+**Raison.** Hobbies est content-lourd et mérite une entrée directe ; Contact est une action ponctuelle qui s'accommode très bien du footer (pattern standard). On garde le plafond CDC à 5 entrées sans sacrifier de section.
+
+**Impact.** À l'ajout d'une future section content (ex : Archive, Presse), il faudra trancher entre étendre le plafond à 6 ou évincer une entrée existante — créer une nouvelle décision le moment venu.
+
+---
+
 ## #004 — Pas de dépendance `clsx` / `tailwind-merge`
 
 **Date** : 2026-04-21.

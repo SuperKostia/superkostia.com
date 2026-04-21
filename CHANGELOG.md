@@ -8,6 +8,23 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Rien en cours pour l'instant.
 
+## [0.1.0] — 2026-04-21 — Phase 1 : squelette
+
+### Ajouté
+- Header sticky : logo cliquable, nav desktop `Projets · Hobbies · Laboratoire · Écrits · À propos`, `ThemeToggle`, `MobileMenu`.
+- `MobileMenu` : overlay plein écran, typo énorme, fermeture au clic d'un lien, Esc, `body.overflow: hidden` pendant l'ouverture.
+- `Footer` : `Contact`, `Colophon`, lien GitHub, crédit DA.
+- Pipeline MDX : `lib/mdx.ts` (lecture `content/{projets,hobbies,ecrits}` avec `gray-matter`, helpers `getProjets` / `getHobbies` / `getEcrits` + variantes `BySlug`) et `lib/types.ts` (frontmatter typé).
+- Composants MDX partagés (`components/mdx/MDXComponents.tsx`) branchés sur `mdx-components.tsx`.
+- `PageShell` : header de page réutilisable (eyebrow + display title + intro).
+- Pages créées : `/projets`, `/hobbies`, `/laboratoire`, `/ecrits`, `/a-propos`, `/contact`, `/colophon`.
+- Contenu de démo : `axiom-hub.mdx`, `photographie.mdx`, `bienvenue.mdx` (1 par catégorie pour prouver le pipeline).
+- Dépendance `server-only` (marqueur anti-bundling client pour `lib/mdx.ts`).
+
+### Changé
+- Home provisoire : passe par le nouveau `PageShell`, `ThemeToggle` vit désormais dans le header global.
+- `CAHIER-DES-CHARGES.md` : pas touché dans cette release — le décalage header nav (Hobbies ajouté, Contact déplacé) est couvert par la décision `#005`.
+
 ## [0.0.2] — 2026-04-21
 
 ### Ajouté

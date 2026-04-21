@@ -22,17 +22,20 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 
 ## Phase 1 — Squelette
 
-- [ ] Header sticky (logo cliquable, 5 entrées max, `ThemeToggle`)
-- [ ] Footer minimal (liens utiles + crédit DA)
-- [ ] Menu mobile plein écran (overlay, typo énorme)
-- [ ] Pipeline MDX : parsing, types frontmatter, composants MDX shared
-- [ ] Page `/projets` (vide, layout en place)
-- [ ] Page `/hobbies` (vide, layout en place)
-- [ ] Page `/laboratoire` (vide, layout en place)
-- [ ] Page `/ecrits` (vide, layout en place)
-- [ ] Page `/a-propos` (vide, layout en place)
-- [ ] Page `/contact` (vide, layout en place)
-- [ ] Page `/colophon` (vide, layout en place)
+- [x] Header sticky (logo cliquable, 5 entrées : Projets/Hobbies/Laboratoire/Écrits/À propos — cf. #005, `ThemeToggle`)
+- [x] Footer minimal (Contact, Colophon, lien GitHub)
+- [x] Menu mobile plein écran (overlay, typo énorme, Esc + body scroll lock)
+- [x] Pipeline MDX : lecture `content/*` via gray-matter, types frontmatter, helpers `getProjets` / `getHobbies` / `getEcrits`
+- [x] Composants MDX partagés (`h1`, `h2`, `h3`, `p`, `a`, `ul`, `ol`, `blockquote`, `code`, `pre`, `hr`)
+- [x] `PageShell` : header de page commun (eyebrow + titre display + intro)
+- [x] Page `/projets` (lit et affiche le frontmatter des MDX)
+- [x] Page `/hobbies` (lit et affiche le frontmatter des MDX)
+- [x] Page `/laboratoire` (liste statique des 5 expérimentations CDC §6)
+- [x] Page `/ecrits` (lit et affiche le frontmatter des MDX, tri date descendante)
+- [x] Page `/a-propos` (stub)
+- [x] Page `/contact` (stub)
+- [x] Page `/colophon` (stub)
+- [x] Contenu de démo : `axiom-hub.mdx`, `photographie.mdx`, `bienvenue.mdx`
 
 ## Phase 2 — Home expérientielle
 
