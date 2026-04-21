@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
 import type { Photo, Series } from "@/lib/photos";
 import { ExifLine } from "./ExifLine";
+import { cn } from "@/lib/utils";
 
 type PhotoGalleryProps = {
   series: Series[];
@@ -41,7 +42,6 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
 
-    // Préchargement des voisins pour une navigation instantanée.
     const preload = (i: number) => {
       const photo = allPhotos[i];
       if (!photo) return;
@@ -62,8 +62,6 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
   }
 
   const hero = heroIndex !== null ? allPhotos[heroIndex] : null;
-  const lightboxPhoto =
-    lightboxIndex !== null ? allPhotos[lightboxIndex] : null;
 
   return (
     <>
@@ -138,20 +136,12 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
         </section>
       ))}
 
-      {lightboxPhoto ? (
+      {lightboxIndex !== null ? (
         <Lightbox
-          photo={lightboxPhoto}
+          photos={allPhotos}
+          currentIndex={lightboxIndex}
+          onIndexChange={setLightboxIndex}
           onClose={() => setLightboxIndex(null)}
-          onPrev={() =>
-            setLightboxIndex((i) =>
-              i === null ? null : (i - 1 + allPhotos.length) % allPhotos.length,
-            )
-          }
-          onNext={() =>
-            setLightboxIndex((i) =>
-              i === null ? null : (i + 1) % allPhotos.length,
-            )
-          }
         />
       ) : null}
     </>
@@ -159,13 +149,36 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
 }
 
 type LightboxProps = {
-  photo: Photo;
+  photos: Photo[];
+  currentIndex: number;
+  onIndexChange: (i: number) => void;
   onClose: () => void;
-  onPrev: () => void;
-  onNext: () => void;
 };
 
-function Lightbox({ photo, onClose, onPrev, onNext }: LightboxProps) {
+function Lightbox({
+  photos,
+  currentIndex,
+  onIndexChange,
+  onClose,
+}: LightboxProps) {
+  const photo = photos[currentIndex];
+  const stripRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    const active = stripRef.current?.querySelector<HTMLElement>(
+      '[data-active="true"]',
+    );
+    active?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  }, [currentIndex]);
+
+  const prev = () =>
+    onIndexChange((currentIndex - 1 + photos.length) % photos.length);
+  const next = () => onIndexChange((currentIndex + 1) % photos.length);
+
   return (
     <div
       role="dialog"
@@ -184,16 +197,14 @@ function Lightbox({ photo, onClose, onPrev, onNext }: LightboxProps) {
 
       <button
         type="button"
-        onClick={onPrev}
+        onClick={prev}
         aria-label="Photo précédente"
-        data-cursor="←"
         className="absolute inset-y-0 left-0 z-0 w-1/3"
       />
       <button
         type="button"
-        onClick={onNext}
+        onClick={next}
         aria-label="Photo suivante"
-        data-cursor="→"
         className="absolute inset-y-0 right-0 z-0 w-1/3"
       />
 
@@ -209,10 +220,43 @@ function Lightbox({ photo, onClose, onPrev, onNext }: LightboxProps) {
         />
       </div>
 
-      <footer className="flex items-center justify-between gap-4 border-t border-[color:var(--photo-border)] px-6 py-4">
+      <ul
+        ref={stripRef}
+        className="relative z-10 flex shrink-0 items-center gap-2 overflow-x-auto border-t border-[color:var(--photo-border)] px-4 py-3 scroll-smooth"
+      >
+        {photos.map((p, i) => {
+          const isActive = i === currentIndex;
+          return (
+            <li key={p.src} data-active={isActive} className="shrink-0">
+              <button
+                type="button"
+                onClick={() => onIndexChange(i)}
+                aria-label={`Aller à ${p.alt}`}
+                aria-current={isActive}
+                className={cn(
+                  "group relative block h-14 overflow-hidden transition-all duration-300 sm:h-16",
+                  isActive
+                    ? "w-24 border-2 border-[color:var(--photo-fg)] opacity-100 sm:w-28"
+                    : "w-16 opacity-40 blur-[1.5px] hover:w-24 hover:opacity-90 hover:blur-0 sm:w-20 sm:hover:w-28",
+                )}
+              >
+                <Image
+                  src={p.src}
+                  alt=""
+                  fill
+                  sizes="112px"
+                  className="object-cover"
+                />
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      <footer className="flex shrink-0 items-center justify-between gap-4 border-t border-[color:var(--photo-border)] px-6 py-3">
         <ExifLine exif={photo.exif} tags={photo.tags} />
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[color:var(--photo-fg-muted)]">
-          ← → · esc
+          {currentIndex + 1} / {photos.length} · ← → · esc
         </p>
       </footer>
     </div>
