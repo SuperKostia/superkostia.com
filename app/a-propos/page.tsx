@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ArrowUpRight } from "lucide-react";
 import { Tag } from "@/components/ui/Tag";
+import { cn } from "@/lib/utils";
 import { getNomadsProfile } from "@/lib/nomads";
 
 export const metadata: Metadata = {
@@ -269,7 +270,7 @@ export default async function AProposPage() {
       </section>
 
       <section className="border-t-2 border-[color:var(--color-border)] px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
-        <div className="flex flex-col gap-3">
+        <div className="mb-10 flex flex-col gap-3">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
             04 · capsules
           </p>
@@ -277,12 +278,155 @@ export default async function AProposPage() {
             Timeline non-linéaire.
           </h2>
           <p className="max-w-2xl text-base leading-relaxed text-[color:var(--color-muted)]">
-            À remplir ensemble. Des capsules thématiques — villes qui m&apos;ont
-            formé, outils qui m&apos;ont transformé, ratages qui m&apos;ont
-            servi. Envoie-moi les angles et je structure.
+            Pas un CV. Des capsules thématiques qui disent où je suis passé,
+            qui m&apos;a tiré, ce qui m&apos;a cassé.
           </p>
         </div>
+
+        <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+          <Capsule
+            index="A"
+            title="Villes qui m'ont formé"
+            items={[
+              { label: "Moscou" },
+              { label: "Paris" },
+              { label: "Dubaï" },
+              { label: "Athènes" },
+              { label: "Lisbonne" },
+            ]}
+          />
+
+          <Capsule
+            index="B"
+            title="Outils qui m'ont transformé"
+            accent
+            items={[
+              { label: "Claude Code" },
+              { label: "Claude Code" },
+              { label: "Claude Code" },
+            ]}
+            footer="Pas une faute de frappe."
+          />
+
+          <Capsule
+            index="C"
+            title="Ratages qui m'ont servi"
+            items={[
+              {
+                label: "Traffic Intellect",
+                note: "Ma première boîte, montée à Moscou.",
+              },
+            ]}
+          />
+
+          <Capsule
+            index="D"
+            title="Rencontres qui m'ont tiré"
+            items={[
+              { label: "Arthur", note: "France" },
+              { label: "Dimitri", note: "Russie" },
+              { label: "Laurent", note: "Grèce" },
+              { label: "+ beaucoup d'autres" },
+            ]}
+          />
+
+          <Capsule
+            index="E"
+            title="Pays habités"
+            items={[
+              { label: "Moscou", note: "plus de dix ans" },
+              { label: "Patmos", note: "pendant le Covid" },
+            ]}
+            footer="Pour les pays traversés, voir la carte Nomade plus haut."
+          />
+        </div>
+
+        <div className="mt-10 flex flex-col gap-4 border-t-2 border-[color:var(--color-border)] pt-10">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
+            · clôture
+          </p>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <blockquote className="border-l-4 border-[color:var(--color-accent)] pl-6 font-[family-name:var(--font-space-grotesk)] text-2xl leading-snug sm:text-3xl">
+              Mon obsession qui dure :{" "}
+              <span className="inline-block bg-[color:var(--color-accent)] px-1.5 text-[color:var(--color-accent-fg)] -rotate-1">
+                créer une marque
+              </span>{" "}
+              aimée par le grand public.
+            </blockquote>
+            <div className="flex flex-col gap-3 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-6 shadow-[var(--shadow-hard-sm)]">
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
+                Règles que je me suis données
+              </p>
+              <p className="font-[family-name:var(--font-space-grotesk)] text-xl leading-snug">
+                Respecter mes limites en{" "}
+                <strong className="font-black">travail</strong>,{" "}
+                <strong className="font-black">créativité</strong>,{" "}
+                <strong className="font-black">découverte</strong>,{" "}
+                <strong className="font-black">rencontre</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
+    </article>
+  );
+}
+
+type CapsuleProps = {
+  index: string;
+  title: string;
+  items: Array<{ label: string; note?: string }>;
+  footer?: string;
+  accent?: boolean;
+};
+
+function Capsule({ index, title, items, footer, accent }: CapsuleProps) {
+  return (
+    <article
+      className={cn(
+        "mb-4 flex break-inside-avoid flex-col gap-4 border-2 border-[color:var(--color-border)] p-5 shadow-[var(--shadow-hard-sm)] sm:p-6",
+        accent
+          ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
+          : "bg-[color:var(--color-bg)]",
+      )}
+    >
+      <header className="flex items-baseline gap-3">
+        <span className="font-mono text-xs uppercase tracking-[0.2em] opacity-60">
+          {index}
+        </span>
+        <h3 className="font-[family-name:var(--font-space-grotesk)] text-xl font-black uppercase leading-tight tracking-tight sm:text-2xl">
+          {title}
+        </h3>
+      </header>
+
+      <ol className="flex flex-col">
+        {items.map((item, i) => (
+          <li
+            key={`${item.label}-${i}`}
+            className="flex items-baseline gap-3 border-t border-[color:var(--color-border)]/30 py-3 first:border-t-0 first:pt-0 last:pb-0"
+          >
+            <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.2em] opacity-50">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <div className="flex flex-col gap-0.5">
+              <span className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold leading-tight">
+                {item.label}
+              </span>
+              {item.note ? (
+                <span className="font-mono text-[11px] uppercase tracking-[0.15em] opacity-60">
+                  {item.note}
+                </span>
+              ) : null}
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      {footer ? (
+        <p className="font-mono text-[11px] uppercase tracking-[0.15em] opacity-50">
+          {footer}
+        </p>
+      ) : null}
     </article>
   );
 }
