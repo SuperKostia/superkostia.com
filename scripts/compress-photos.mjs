@@ -20,6 +20,7 @@ import sharp from "sharp";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..", "public", "images", "photographie");
 const MAX_DIMENSION = 2400;
+const MIN_DIMENSION_WARN = 1600;
 const JPEG_QUALITY = 82;
 
 async function walk(dir) {
@@ -45,8 +46,11 @@ function fmt(bytes) {
 async function processOne(filePath) {
   const originalSize = (await fs.stat(filePath)).size;
   const meta = await sharp(filePath, { failOn: "none" }).metadata();
-  const needsResize =
-    (meta.width ?? 0) > MAX_DIMENSION || (meta.height ?? 0) > MAX_DIMENSION;
+  const w = meta.width ?? 0;
+  const h = meta.height ?? 0;
+  const longest = Math.max(w, h);
+  const needsResize = longest > MAX_DIMENSION;
+  const isLowRes = longest > 0 && longest < MIN_DIMENSION_WARN;
 
   let pipeline = sharp(filePath, { failOn: "none" }).withMetadata();
   if (needsResize) {
@@ -61,21 +65,32 @@ async function processOne(filePath) {
 
   const buffer = await pipeline.toBuffer();
 
-  // Si le nouveau buffer n'apporte pas de gain réel, on ne touche pas.
-  if (buffer.length >= originalSize * 0.95) {
-    return { action: "skip", path: filePath, originalSize, newSize: originalSize };
+  const action = (() => {
+    if (buffer.length >= originalSize * 0.95) return "skip";
+    return needsResize ? "resize" : "compress";
+  })();
+
+  if (action !== "skip") {
+    const target = filePath.replace(/\.png$/i, ".jpg");
+    await fs.writeFile(target, buffer);
+    if (target !== filePath) await fs.unlink(filePath);
+    return {
+      action,
+      path: target,
+      originalSize,
+      newSize: buffer.length,
+      dims: `${w}×${h}`,
+      lowRes: isLowRes,
+    };
   }
 
-  // Converti les .png en .jpg (le fichier sortant est toujours en JPEG).
-  const target = filePath.replace(/\.png$/i, ".jpg");
-  await fs.writeFile(target, buffer);
-  if (target !== filePath) await fs.unlink(filePath);
-
   return {
-    action: needsResize ? "resize" : "compress",
-    path: target,
+    action,
+    path: filePath,
     originalSize,
-    newSize: buffer.length,
+    newSize: originalSize,
+    dims: `${w}×${h}`,
+    lowRes: isLowRes,
   };
 }
 
@@ -95,6 +110,7 @@ async function main() {
   console.log(`Compression de ${files.length} fichier(s)...\n`);
   let totalBefore = 0;
   let totalAfter = 0;
+  const lowResList = [];
 
   for (const file of files) {
     try {
@@ -102,11 +118,13 @@ async function main() {
       totalBefore += result.originalSize;
       totalAfter += result.newSize;
       const rel = path.relative(ROOT, result.path);
+      const flag = result.lowRes ? " ⚠ basse résolution" : "";
       console.log(
-        `  [${result.action.padEnd(8)}] ${rel.padEnd(40)} ${fmt(
+        `  [${result.action.padEnd(8)}] ${rel.padEnd(40)} ${result.dims.padEnd(11)} ${fmt(
           result.originalSize,
-        )} → ${fmt(result.newSize)}`,
+        )} → ${fmt(result.newSize)}${flag}`,
       );
+      if (result.lowRes) lowResList.push(rel);
     } catch (err) {
       console.error(`  [ERROR]    ${path.relative(ROOT, file)} — ${err.message}`);
     }
@@ -117,6 +135,16 @@ async function main() {
       totalBefore - totalAfter,
     )} économisés)`,
   );
+
+  if (lowResList.length > 0) {
+    console.log(
+      `\n⚠ ${lowResList.length} photo(s) en dessous de ${MIN_DIMENSION_WARN} px — rendu pixelisé attendu en plein écran.`,
+    );
+    console.log(
+      `  Astuce : re-exporter depuis iPhone Photos en "Actual Size" (Share → Options → Actual Size) ou via AirDrop.`,
+    );
+    for (const f of lowResList) console.log(`  · ${f}`);
+  }
 }
 
 main().catch((err) => {
