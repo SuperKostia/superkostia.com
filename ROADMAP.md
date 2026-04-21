@@ -79,10 +79,13 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 - [ ] Kostia dépose ses photos, les compresse, commit
 
 ### Chunk 3d — /a-propos étoffée
-- [ ] Bio longue, 1re personne, switch EN possible plus tard
-- [ ] Section "ce que je fais en ce moment" (MDX dédié)
-- [ ] Section "ce qui m'obsède"
-- [ ] Timeline non-linéaire (capsules thématiques)
+- [x] Hero "Kostia.", eyebrow typographique
+- [x] Section 01 · situation : bio courte 1re personne (Athènes, Axiom Academic, créatif, curiosité, intense, tout ou rien) + carte héritage (photo + vélo du grand-père maternel)
+- [x] Section 02 · en ce moment : carte phare accent MercatoFirst + 3 cartes "Je code.", "Tout à l'iPhone.", "Cyclisme."
+- [x] Section 03 · obsessions : 3 grosses lignes (IA, mutation sociale, bien-être des enfants) sur fond inversé + pullquote "anti-école"
+- [x] Section 04 · timeline : stub avec invite à compléter ensemble
+- [ ] Remplir les capsules thématiques quand Kostia m'envoie les angles
+- [ ] Switch EN : reporté à Phase 5 polish (décision tacite, pas de demande urgente)
 
 ## Phase 4 — Laboratoire
 

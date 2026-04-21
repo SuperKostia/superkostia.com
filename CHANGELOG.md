@@ -6,7 +6,20 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 ## [Unreleased]
 
-Phase 3 en cours — chunks 3b (filtres `/projets`) et 3d (`/a-propos` étoffée) à venir. Chunk 3c livré côté code, en attente de photos réelles.
+Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos` + photos réelles pour `/hobbies/photographie`.
+
+## [0.3.2] — 2026-04-21 — Phase 3d : /a-propos étoffée
+
+### Ajouté
+- `app/a-propos/page.tsx` remplacée (plus de stub) avec 4 sections :
+  - **01 · situation** : hero "Kostia.", phrase bio avec "Athènes" en accent rotaté, carte héritage sur le grand-père maternel (photo + vélo).
+  - **02 · en ce moment** : carte phare accent jaune pour MercatoFirst (l'app des gardiens de but amateurs) + 3 cartes secondaires : "Je code." (10-12 h/jour, avec pullquote *"aujourd'hui le code est gratuit et parfait ; à l'époque c'était ultra cher et très imparfait"*), "Tout à l'iPhone." (pas de reflex, spontanéité), "Cyclisme." (passion moins sportive désormais).
+  - **03 · obsessions** : section sur fond inversé (bg-fg / text-bg), 3 lignes numérotées géantes (IA, mutation sociale, bien-être enfants) + pullquote *"Je ne suis pas très école. Je suis anti-école, en fait."*
+  - **04 · capsules** : stub avec invite à compléter la timeline non-linéaire ensemble.
+
+### Notes
+- Contenu inline TSX pour ce premier jet. Si les listes "en ce moment" / "obsessions" commencent à tourner régulièrement, on bascule sur du MDX dédié (CDC §7.5 hint).
+- Switch EN non implémenté — reporté à Phase 5 polish sans décision formelle.
 
 ## [0.3.1] — 2026-04-21 — Phase 3c : univers photographie à part (rupture DA)
 
