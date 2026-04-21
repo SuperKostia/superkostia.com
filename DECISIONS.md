@@ -75,6 +75,42 @@ Format :
 
 ---
 
+## #006 — `exifr` pour lire les métadonnées EXIF des JPEG au build
+
+**Date** : 2026-04-21.
+**Statut** : Acceptée.
+
+**Contexte.** Le CDC §7.3 prévoit l'affichage optionnel des métadonnées EXIF (focale, vitesse, ouverture, ISO, appareil) dans la lightbox de `/hobbies/photographie`. Deux voies : automatiser via un parser EXIF ou demander à Kostia de taper les données à la main dans un fichier sidecar.
+
+**Décision.** Installation de `exifr` (~20 kb minzipped, zéro dépendance runtime, build only). Appelé depuis `lib/photos.ts` au moment du scan du dossier `public/images/photographie/`.
+
+**Raison.** Automatiser supprime la friction pour Kostia (drop un JPEG, c'est tout). Les alternatives :
+- *Parser EXIF maison* : complexe (format binaire), inutile.
+- *Champ `exif` manuel dans `_series.json`* : friction, doublon avec ce qui est déjà dans le fichier JPEG.
+- *Pas d'EXIF* : appauvrit la fiche technique, va contre l'esprit CDC §7.3 ("fiche technique").
+
+**Impact.** Dep runtime côté server uniquement (pas de bundle client). Pas de rate limit, pas de service extérieur. Zéro coût conforme CDC rule #1.
+
+---
+
+## #007 — Hébergement photos : `public/` pour commencer, Supabase Storage au-delà de 100 MB
+
+**Date** : 2026-04-21.
+**Statut** : Acceptée.
+
+**Contexte.** `/hobbies/photographie` a besoin d'héberger les originaux des photos. Plusieurs options : filesystem (`public/`), Supabase Storage, Vercel Blob, CDN tiers.
+
+**Décision.** Phase 3 : toutes les photos vivent dans `public/images/photographie/<serie>/*.jpg`, bundlées avec le déploiement Vercel et servies par son CDN. Phase 4+ (quand le repo dépassera 100 MB — limite Vercel Hobby) : migration vers Supabase Storage avec un bucket public.
+
+**Raison.**
+- **Phase 3** : zéro service, zéro auth, zéro config. Le code scanne le filesystem, `next/image` optimise. Parfaitement fluide tant qu'on reste raisonnable.
+- **Seuil 100 MB** : limite brute du repo Vercel Hobby. Vercel Pro passe à 1 GB mais on veut rester gratuit (CDC rule #1). Un script `npm run compress:photos` (sharp + mozjpeg, 2400 px max, qualité 82) est fourni pour optimiser avant commit.
+- **Phase 4+ migration** : Supabase Storage plan gratuit 1 GB, déjà prévu par le CDC §3.3 ("Storage pour images/vidéos lourdes"). Le scanner `lib/photos.ts` sera adapté pour lire la liste des objets via le client Supabase plutôt que `fs.readdir`.
+
+**Impact.** À surveiller : taille du dossier `public/images/photographie/` à chaque commit. Quand ça approche 80 MB, planifier la migration.
+
+---
+
 ## #004 — Pas de dépendance `clsx` / `tailwind-merge`
 
 **Date** : 2026-04-21.

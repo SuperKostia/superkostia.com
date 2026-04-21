@@ -79,6 +79,26 @@ body {
   color: var(--color-accent-fg);
 }
 
+/* ---- Section photographie — rupture DA (décision #002) ---- */
+
+.photo-surface {
+  --photo-bg: #f8f6f0;
+  --photo-fg: #111111;
+  --photo-fg-muted: #7a7a7a;
+  --photo-border: rgba(0, 0, 0, 0.12);
+
+  background: var(--photo-bg);
+  color: var(--photo-fg);
+  min-height: 100vh;
+}
+
+.dark .photo-surface {
+  --photo-bg: #0a0a0a;
+  --photo-fg: #ededed;
+  --photo-fg-muted: #7a7a7a;
+  --photo-border: rgba(255, 255, 255, 0.12);
+}
+
 /* ---- Animations utilitaires ---- */
 
 @keyframes fade-in {

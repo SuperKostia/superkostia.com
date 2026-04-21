@@ -6,7 +6,28 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 ## [Unreleased]
 
-Phase 3 en cours — chunks 3b (filtres `/projets`), 3c (rupture DA `/hobbies/photographie`), 3d (`/a-propos` étoffée) à venir.
+Phase 3 en cours — chunks 3b (filtres `/projets`) et 3d (`/a-propos` étoffée) à venir. Chunk 3c livré côté code, en attente de photos réelles.
+
+## [0.3.1] — 2026-04-21 — Phase 3c : univers photographie à part (rupture DA)
+
+### Ajouté
+- `app/hobbies/photographie/layout.tsx` : wrapper avec classe `.photo-surface` qui définit des tokens CSS propres (`--photo-bg`, `--photo-fg`, `--photo-fg-muted`, `--photo-border`), zéro jaune acide, font EB Garamond italique pour les titres de série. Dark mode supporté avec palette dédiée.
+- `app/hobbies/photographie/page.tsx` : route statique qui override le catch-all `/hobbies/[slug]` (décision #002). Rend le `<PhotoGallery>` client.
+- `lib/photos.ts` : scan de `public/images/photographie/<serie>/`, lecture EXIF automatique via `exifr` (focale, vitesse, ouverture, ISO, appareil). Supporte un `_series.json` optionnel par dossier (titre, date, description, order, alt + tags par photo).
+- `components/photographie/PhotoGallery.tsx` (Client Component) : hero plein écran avec photo tirée au hasard à chaque visite, planche-contact par série (grille 2/3/4 cols, images en grayscale par défaut qui reviennent en couleur au hover), lightbox plein écran avec EXIF + tags en pied + zones cliquables gauche/droite invisibles.
+- Navigation lightbox : flèches clavier ← / →, Esc pour fermer, **préchargement des voisins** au changement de photo pour une nav instantanée, `unoptimized` sur l'image courante (on a déjà compressé à 2400 px en amont).
+- `components/photographie/ExifLine.tsx` : fiche technique en mono discret, `50 mm · f/2 · 1/250 · ISO 400 · Leica M10`.
+- Empty state stylisé quand aucune photo présente (font italique, message mono).
+- 5 dossiers de séries pré-créés pour Kostia : `patmos`, `grece`, `portraits`, `paysages`, `voyages`.
+- Script `npm run compress:photos` : `scripts/compress-photos.mjs` utilise `sharp` + `mozjpeg` pour redimensionner à 2400 px (côté le plus long), qualité 82, préserve l'EXIF, opère in-place, skippe les gains < 5 %.
+- Dep runtime : `exifr` (build-only, scanner EXIF). Voir DECISIONS #006.
+
+### Décisions
+- DECISIONS #006 : `exifr` accepté pour automatiser la fiche technique EXIF.
+- DECISIONS #007 : photos dans `public/` pour commencer (bundlé par Vercel, servi par son CDN), migration vers Supabase Storage prévue dès que le repo approche 100 MB.
+
+### Changé
+- `app/hobbies/[slug]/page.tsx` : `generateStaticParams` exclut le slug `photographie` pour éviter un conflit de prerender avec la route statique dédiée.
 
 ## [0.3.0] — 2026-04-21 — Phase 3a : rendu MDX + detail pages
 

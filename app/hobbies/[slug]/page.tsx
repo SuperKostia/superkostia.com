@@ -7,7 +7,11 @@ import { getHobbies, getHobbyBySlug } from "@/lib/mdx";
 
 export async function generateStaticParams() {
   const hobbies = await getHobbies();
-  return hobbies.map((h) => ({ slug: h.frontmatter.slug }));
+  // Le slug "photographie" a sa propre route statique (décision #002)
+  // qui override le catch-all [slug] — on l'exclut ici pour éviter un conflit de prerender.
+  return hobbies
+    .filter((h) => h.frontmatter.slug !== "photographie")
+    .map((h) => ({ slug: h.frontmatter.slug }));
 }
 
 type PageProps = {

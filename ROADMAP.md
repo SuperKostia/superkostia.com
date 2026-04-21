@@ -68,9 +68,15 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 ### Chunk 3b — filtres + recherche
 - [ ] `/projets` : grille + filtres (type/tag/année/statut) + recherche client-side
 
-### Chunk 3c — rupture DA photo (décision #002)
-- [ ] `app/hobbies/photographie/layout.tsx` qui override les tokens CSS
-- [ ] `app/hobbies/photographie/page.tsx` : layout dédié, galerie, lightbox plein écran, flèches clavier, EXIF optionnel
+### Chunk 3c — rupture DA photo (décision #002) — code livré, photos à venir
+- [x] `app/hobbies/photographie/layout.tsx` : tokens CSS override (`--photo-bg`, `--photo-fg`, plus de jaune acide) + font EB Garamond italique
+- [x] `app/hobbies/photographie/page.tsx` : hero aléatoire plein écran + planche-contact par série + lightbox plein écran avec EXIF + tags
+- [x] `lib/photos.ts` : scan `public/images/photographie/<serie>/`, lecture EXIF auto via `exifr`, support `_series.json` (titre, date, description, order, alt + tags par photo)
+- [x] Lightbox : flèches clavier, Esc, préchargement des voisins pour navigation instantanée, image unoptimized (on a déjà compressé à 2400 px)
+- [x] 5 dossiers de séries pré-créés : patmos, grece, portraits, paysages, voyages
+- [x] Script `npm run compress:photos` (sharp + mozjpeg, max 2400 px, qualité 82, préserve EXIF)
+- [x] Empty state stylisé quand aucune photo présente
+- [ ] Kostia dépose ses photos, les compresse, commit
 
 ### Chunk 3d — /a-propos étoffée
 - [ ] Bio longue, 1re personne, switch EN possible plus tard
