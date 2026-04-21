@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { Tag } from "@/components/ui/Tag";
 import { MDXContent } from "@/components/mdx/MDXContent";
 import { ProjetHero } from "@/components/projet/ProjetHero";
+import { ProjetKeyboardNav } from "@/components/projet/ProjetKeyboardNav";
 import { getProjets, getProjetBySlug } from "@/lib/mdx";
 
 async function hasScreenshot(slug: string): Promise<boolean> {
@@ -61,12 +62,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjetDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const projet = await getProjetBySlug(slug);
+  const [projet, allProjets] = await Promise.all([
+    getProjetBySlug(slug),
+    getProjets(),
+  ]);
   if (!projet) notFound();
 
   const { frontmatter, body } = projet;
   const primaryLink = frontmatter.links?.[0];
   const showHero = Boolean(primaryLink?.url) && (await hasScreenshot(slug));
+
+  const currentIndex = allProjets.findIndex(
+    (p) => p.frontmatter.slug === slug,
+  );
+  const prevSlug =
+    allProjets[(currentIndex - 1 + allProjets.length) % allProjets.length]
+      ?.frontmatter.slug;
+  const nextSlug =
+    allProjets[(currentIndex + 1) % allProjets.length]?.frontmatter.slug;
 
   return (
     <article className="px-6 py-10 sm:px-10 lg:px-12">
@@ -106,6 +119,8 @@ export default async function ProjetDetailPage({ params }: PageProps) {
       ) : null}
 
       <MDXContent source={body} />
+
+      <ProjetKeyboardNav prevSlug={prevSlug} nextSlug={nextSlug} />
     </article>
   );
 }

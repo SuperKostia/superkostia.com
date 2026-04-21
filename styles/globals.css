@@ -112,6 +112,24 @@ body {
   }
 }
 
+@keyframes keynav-arrows {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-[keynav-arrows"] {
+    animation: none;
+  }
+}
+
 /* ---- Marquee & ticker ---- */
 
 .marquee {
