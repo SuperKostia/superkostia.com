@@ -107,13 +107,16 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
             ) : null}
           </header>
 
-          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
+          <ul className="-mx-6 flex snap-x snap-mandatory gap-2 overflow-x-auto px-6 pb-2 scroll-smooth sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
             {s.photos.map((photo) => {
               const globalIndex = allPhotos.findIndex(
                 (p) => p.src === photo.src,
               );
               return (
-                <li key={photo.src}>
+                <li
+                  key={photo.src}
+                  className="w-[78%] shrink-0 snap-center sm:w-auto sm:shrink"
+                >
                   <button
                     type="button"
                     onClick={() => setLightboxIndex(globalIndex)}
@@ -125,7 +128,7 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
                       src={photo.src}
                       alt={photo.alt}
                       fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      sizes="(max-width: 640px) 78vw, (max-width: 1024px) 33vw, 25vw"
                       className="object-cover transition-[filter] group-hover:grayscale-0 sm:grayscale"
                     />
                   </button>

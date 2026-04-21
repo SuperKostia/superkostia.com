@@ -1,15 +1,33 @@
 import { getProjets } from "@/lib/mdx";
+import { getNomadsProfile } from "@/lib/nomads";
 import { AthensClock } from "./AthensClock";
 
+function formatKm(n: number): string {
+  return new Intl.NumberFormat("fr-FR").format(n) + " km";
+}
+
 export async function Ticker() {
-  const projets = await getProjets();
+  const [projets, nomads] = await Promise.all([
+    getProjets(),
+    getNomadsProfile(),
+  ]);
   const dernier = projets[0]?.frontmatter.title ?? "—";
 
   const pills: Array<{ label: string; value: React.ReactNode }> = [
     { label: "Athènes", value: <AthensClock /> },
     { label: "Dernier projet", value: dernier },
-    { label: "Visiteurs aujourd'hui", value: "—" },
-    { label: "Dernier mot sur le mur", value: "—" },
+    {
+      label: "Pays visités",
+      value: nomads ? `${nomads.stats.countries}` : "—",
+    },
+    {
+      label: "Km parcourus",
+      value: nomads ? formatKm(nomads.stats.distance_traveled_km) : "—",
+    },
+    {
+      label: "Dernière ville",
+      value: nomads?.lastTrip ? nomads.lastTrip.place : "—",
+    },
   ];
 
   const doubled = [...pills, ...pills];

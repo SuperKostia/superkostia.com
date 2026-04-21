@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import { ArrowUpRight } from "lucide-react";
 import { Tag } from "@/components/ui/Tag";
+import { getNomadsProfile } from "@/lib/nomads";
 
 export const metadata: Metadata = {
   title: "À propos",
   description: "Kostia, en long et en travers. Pas un CV.",
 };
 
-export default function AProposPage() {
+export default async function AProposPage() {
+  const nomads = await getNomadsProfile();
   return (
     <article className="flex flex-col">
       <header className="border-b-2 border-[color:var(--color-border)] px-6 py-12 sm:px-10 lg:px-12 lg:py-20">
@@ -109,7 +112,7 @@ export default function AProposPage() {
           </a>
         </div>
 
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <li>
             <article className="flex h-full flex-col gap-3 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-6 shadow-[var(--shadow-hard-sm)]">
               <Tag>10–12 h · jour</Tag>
@@ -153,6 +156,69 @@ export default function AProposPage() {
               </p>
             </article>
           </li>
+          {nomads ? (
+            <li>
+              <a
+                href={nomads.profileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="ouvrir"
+                className="group flex h-full flex-col gap-4 border-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] p-6 text-[color:var(--color-bg)] shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="inline-flex items-center border-2 border-[color:var(--color-bg)] bg-transparent px-2 py-0.5 font-mono text-xs uppercase tracking-wider">
+                    nomade
+                  </span>
+                  <ArrowUpRight
+                    size={18}
+                    strokeWidth={2.5}
+                    aria-hidden
+                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </div>
+                <h3 className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
+                  En mouvement.
+                </h3>
+                <dl className="mt-1 grid grid-cols-3 gap-2 border-y-2 border-[color:var(--color-bg)] py-3">
+                  <div className="flex flex-col gap-0.5">
+                    <dt className="font-mono text-[10px] uppercase tracking-[0.15em] opacity-60">
+                      pays
+                    </dt>
+                    <dd className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black tracking-tight">
+                      {nomads.stats.countries}
+                    </dd>
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <dt className="font-mono text-[10px] uppercase tracking-[0.15em] opacity-60">
+                      villes
+                    </dt>
+                    <dd className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black tracking-tight">
+                      {nomads.stats.cities}
+                    </dd>
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <dt className="font-mono text-[10px] uppercase tracking-[0.15em] opacity-60">
+                      km
+                    </dt>
+                    <dd className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black tracking-tight">
+                      {new Intl.NumberFormat("fr-FR").format(
+                        nomads.stats.distance_traveled_km,
+                      )}
+                    </dd>
+                  </div>
+                </dl>
+                {nomads.lastTrip ? (
+                  <p className="font-mono text-xs uppercase tracking-wider opacity-70">
+                    Dernier arrêt : {nomads.lastTrip.place},{" "}
+                    {nomads.lastTrip.country}
+                  </p>
+                ) : null}
+                <p className="mt-auto font-mono text-[11px] uppercase tracking-[0.15em] opacity-60">
+                  Source : nomads.com
+                </p>
+              </a>
+            </li>
+          ) : null}
         </ul>
       </section>
 
