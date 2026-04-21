@@ -42,9 +42,9 @@ export function MobileMenu() {
           role="dialog"
           aria-modal="true"
           aria-label="Menu principal"
-          className="fixed inset-0 z-50 flex flex-col bg-[color:var(--color-bg)] text-[color:var(--color-fg)]"
+          className="fixed inset-0 z-50 flex h-[100dvh] flex-col overflow-y-auto bg-[color:var(--color-bg)] text-[color:var(--color-fg)]"
         >
-          <div className="flex items-center justify-between border-b-2 border-[color:var(--color-border)] px-6 py-4">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-6 py-4">
             <NextLink
               href="/"
               onClick={close}
@@ -62,7 +62,7 @@ export function MobileMenu() {
             </button>
           </div>
 
-          <nav className="flex flex-1 flex-col overflow-y-auto">
+          <nav className="flex flex-1 flex-col">
             <ul>
               {PRIMARY_NAV.map((item) => {
                 const active =
@@ -76,7 +76,7 @@ export function MobileMenu() {
                       href={item.href}
                       onClick={close}
                       className={cn(
-                        "flex items-center px-6 py-6 font-[family-name:var(--font-space-grotesk)] text-5xl font-black uppercase leading-none tracking-tight",
+                        "flex items-center px-6 py-5 font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-none tracking-tight sm:py-6 sm:text-5xl",
                         active && "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]",
                       )}
                     >
@@ -87,7 +87,7 @@ export function MobileMenu() {
               })}
             </ul>
 
-            <ul className="mt-auto flex flex-wrap gap-4 px-6 py-6 text-sm uppercase tracking-wider">
+            <ul className="mt-auto flex flex-wrap items-center gap-4 px-6 py-5 text-sm uppercase tracking-wider">
               {FOOTER_NAV.map((item) => (
                 <li key={item.href}>
                   <NextLink
