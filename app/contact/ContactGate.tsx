@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { notifyTelegram } from "./actions";
 
 const STORAGE_KEY = "contact-unlocked";
 
@@ -45,7 +46,7 @@ export function ContactGate({ channels }: ContactGateProps) {
     const honey = (form.elements.namedItem("website") as HTMLInputElement).value.trim();
 
     if (honey) {
-      // Silently succeed for bots.
+      // Silently succeed for bots, n'envoie rien.
       unlock();
       return;
     }
@@ -58,6 +59,13 @@ export function ContactGate({ channels }: ContactGateProps) {
       return;
     }
     setFormError(null);
+
+    // Fire-and-forget vers Telegram — on ne bloque pas le déverrouillage
+    // si la notif échoue, l'utilisateur a quand même rempli sa part.
+    void notifyTelegram({ name, motif, honeypot: "" }).catch((err) => {
+      console.error("notifyTelegram failed", err);
+    });
+
     unlock();
   }
 
@@ -111,9 +119,9 @@ function LockedForm({ onSubmit, error }: LockedFormProps) {
           Clé d&apos;entrée
         </p>
         <p className="font-[family-name:var(--font-space-grotesk)] text-2xl leading-snug sm:text-3xl">
-          Dis-moi en deux mots pourquoi tu veux me joindre. Ton mot reste chez
-          toi — pas de serveur, pas de captation. C&apos;est un rituel, pas un
-          formulaire.
+          Dis-moi en deux mots pourquoi tu veux me joindre. Ton message
+          m&apos;arrive direct sur Telegram, et tu débloques mes contacts juste
+          après. Deux canaux, un humain.
         </p>
       </div>
 
