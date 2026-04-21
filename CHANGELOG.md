@@ -6,7 +6,18 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 ## [Unreleased]
 
-Phase 2 en cours — chunk 2c (curseur custom desktop) à venir.
+Phase 2 complète. Prochaine étape : Phase 3 (contenu — `/projets/[slug]`, `/hobbies/[slug]`, `/ecrits/[slug]`, `/a-propos` étoffée).
+
+## [0.2.2] — 2026-04-21 — Phase 2c : curseur custom desktop
+
+### Ajouté
+- `CustomCursor` (Client Component) : petit rond 12 px avec `mix-blend-mode: difference` qui suit la souris via `requestAnimationFrame` (transforme directement le DOM, zéro re-render sur mousemove). Au hover d'un `<a>` / `<button>` / `[data-cursor]`, morphe en pill jaune acide avec label contextuel (`ouvrir` lien externe, `lire` lien interne, `cliquer` bouton, override via `data-cursor="..."`).
+- Masqué automatiquement sur `@media (pointer: coarse)` (tactile), désactive les transitions sur `prefers-reduced-motion`.
+- Curseur natif masqué via `body.has-custom-cursor * { cursor: none }` uniquement quand `pointer: fine` (pas de masquage sur mobile).
+- Montage au top du `<body>` dans le root layout.
+
+### Notes
+- Le label utilise `e.target.closest([data-cursor], a, button, [role='button'])` donc l'override `data-cursor="lire plus"` fonctionne partout, y compris dans du MDX futur.
 
 ## [0.2.1] — 2026-04-21 — Phase 2b : home vivante
 

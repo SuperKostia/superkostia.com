@@ -52,7 +52,7 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 - [x] Easter egg : 10 clics logo → révèle bouton `→ colophon` à côté du logo dans le header
 
 ### Chunk 2c — curseur
-- [ ] Curseur custom desktop contextuel ("lire", "ouvrir", "écouter"), pointer fin uniquement, respect `prefers-reduced-motion`
+- [x] Curseur custom desktop : petit rond `mix-blend-mode: difference` par défaut, morphing en pill jaune avec label contextuel au hover (`ouvrir` sur liens externes, `lire` sur liens internes, `cliquer` sur boutons, override via `data-cursor="..."`). Pointer fin uniquement (`@media (pointer: coarse)` → masqué), respect `prefers-reduced-motion`, `requestAnimationFrame` pour lisser le suivi.
 
 ## Phase 3 — Contenu
 
