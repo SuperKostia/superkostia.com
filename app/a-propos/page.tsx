@@ -313,7 +313,7 @@ export default async function AProposPage() {
             title="Ratages qui m'ont servi"
             items={[
               {
-                label: "Traffic Intellect",
+                label: "Trafficintellect",
                 note: "Ma première boîte, montée à Moscou.",
               },
             ]}
