@@ -63,7 +63,7 @@ export function Portes() {
               <span className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-none tracking-tight sm:text-5xl lg:text-4xl xl:text-5xl">
                 {porte.label}
               </span>
-              <span className="max-w-[28ch] text-sm leading-snug text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
+              <span className="block min-h-[4em] max-w-[28ch] text-sm leading-snug text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
                 {porte.teaser}
               </span>
             </div>
