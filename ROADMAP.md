@@ -108,9 +108,15 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 
 ## Phase 6 — Lancement
 
-- [ ] DNS pointant vers Vercel sur `superkostia.com`
-- [ ] Monitoring actif
-- [ ] Annonce
+- [x] Projet Vercel créé sous l'org `superkostia` (prj_cto6CQ9LNJeut8WsVVkUpnNsrmAH)
+- [x] Auto-deploy connecté à `SuperKostia/superkostia.com` — chaque push sur main redéploie
+- [x] 4 domaines attachés : `superkostia.com` (canonical) + `www.superkostia.com` + `superkostia.fr` + `www.superkostia.fr`
+- [x] Redirections 308 : les 3 variantes → `superkostia.com`
+- [x] DNS posés chez Ionos (A `76.76.21.21` + CNAME `www` → `cname.vercel-dns.com.`)
+- [x] SSL Let's Encrypt émis sur les 4 domaines (émission forcée côté apex via API Vercel)
+- [x] `https://superkostia.com` **LIVE** le 2026-04-21 ~22h UTC
+- [ ] Monitoring actif (Vercel Analytics, Sentry) — Phase 5
+- [ ] Annonce publique
 
 ---
 

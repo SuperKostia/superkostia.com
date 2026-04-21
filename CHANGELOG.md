@@ -8,6 +8,19 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+## [0.6.0] — 2026-04-21 — Mise en ligne
+
+### Ajouté
+- Projet Vercel `superkostia` créé sous l'org `superkostia`, auto-deploy branché sur `SuperKostia/superkostia.com`.
+- 4 domaines attachés : canonical `superkostia.com`, `www.superkostia.com` (redirect 308), `superkostia.fr` (redirect 308), `www.superkostia.fr` (redirect 308).
+- DNS Ionos : A `@ → 76.76.21.21` + CNAME `www → cname.vercel-dns.com.` sur les 2 domaines.
+- SSL Let's Encrypt actif sur les 4 domaines (émission apex forcée via `POST /v4/now/certs`).
+- Email alias `hey@superkostia.com` en mode forwarding Ionos → Gmail (réponse via Gmail, "Send mail as" SMTP non configuré — Ionos ne fournit pas de mailbox gratuite avec SMTP, voie Zoho envisageable plus tard).
+
+### Notes
+- **Le site est live** : https://superkostia.com
+- Les labels "DNS Change Recommended" côté Vercel sont des suggestions d'optimisation mineures (ANAME/ALIAS plutôt que A pour l'apex), pas des erreurs. Les 4 domaines sont opérationnels et certifiés.
+
 ## [0.3.3] — 2026-04-21 — Screenshots projets + CTA + vrais projets
 
 ### Ajouté
