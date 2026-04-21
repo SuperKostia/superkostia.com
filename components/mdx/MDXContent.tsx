@@ -7,6 +7,7 @@ import { Gallery } from "./Gallery";
 import { VideoEmbed } from "./VideoEmbed";
 import { Press, PressItem } from "./Press";
 import { Screenshot } from "./Screenshot";
+import { Social } from "./Social";
 
 const CUSTOM_COMPONENTS = {
   Stack,
@@ -17,6 +18,7 @@ const CUSTOM_COMPONENTS = {
   Press,
   PressItem,
   Screenshot,
+  Social,
 };
 
 type MDXContentProps = {
