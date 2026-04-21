@@ -17,14 +17,17 @@
 }
 
 .dark {
-  --color-bg: #0a0a0a;
-  --color-fg: #ededed;
+  /* bg : gris anthracite plutôt que noir pur pour ne pas fatiguer l'œil */
+  --color-bg: #161616;
+  /* fg : blanc cassé légèrement chaud, contraste réduit de ~15 % vs pur white */
+  --color-fg: #e5e5e5;
   --color-muted: #8f8f8f;
-  --color-border: #ededed;
+  /* border : plus doux que le fg pour les bordures 2-4 px qui deviennent violentes à pur blanc */
+  --color-border: #c9c9c9;
 
   /* L'accent vibre plus en dark, cf §2.3 */
   --color-accent: #e4ff3a;
-  --color-accent-fg: #0a0a0a;
+  --color-accent-fg: #161616;
 }
 
 @theme inline {
@@ -93,9 +96,9 @@ body {
 }
 
 .dark .photo-surface {
-  --photo-bg: #0a0a0a;
-  --photo-fg: #ededed;
-  --photo-fg-muted: #7a7a7a;
+  --photo-bg: #121212;
+  --photo-fg: #e5e5e5;
+  --photo-fg-muted: #8a8a8a;
   --photo-border: rgba(255, 255, 255, 0.12);
 }
 
