@@ -23,7 +23,7 @@ function generatePileLayouts(count: number): PileLayout[] {
     top: 8 + Math.random() * 78,
     left: 6 + Math.random() * 84,
     rotate: (Math.random() - 0.5) * 22,
-    z: Math.floor(Math.random() * 100),
+    z: Math.floor(Math.random() * 20),
     width: 150 + Math.random() * 90,
   }));
 }
@@ -84,11 +84,14 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
     return <EmptyState />;
   }
 
+  const lightboxOpen = lightboxIndex !== null;
+
   return (
     <>
       <PhotoPile
         photos={allPhotos}
         onOpen={(globalIndex) => setLightboxIndex(globalIndex)}
+        paused={lightboxOpen}
       />
 
       {series.map((s) => (
@@ -166,6 +169,7 @@ function Lightbox({
 }: LightboxProps) {
   const photo = photos[currentIndex];
   const stripRef = useRef<HTMLUListElement>(null);
+  const touchRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const active = stripRef.current?.querySelector<HTMLElement>(
@@ -182,12 +186,29 @@ function Lightbox({
     onIndexChange((currentIndex - 1 + photos.length) % photos.length);
   const next = () => onIndexChange((currentIndex + 1) % photos.length);
 
+  const onTouchStart = (event: React.TouchEvent) => {
+    const t = event.touches[0];
+    touchRef.current = { x: t.clientX, y: t.clientY };
+  };
+
+  const onTouchEnd = (event: React.TouchEvent) => {
+    if (!touchRef.current) return;
+    const t = event.changedTouches[0];
+    const dx = t.clientX - touchRef.current.x;
+    const dy = t.clientY - touchRef.current.y;
+    touchRef.current = null;
+    if (Math.abs(dy) > Math.abs(dx)) return;
+    const THRESHOLD = 50;
+    if (dx <= -THRESHOLD) next();
+    else if (dx >= THRESHOLD) prev();
+  };
+
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-label={photo.alt}
-      className="fixed inset-0 z-50 flex flex-col bg-[color:var(--photo-bg)]"
+      className="fixed inset-0 z-[60] flex flex-col bg-[color:var(--photo-bg)]"
     >
       <button
         type="button"
@@ -211,7 +232,11 @@ function Lightbox({
         className="absolute inset-y-0 right-0 z-0 w-1/3"
       />
 
-      <div className="relative flex-1">
+      <div
+        className="relative flex-1 touch-pan-y"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         <Image
           src={photo.src}
           alt={photo.alt}
@@ -269,9 +294,10 @@ function Lightbox({
 type PhotoPileProps = {
   photos: Photo[];
   onOpen: (globalIndex: number) => void;
+  paused?: boolean;
 };
 
-function PhotoPile({ photos, onOpen }: PhotoPileProps) {
+function PhotoPile({ photos, onOpen, paused = false }: PhotoPileProps) {
   const [sample, setSample] = useState<Photo[]>([]);
   const [layouts, setLayouts] = useState<PileLayout[]>([]);
 
@@ -281,16 +307,19 @@ function PhotoPile({ photos, onOpen }: PhotoPileProps) {
     setSample(picked);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLayouts(generatePileLayouts(picked.length));
+  }, [photos]);
 
+  useEffect(() => {
+    if (paused || sample.length === 0) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
 
     const id = window.setInterval(() => {
-      setLayouts(generatePileLayouts(picked.length));
+      setLayouts(generatePileLayouts(sample.length));
     }, PILE_REARRANGE_MS);
 
     return () => window.clearInterval(id);
-  }, [photos]);
+  }, [paused, sample.length]);
 
   if (sample.length === 0 || layouts.length === 0) {
     return (
@@ -304,7 +333,11 @@ function PhotoPile({ photos, onOpen }: PhotoPileProps) {
   return (
     <section
       aria-label="Mosaïque aléatoire"
-      className="relative h-[85vh] w-full overflow-hidden bg-[color:var(--photo-bg)] sm:h-[90vh]"
+      aria-hidden={paused}
+      className={cn(
+        "relative h-[85vh] w-full overflow-hidden bg-[color:var(--photo-bg)] transition-opacity duration-200 sm:h-[90vh]",
+        paused && "invisible opacity-0",
+      )}
     >
       {sample.map((photo, i) => {
         const layout = layouts[i];
