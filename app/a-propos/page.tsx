@@ -57,23 +57,57 @@ export default function AProposPage() {
           </h2>
         </div>
 
-        <article className="mb-4 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] p-6 text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard)] sm:p-10">
-          <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-            <span className="inline-flex items-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-2 py-0.5 font-mono text-xs uppercase tracking-wider text-[color:var(--color-fg)]">
-              mon phare
-            </span>
-            <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-70">
-              Saison 2026
-            </span>
-          </div>
-          <h3 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-[0.95] tracking-tight sm:text-6xl">
-            MercatoFirst
-          </h3>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed sm:text-lg">
-            Une app pour trouver des gardiens de but, pour les jeunes et les
-            joueurs de foot amateurs.
-          </p>
-        </article>
+        <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <a
+            href="https://mercatofirst.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cursor="ouvrir"
+            className="group block border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] p-6 text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 sm:p-8"
+          >
+            <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+              <span className="inline-flex items-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-2 py-0.5 font-mono text-xs uppercase tracking-wider text-[color:var(--color-fg)]">
+                mon phare
+              </span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-70">
+                mercatofirst.com ↗
+              </span>
+            </div>
+            <h3 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-[0.95] tracking-tight sm:text-5xl">
+              MercatoFirst
+            </h3>
+            <p className="mt-4 max-w-xl text-base leading-relaxed">
+              Un CRM pour les agents de joueurs de football. Carnet
+              d&apos;adresses augmenté, pipeline avec alertes sur les fins de
+              contrat, prise de contact WhatsApp.
+            </p>
+          </a>
+
+          <a
+            href="https://superkostia.github.io/bookeeper/"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cursor="ouvrir"
+            className="group block border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] p-6 text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 sm:p-8"
+          >
+            <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+              <span className="inline-flex items-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-2 py-0.5 font-mono text-xs uppercase tracking-wider text-[color:var(--color-fg)]">
+                mon coup de tête
+              </span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-70">
+                avec Karim ↗
+              </span>
+            </div>
+            <h3 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-[0.95] tracking-tight sm:text-5xl">
+              BooKeeper
+            </h3>
+            <p className="mt-4 max-w-xl text-base leading-relaxed">
+              Plateforme pour réserver un gardien de but à l&apos;heure — pour
+              les clubs et équipes amateurs qui cherchent un keeper, un match
+              précis, une date, un niveau.
+            </p>
+          </a>
+        </div>
 
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <li>
