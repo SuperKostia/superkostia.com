@@ -323,9 +323,15 @@ export default async function AProposPage() {
             index="D"
             title="Rencontres qui m'ont tiré"
             items={[
-              { label: "Arthur", note: "France" },
-              { label: "Dimitri", note: "Russie" },
-              { label: "Laurent", note: "Grèce" },
+              { label: "Arthur", note: "Russie · entrepreneur en série" },
+              {
+                label: "Laurent",
+                note: "France · coach de chefs d'entreprise",
+              },
+              {
+                label: "Dimitri",
+                note: "Franco-grec · entrepreneur tech, crypto bro",
+              },
               { label: "+ beaucoup d'autres" },
             ]}
           />
