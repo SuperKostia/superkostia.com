@@ -23,6 +23,20 @@ const MAX_DIMENSION = 2400;
 const MIN_DIMENSION_WARN = 1600;
 const JPEG_QUALITY = 82;
 
+const WATERMARK_WIDTH = 280;
+const WATERMARK_HEIGHT = 46;
+const WATERMARK_PADDING = 28;
+
+function watermarkSvg() {
+  return Buffer.from(
+    `<svg width="${WATERMARK_WIDTH}" height="${WATERMARK_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="black" fill-opacity="0.82"/>
+      <rect width="5" height="100%" fill="#E4FF3A"/>
+      <text x="22" y="32" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="900" letter-spacing="1.2" fill="white">SUPERKOSTIA</text>
+    </svg>`,
+  );
+}
+
 async function walk(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   const files = [];
@@ -61,12 +75,39 @@ async function processOne(filePath) {
       withoutEnlargement: true,
     });
   }
+
+  // Dimensions finales après resize (pour calcul de position watermark)
+  const finalW = needsResize
+    ? w >= h
+      ? MAX_DIMENSION
+      : Math.round((w / h) * MAX_DIMENSION)
+    : w;
+  const finalH = needsResize
+    ? h >= w
+      ? MAX_DIMENSION
+      : Math.round((h / w) * MAX_DIMENSION)
+    : h;
+
+  // Watermark si l'image est assez grande pour le porter sans gêner
+  if (finalW >= WATERMARK_WIDTH + 2 * WATERMARK_PADDING && finalH >= 200) {
+    pipeline = pipeline.composite([
+      {
+        input: watermarkSvg(),
+        top: finalH - WATERMARK_HEIGHT - WATERMARK_PADDING,
+        left: finalW - WATERMARK_WIDTH - WATERMARK_PADDING,
+      },
+    ]);
+  }
+
   pipeline = pipeline.jpeg({ quality: JPEG_QUALITY, mozjpeg: true });
 
   const buffer = await pipeline.toBuffer();
 
+  // FORCE=1 npm run compress:photos → réécrit même si le gain est marginal
+  // (utile pour (re)watermark toutes les photos existantes)
+  const force = process.env.FORCE === "1";
   const action = (() => {
-    if (buffer.length >= originalSize * 0.95) return "skip";
+    if (!force && buffer.length >= originalSize * 0.95) return "skip";
     return needsResize ? "resize" : "compress";
   })();
 
