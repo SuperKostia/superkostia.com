@@ -5,6 +5,7 @@ import { Links } from "./Links";
 import { Quote } from "./Quote";
 import { Gallery } from "./Gallery";
 import { VideoEmbed } from "./VideoEmbed";
+import { Press } from "./Press";
 
 const CUSTOM_COMPONENTS = {
   Stack,
@@ -12,6 +13,7 @@ const CUSTOM_COMPONENTS = {
   Quote,
   Gallery,
   VideoEmbed,
+  Press,
 };
 
 type MDXContentProps = {
