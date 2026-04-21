@@ -8,6 +8,7 @@ import { Tag } from "@/components/ui/Tag";
 import { MDXContent } from "@/components/mdx/MDXContent";
 import { ProjetHero } from "@/components/projet/ProjetHero";
 import { ProjetKeyboardNav } from "@/components/projet/ProjetKeyboardNav";
+import { ProjetPrevNext } from "@/components/projet/ProjetPrevNext";
 import { getProjets, getProjetBySlug } from "@/lib/mdx";
 
 async function hasScreenshot(slug: string): Promise<boolean> {
@@ -75,11 +76,11 @@ export default async function ProjetDetailPage({ params }: PageProps) {
   const currentIndex = allProjets.findIndex(
     (p) => p.frontmatter.slug === slug,
   );
-  const prevSlug =
-    allProjets[(currentIndex - 1 + allProjets.length) % allProjets.length]
-      ?.frontmatter.slug;
-  const nextSlug =
-    allProjets[(currentIndex + 1) % allProjets.length]?.frontmatter.slug;
+  const prevProjet =
+    allProjets[(currentIndex - 1 + allProjets.length) % allProjets.length];
+  const nextProjet = allProjets[(currentIndex + 1) % allProjets.length];
+  const prevSlug = prevProjet?.frontmatter.slug;
+  const nextSlug = nextProjet?.frontmatter.slug;
 
   return (
     <article className="px-6 py-10 sm:px-10 lg:px-12">
@@ -119,6 +120,13 @@ export default async function ProjetDetailPage({ params }: PageProps) {
       ) : null}
 
       <MDXContent source={body} />
+
+      {prevProjet && nextProjet && prevProjet !== nextProjet ? (
+        <ProjetPrevNext
+          prev={prevProjet.frontmatter}
+          next={nextProjet.frontmatter}
+        />
+      ) : null}
 
       <ProjetKeyboardNav prevSlug={prevSlug} nextSlug={nextSlug} />
     </article>
