@@ -1,10 +1,26 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 export const alt = "superkostia — terrain de jeu public";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+async function loadFont(relativePath: string) {
+  const absolute = path.join(process.cwd(), "node_modules", relativePath);
+  return readFile(absolute);
+}
+
 export default async function Image() {
+  const [spaceGroteskBold, interMedium] = await Promise.all([
+    loadFont(
+      "@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff",
+    ),
+    loadFont("@fontsource/inter/files/inter-latin-500-normal.woff").catch(
+      () => null,
+    ),
+  ]);
+
   return new ImageResponse(
     (
       <div
@@ -16,8 +32,7 @@ export default async function Image() {
           justifyContent: "space-between",
           background: "#f4f1ea",
           padding: 72,
-          fontFamily:
-            "Helvetica, Arial, system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+          fontFamily: "Inter",
           position: "relative",
         }}
       >
@@ -71,7 +86,8 @@ export default async function Image() {
               display: "flex",
               alignItems: "flex-end",
               fontSize: 180,
-              fontWeight: 900,
+              fontWeight: 700,
+              fontFamily: "Space Grotesk",
               color: "#111",
               letterSpacing: -8,
               lineHeight: 0.9,
@@ -129,6 +145,26 @@ export default async function Image() {
         </div>
       </div>
     ),
-    size,
+    {
+      ...size,
+      fonts: [
+        {
+          name: "Space Grotesk",
+          data: spaceGroteskBold,
+          weight: 700,
+          style: "normal",
+        },
+        ...(interMedium
+          ? ([
+              {
+                name: "Inter",
+                data: interMedium,
+                weight: 500,
+                style: "normal",
+              },
+            ] as const)
+          : []),
+      ],
+    },
   );
 }

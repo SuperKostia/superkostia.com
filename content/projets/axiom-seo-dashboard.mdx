@@ -1,0 +1,38 @@
+---
+title: "Dashboard SEO Axiom"
+slug: "axiom-seo-dashboard"
+type: "pro"
+status: "en-cours"
+year: 2026
+tags: ["axiom", "seo", "tilda", "ops", "side"]
+summary: "Un dashboard interne qui monitore le SEO de chaque page publiée via Tilda sur axiom-academic.com. Titre, description, H1, indexabilité, temps de chargement, tout au même endroit."
+stack: ["Python", "HTMX", "Playwright", "Tilda (scraping)"]
+featured: false
+---
+
+## Contexte
+
+Le site d'Axiom Academic vit sur **Tilda** — génial pour publier vite, mais
+l'éditeur SEO est juste ok. Quand on empile des dizaines de pages, savoir
+lesquelles ont un title/description propre, un H1 unique, un rendu rapide,
+devient un travail à plein temps.
+
+## Le dashboard
+
+Une app locale qui :
+
+- **Scrape chaque page publiée** sur `axiom-academic.com` en continu
+- Extrait le title, la meta description, le H1, les canoniques, les balises OG
+- Calcule le temps de chargement et le score Lighthouse simplifié
+- Signale les **doublons** (deux pages avec le même title, deux H1 identiques…)
+- Vue liste + filtres + tri par score
+
+<Screenshot src="/images/projets/axiom-seo-dashboard.jpg" alt="Dashboard SEO interne pour axiom-academic.com" caption="Vue liste, score par page, alertes doublons" />
+
+<Stack items={["Python", "HTMX", "Playwright", "scraping Tilda", "SQLite"]} />
+
+## Pourquoi un side
+
+Strictement rattaché à Axiom Academic (maintenance), mais suffisamment
+auto-suffisant pour avoir sa propre logique, sa propre UI, son propre rythme.
+Un outil que je peux porter un jour vers d'autres sites Tilda si besoin.
