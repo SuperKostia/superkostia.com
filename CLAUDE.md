@@ -4,9 +4,16 @@ Ce fichier contient les règles permanentes pour tout agent Claude Code travaill
 
 ## Contexte
 
-Site vitrine personnel de Kostia (Constantin). Le cahier des charges complet est dans `CAHIER-DES-CHARGES.md` à la racine — **le lire avant toute action** sur une nouvelle session.
+Site vitrine personnel de Kostia (Constantin). Domaine de production : `superkostia.com`.
 
-Domaine de production : `superkostia.com`
+### Documents à lire AU DÉBUT de chaque session (dans l'ordre)
+
+1. **[`CAHIER-DES-CHARGES.md`](./CAHIER-DES-CHARGES.md)** — vision, DA, stack, arborescence. Spec de référence.
+2. **[`ROADMAP.md`](./ROADMAP.md)** — où on en est, ce qui est fait, ce qui vient. Statut par phase.
+3. **[`DECISIONS.md`](./DECISIONS.md)** — les choix tranchés avec leur raison. Les entrées ici complètent ou surclassent le CDC quand il y a divergence.
+4. **[`CHANGELOG.md`](./CHANGELOG.md)** — ce qui a été livré et quand. Édité à la main, complément du `git log`.
+
+Repo GitHub : https://github.com/SuperKostia/superkostia.com (compte `SuperKostia`, pas le compte perso).
 
 ## Règles absolues
 
@@ -78,15 +85,14 @@ Conventional Commits :
 
 ## État actuel du projet
 
-À mettre à jour au fur et à mesure par Claude Code :
+Le suivi fin de l'avancement vit dans **[`ROADMAP.md`](./ROADMAP.md)**. Ne pas dupliquer ici — un seul endroit où mettre à jour, sinon on désynchronise.
 
-- [ ] Phase 0 — Setup
-- [ ] Phase 1 — Squelette
-- [ ] Phase 2 — Home expérientielle
-- [ ] Phase 3 — Contenu
-- [ ] Phase 4 — Laboratoire
-- [ ] Phase 5 — Polish
-- [ ] Phase 6 — Lancement
+### Hygiène de traçabilité (à tenir à chaque commit significatif)
+
+1. Cocher la case correspondante dans `ROADMAP.md`.
+2. Ajouter une entrée dans `CHANGELOG.md` sous `[Unreleased]` si le changement est visible ou structurant.
+3. Si une décision non-évidente a été prise (stack, DA, dépendance majeure, rupture d'un principe du CDC), l'archiver dans `DECISIONS.md` avec un nouvel ID `#NNN`.
+4. Commit atomique + push.
 
 ## Secrets attendus
 

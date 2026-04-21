@@ -286,6 +286,7 @@ Même logique structurelle que projets mais avec une DA volontairement plus déb
 - **Contenu** : essais courts sous forme de micro-articles MDX, citations, idées en cours.
 
 #### `/hobbies/photographie`
+- **DA — décalage total assumé** : Kostia est photographe. Cette section ne doit **pas ressembler au reste du site**. On sort du brutaliste jaune acide. On entre dans un univers visuel à part : sobriété extrême, fond neutre (blanc cassé très doux ou noir profond selon le mode), typographie discrète voire effacée, chrome UI quasi invisible pour que l'image occupe tout l'espace mental du visiteur. L'unité avec le reste du site est minimale — juste le header/footer globaux. À l'intérieur, c'est un autre monde. Cf. décision [`#002`](./DECISIONS.md) — cette rupture est **explicite** et non-négociable.
 - **Angle** : galerie. Zéro texte marketing. Les images parlent.
 - **Interactif** : layout masonry ou type "contact sheet" style planche-contact argentique. Lightbox au clic (pas de modal lourde — juste agrandissement plein écran avec flèches clavier). Metadata EXIF affichable en option (focale, vitesse, ouverture, lieu) pour le côté "fiche technique".
 - **Technique** : images servies via Supabase Storage + `next/image`, AVIF/WebP auto. Tags par série/thème/lieu.
