@@ -14,8 +14,8 @@ const WHATSAPP_NUMBER = "33626790144";
 const CHANNELS = [
   {
     label: "LinkedIn",
-    handle: "in/constantinmardoukhaev",
-    url: "https://www.linkedin.com/in/constantinmardoukhaev/",
+    handle: "in/cmardoukhaev",
+    url: "https://www.linkedin.com/in/cmardoukhaev/",
     color: "accent" as const,
   },
   ...(WHATSAPP_NUMBER

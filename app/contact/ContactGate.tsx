@@ -24,10 +24,15 @@ export function ContactGate({ channels }: ContactGateProps) {
   const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
+    // localStorage read ne s'expose pas proprement via useSyncExternalStore
+    // (on a besoin d'un état initial "loading" pour éviter le flash form → unlocked
+    // chez un visiteur qui a déjà déverrouillé). Exception ciblée au rule.
     try {
       const stored = localStorage.getItem(STORAGE_KEY) === "true";
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStage(stored ? "unlocked" : "locked");
     } catch {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStage("locked");
     }
   }, []);
