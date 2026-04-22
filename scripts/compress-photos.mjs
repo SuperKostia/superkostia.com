@@ -23,16 +23,16 @@ const MAX_DIMENSION = 2400;
 const MIN_DIMENSION_WARN = 1600;
 const JPEG_QUALITY = 82;
 
-const WATERMARK_WIDTH = 280;
-const WATERMARK_HEIGHT = 46;
-const WATERMARK_PADDING = 28;
+const WATERMARK_WIDTH = 150;
+const WATERMARK_HEIGHT = 24;
+const WATERMARK_PADDING = 18;
 
 function watermarkSvg() {
   return Buffer.from(
     `<svg width="${WATERMARK_WIDTH}" height="${WATERMARK_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="black" fill-opacity="0.82"/>
-      <rect width="5" height="100%" fill="#E4FF3A"/>
-      <text x="22" y="32" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="900" letter-spacing="1.2" fill="white">SUPERKOSTIA</text>
+      <rect width="100%" height="100%" fill="black" fill-opacity="0.78"/>
+      <rect width="3" height="100%" fill="#E4FF3A"/>
+      <text x="12" y="17" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="900" letter-spacing="0.8" fill="white">SUPERKOSTIA</text>
     </svg>`,
   );
 }
