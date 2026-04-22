@@ -8,6 +8,14 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Contenu — grand renommage SEO des 75 photos (2026-04-22)
+- Toutes les photos sources (dans `.source-photos/<serie>/`) et leurs dest correspondantes (dans `public/images/photographie/<serie>/`) renommées d'UUIDs opaques (`44BEB6EF-...jpeg`) vers des slugs descriptifs FR (`astypalee-chora-kastro.jpeg`, `burj-khalifa-fontaines-nuit.jpeg`, `panagia-chozoviotissa-amorgos.jpeg`, etc.).
+- Règle posée : **une URL publiée ne change plus** (Cool URIs). Le nommage se fait une seule fois au niveau source, filename = URL, append-only ensuite.
+- Format : `<theme-slug>.jpg`, 20-45 chars, 3-5 tokens tirets, FR sans accents. Pas de date (EXIF + Schema.org font le job), pas de préfixe marque (déjà dans le domaine + watermark pixel).
+- Locations identifiées pour la pertinence SEO : Astypalée, Amorgos, Patmos (Skala, Agriolivadi, Chora, monastère Saint-Jean, Psili Ammos), Livadi Geranou (Agios Georgios), Lucky Bay & Cape Le Grand (Australie), Sydney, Perth (Hot Bread), Dubai (Burj Khalifa, Burj Al Arab, Dhow), Doha (FANAR), Lisbonne (Cristo Rei, église TAP), Gizeh (Khéops), Seychelles, Casablanca, Tanger, Rajasthan, Batumi, Grand Popo (Bénin), Lomé (Togo), Amorgos épave du Olympia (Liveros Bay).
+- Moment idéal : site lancé 2026-04-21, aucune indexation Google héritée à casser.
+- Aucun fichier n'a changé physiquement (même contenu, même watermark, même manifest) — git détecte 100 % comme des renames (R), pas comme delete+add.
+
 ### Ajouté — /voyages (remplace /laboratoire, cf. #008)
 - Nouvelle page `/voyages` : carte monde SVG brutaliste (pays visités remplis, villes en carrés jaunes dimensionnés au nombre de passages), stats géantes (22 pays, 33 villes, 156 404 km, 61 voyages), narration "X tours de Terre" (distance / équateur terrestre), trois top-lists avec barres brutalistes (pays les plus arpentés, villes de retour, étapes les plus longues), timeline inversée par année jusqu'à 1989, capsule "point de départ" (Paris, 20 juin 1989).
 - `components/voyages/WorldMap.tsx` : composant server-only, projection `geoEqualEarth` (d3-geo) sur topojson `countries-110m` (world-atlas), 177 pays rendus comme paths, matching par ISO numeric via `lib/iso-countries.ts`. Zero JS côté client, tooltip natif via `<title>`.
