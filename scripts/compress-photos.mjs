@@ -69,16 +69,18 @@ async function saveManifest(entries) {
 
 // Cible 10% de la largeur de la photo, bornée pour rester lisible
 // et ne jamais dominer la composition. Aspect ratio 150:24 = 6.25:1.
-// Cible ~11% de la largeur de la photo, bornée pour rester lisible
-// sans dominer. Aspect ratio 150:24 = 6.25:1. Photos < 320 px sautent.
-const WATERMARK_TARGET_RATIO = 0.11;
-const WATERMARK_MIN_WIDTH = 85;
+// Cible ~9% du côté LE PLUS LONG de la photo. Calculé sur longest plutôt
+// que sur width pour que les portraits et paysages aient un watermark
+// source identique (tant que longest est le même après resize).
+// Aspect ratio watermark 150:24 = 6.25:1.
+const WATERMARK_TARGET_RATIO = 0.09;
+const WATERMARK_MIN_WIDTH = 90;
 const WATERMARK_MAX_WIDTH = 220;
-const WATERMARK_MIN_PHOTO_WIDTH = 320;
+const WATERMARK_MIN_PHOTO_LONGEST = 600;
 const WATERMARK_ASPECT = 24 / 150;
 
-function computeWatermarkSize(photoWidth) {
-  const targetW = photoWidth * WATERMARK_TARGET_RATIO;
+function computeWatermarkSize(photoLongest) {
+  const targetW = photoLongest * WATERMARK_TARGET_RATIO;
   const w = Math.round(
     Math.min(WATERMARK_MAX_WIDTH, Math.max(WATERMARK_MIN_WIDTH, targetW)),
   );
@@ -86,8 +88,8 @@ function computeWatermarkSize(photoWidth) {
   return { w, h };
 }
 
-function computeWatermarkPadding(photoWidth) {
-  return Math.max(12, Math.round(photoWidth * 0.014));
+function computeWatermarkPadding(photoLongest) {
+  return Math.max(12, Math.round(photoLongest * 0.012));
 }
 
 function watermarkSvg(renderWidth, renderHeight) {
@@ -198,11 +200,15 @@ async function processOne(sourcePath, manifest) {
       : Math.round((h / w) * MAX_DIMENSION)
     : h;
 
-  // Watermark systématique (source non touchée, donc zéro risque de doublage)
-  const { w: wmW, h: wmH } = computeWatermarkSize(finalW);
-  const wmPad = computeWatermarkPadding(finalW);
+  // Watermark systématique (source non touchée, donc zéro risque de doublage).
+  // Taille basée sur le côté le plus long → même pixel-size source quelle
+  // que soit l'orientation, du moment que les photos sortent toutes de
+  // Actual Size iPhone (longest = 2400 après resize).
+  const finalLongest = Math.max(finalW, finalH);
+  const { w: wmW, h: wmH } = computeWatermarkSize(finalLongest);
+  const wmPad = computeWatermarkPadding(finalLongest);
   const canFitWatermark =
-    finalW >= WATERMARK_MIN_PHOTO_WIDTH &&
+    finalLongest >= WATERMARK_MIN_PHOTO_LONGEST &&
     finalW >= wmW + 2 * wmPad &&
     finalH >= wmH + 2 * wmPad;
 
