@@ -19,9 +19,29 @@ import sharp from "sharp";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..", "public", "images", "photographie");
+const MANIFEST_PATH = path.join(ROOT, ".watermarked.json");
 const MAX_DIMENSION = 2400;
 const MIN_DIMENSION_WARN = 1600;
 const JPEG_QUALITY = 82;
+
+async function loadManifest() {
+  try {
+    const raw = await fs.readFile(MANIFEST_PATH, "utf8");
+    const data = JSON.parse(raw);
+    return new Set(Array.isArray(data.watermarked) ? data.watermarked : []);
+  } catch {
+    return new Set();
+  }
+}
+
+async function saveManifest(set) {
+  const payload = {
+    _note:
+      "Fichier généré automatiquement. Liste les photos déjà watermarkées pour éviter les doublons au re-run.",
+    watermarked: [...set].sort(),
+  };
+  await fs.writeFile(MANIFEST_PATH, JSON.stringify(payload, null, 2) + "\n");
+}
 
 const WATERMARK_WIDTH = 150;
 const WATERMARK_HEIGHT = 24;
@@ -57,7 +77,8 @@ function fmt(bytes) {
   return `${(bytes / 1024 / 1024).toFixed(2)} Mb`;
 }
 
-async function processOne(filePath) {
+async function processOne(filePath, manifest) {
+  const rel = path.relative(ROOT, filePath);
   const originalSize = (await fs.stat(filePath)).size;
   const meta = await sharp(filePath, { failOn: "none" }).metadata();
   const w = meta.width ?? 0;
@@ -65,6 +86,7 @@ async function processOne(filePath) {
   const longest = Math.max(w, h);
   const needsResize = longest > MAX_DIMENSION;
   const isLowRes = longest > 0 && longest < MIN_DIMENSION_WARN;
+  const alreadyWatermarked = manifest.has(rel);
 
   let pipeline = sharp(filePath, { failOn: "none" }).withMetadata();
   if (needsResize) {
@@ -88,8 +110,13 @@ async function processOne(filePath) {
       : Math.round((h / w) * MAX_DIMENSION)
     : h;
 
-  // Watermark si l'image est assez grande pour le porter sans gêner
-  if (finalW >= WATERMARK_WIDTH + 2 * WATERMARK_PADDING && finalH >= 200) {
+  // Watermark UNIQUEMENT si la photo n'a pas déjà été traitée (via manifest).
+  // Évite l'empilement de watermarks au re-run.
+  const canFitWatermark =
+    finalW >= WATERMARK_WIDTH + 2 * WATERMARK_PADDING && finalH >= 200;
+  const applyWatermark = canFitWatermark && !alreadyWatermarked;
+
+  if (applyWatermark) {
     pipeline = pipeline.composite([
       {
         input: watermarkSvg(),
@@ -115,6 +142,8 @@ async function processOne(filePath) {
     const target = filePath.replace(/\.png$/i, ".jpg");
     await fs.writeFile(target, buffer);
     if (target !== filePath) await fs.unlink(filePath);
+    const targetRel = path.relative(ROOT, target);
+    if (applyWatermark) manifest.add(targetRel);
     return {
       action,
       path: target,
@@ -122,6 +151,7 @@ async function processOne(filePath) {
       newSize: buffer.length,
       dims: `${w}×${h}`,
       lowRes: isLowRes,
+      watermarked: applyWatermark,
     };
   }
 
@@ -132,6 +162,7 @@ async function processOne(filePath) {
     newSize: originalSize,
     dims: `${w}×${h}`,
     lowRes: isLowRes,
+    watermarked: false,
   };
 }
 
@@ -148,6 +179,8 @@ async function main() {
     return;
   }
 
+  const manifest = await loadManifest();
+
   console.log(`Compression de ${files.length} fichier(s)...\n`);
   let totalBefore = 0;
   let totalAfter = 0;
@@ -155,21 +188,24 @@ async function main() {
 
   for (const file of files) {
     try {
-      const result = await processOne(file);
+      const result = await processOne(file, manifest);
       totalBefore += result.originalSize;
       totalAfter += result.newSize;
       const rel = path.relative(ROOT, result.path);
       const flag = result.lowRes ? " ⚠ basse résolution" : "";
+      const wm = result.watermarked ? " ✓ watermark" : "";
       console.log(
         `  [${result.action.padEnd(8)}] ${rel.padEnd(40)} ${result.dims.padEnd(11)} ${fmt(
           result.originalSize,
-        )} → ${fmt(result.newSize)}${flag}`,
+        )} → ${fmt(result.newSize)}${wm}${flag}`,
       );
       if (result.lowRes) lowResList.push(rel);
     } catch (err) {
       console.error(`  [ERROR]    ${path.relative(ROOT, file)} — ${err.message}`);
     }
   }
+
+  await saveManifest(manifest);
 
   console.log(
     `\nTotal : ${fmt(totalBefore)} → ${fmt(totalAfter)} (${fmt(
