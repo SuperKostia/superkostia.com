@@ -265,6 +265,17 @@ async function main() {
 
   const manifest = await loadManifest();
 
+  // On construit la liste des dests qui DEVRAIENT exister après ce run,
+  // pour détecter les orphelins (sources supprimées depuis le dernier run).
+  const expectedDests = new Set(
+    files.map((f) =>
+      path
+        .relative(SOURCE_ROOT, f)
+        .replace(/\\/g, "/")
+        .replace(/\.png$/i, ".jpg"),
+    ),
+  );
+
   console.log(
     `Traitement de ${files.length} fichier(s) source vers ${path.relative(
       PROJECT_ROOT,
@@ -293,6 +304,26 @@ async function main() {
       console.error(
         `  [ERROR]    ${path.relative(SOURCE_ROOT, file)} — ${err.message}`,
       );
+    }
+  }
+
+  // Cleanup des orphelins : entries du manifest dont la source a été supprimée
+  const orphaned = Object.keys(manifest).filter(
+    (destRel) => !expectedDests.has(destRel),
+  );
+  if (orphaned.length > 0) {
+    console.log("");
+    for (const destRel of orphaned) {
+      const destPath = path.join(DEST_ROOT, destRel);
+      try {
+        await fs.unlink(destPath);
+        console.log(`  [cleanup] ${destRel} — source disparue, dest supprimé`);
+      } catch {
+        console.log(
+          `  [cleanup] ${destRel} — manifest nettoyé (dest déjà absent)`,
+        );
+      }
+      delete manifest[destRel];
     }
   }
 
