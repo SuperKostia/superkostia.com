@@ -44,7 +44,8 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 - [x] `DisplayTitle` : titre display énorme (taille viewport), variation aléatoire au mount, accent inline rotaté
 - [x] `Intro` : pavé manuscrit / monospace, 1re personne, 3 lignes courtes
 - [x] `Portes` : 4 cartes d'entrée (Projets · Voyages · Écrits · À propos) avec hover jaune acide plein et flèche qui bouge
-- [x] `HeroSandField` : champ derrière le `DisplayTitle`, piscine façon Hockney rendue en SVG natif (gradient base + glint radial avec 8 bleus échantillonnés + caustiques blanches via chaîne `feTurbulence` × 3 / `feMorphology` / `feComposite` / `feDisplacementMap`, périodes coprime 73s · 47s · 19s pour casser la perception de boucle, cf. #009)
+- [x] `WaterField` (`components/ui/WaterField.tsx`) : champ d'eau procédural en SVG natif (gradient base + glint radial avec 8 bleus échantillonnés Hockney + caustiques blanches via chaîne `feTurbulence` × 3 / `feMorphology` / `feComposite` / `feDisplacementMap`, périodes coprime 73s · 47s · 19s pour casser la perception de boucle, cf. #009). Embarqué derrière `DisplayTitle` sur la home **et** sous `WorldMap` sur `/voyages` (effet d'océan animé entre les continents).
+- [x] Carte de Portes home étendue à 5 entrées : ajout d'une 5e carte `Photo` en position 2 (lien direct `/hobbies/photographie`) pour discoverability mobile sans menu, grille passée à `lg:grid-cols-5`.
 
 ### Chunk 2b — vivant
 - [x] Marquee projets `featured: true` (pause au hover, CSS pur, respect `prefers-reduced-motion`)

@@ -8,6 +8,13 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Style — Effet d'océan Hockney sous la carte `/voyages` + refactor `WaterField` (2026-04-22)
+- Le composant `HeroSandField` (créé pour le hero home) est renommé en `WaterField` et déplacé en `components/ui/WaterField.tsx` — c'est un effet visuel générique réutilisable, plus "Hero" ni "Sand" dans le nom, ni dans `components/home/`.
+- La classe CSS `.hero-fluid` devient `.water-field` ; tout le reste de la chaîne SVG (3 turbulences animées, blend `difference`, threshold matrix, érosion, soustraction, displacement final) est intacte au caractère près.
+- 2e usage : embarqué dans `components/voyages/WorldMap.tsx` derrière le SVG monde (le conteneur passe en `relative isolate` pour contenir le `z-index: -1`). Visuellement → océans entre les continents montrent l'eau Hockney qui ondule, la carte garde son rendu d3-geo / topojson.
+- Pays non-visités : leur `fill` passe de `transparent` à `var(--color-bg)` (cream en light, anthracite en dark). Sans ça, ils auraient disparu dans l'océan et la carte serait devenue illisible. Hiérarchie visuelle finale : océan cyan animé · pays non-visités neutres · pays visités en `--color-fg 85%` · villes en carrés jaunes accent.
+- Décision `#009` mise à jour avec le nouveau nom de composant et la mention de la portée multi-pages.
+
 ### Style — Portes home : 5e carte `Photo` (2026-04-22)
 - Ajout d'une 5e carte `Photo` dans `components/home/Portes.tsx`, position 2 (après Projets, avant Voyages — alignée sur l'ordre de la nav). Lien direct vers `/hobbies/photographie` (skip de l'index `/hobbies` qui n'a qu'un seul item peuplé).
 - Grille passée à `lg:grid-cols-5` (5 cartes sur une ligne en desktop). Label raccourci à `Photo` pour tenir au même gabarit typo que les autres cartes (option C, cf. discussion).

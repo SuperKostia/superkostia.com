@@ -2,24 +2,36 @@
 
 import { useEffect, useState } from "react";
 
-function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setReduced(e.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-  return reduced;
-}
-
-export function HeroSandField() {
+/**
+ * WaterField — champ d'eau procédural en SVG natif (façon piscine Hockney).
+ *
+ * Composant générique réutilisable pour n'importe quel conteneur ayant
+ * `position: relative` + `isolation: isolate` (ce dernier pour contenir
+ * le `z-index: -1` du SVG dans le contexte de stacking parent).
+ *
+ * Rendu : 3 couches superposées dans un SVG `position: absolute; inset: 0` :
+ *  1. Gradient vertical = profondeur (deep cobalt haut → pale aqua bas).
+ *  2. Gradient radial top-left = glint solaire (asymétrie reluisante).
+ *  3. Réseau de caustiques blanches via filter chain de 8 primitives :
+ *     2× feTurbulence animés en périodes coprime (73s, 47s) →
+ *     feBlend difference → seuillage matrix → feMorphology erode →
+ *     feComposite arithmetic (soustraction = contours) → 3e turbulence
+ *     animée (19s) → feDisplacementMap qui warpe les bords.
+ *
+ * PPCM des 3 périodes ≈ 18h, l'œil ne perçoit jamais la répétition.
+ *
+ * Respect prefers-reduced-motion : le hook `useReducedMotion` retire les
+ * `<animate>` SMIL pour les utilisateurs concernés (le réseau apparaît figé).
+ *
+ * Usages : `<HeroPool>` sur la home, sous `<WorldMap>` sur /voyages.
+ * Décision archivée en DECISIONS.md #009.
+ */
+export function WaterField() {
   const reduced = useReducedMotion();
 
   return (
     <svg
-      className="hero-fluid"
+      className="water-field"
       width="100%"
       height="100%"
       viewBox="0 0 1200 800"
@@ -188,4 +200,16 @@ export function HeroSandField() {
       <rect width="100%" height="100%" filter="url(#pool-caustics)" />
     </svg>
   );
+}
+
+function useReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return reduced;
 }

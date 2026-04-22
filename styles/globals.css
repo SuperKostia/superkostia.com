@@ -115,14 +115,17 @@ body {
   box-shadow: inset 0 0 80px color-mix(in oklab, #000 60%, transparent);
 }
 
-.hero-fluid {
+/* WaterField — voir components/ui/WaterField.tsx + DECISIONS.md #009.
+   Le composant peut s'embarquer dans n'importe quel parent ayant
+   `position: relative` + `isolation: isolate`. */
+.water-field {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
 }
 
-.hero-sand > *:not(.hero-fluid) {
+.hero-sand > *:not(.water-field) {
   position: relative;
   z-index: 1;
 }

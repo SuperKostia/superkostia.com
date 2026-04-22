@@ -12,6 +12,7 @@ import type { Topology } from "topojson-specification";
 
 import { ALPHA2_TO_NUMERIC } from "@/lib/iso-countries";
 import type { NomadsTrip } from "@/lib/nomads";
+import { WaterField } from "@/components/ui/WaterField";
 
 type WorldMapProps = {
   trips: NomadsTrip[];
@@ -60,7 +61,8 @@ export function WorldMap({ trips, visitedAlpha2 }: WorldMapProps) {
   }
 
   return (
-    <div className="relative overflow-hidden border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
+    <div className="relative isolate overflow-hidden border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
+      <WaterField />
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         preserveAspectRatio="xMidYMid meet"
@@ -89,7 +91,7 @@ export function WorldMap({ trips, visitedAlpha2 }: WorldMapProps) {
                 fill={
                   isVisited
                     ? "color-mix(in oklab, var(--color-fg) 85%, transparent)"
-                    : "transparent"
+                    : "var(--color-bg)"
                 }
                 stroke="var(--color-border)"
                 strokeWidth={0.5}
