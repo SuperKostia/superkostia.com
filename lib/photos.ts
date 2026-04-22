@@ -3,6 +3,7 @@ import "server-only";
 import fs from "node:fs/promises";
 import path from "node:path";
 import exifr from "exifr";
+import sharp from "sharp";
 
 const PHOTO_ROOT = path.join(
   process.cwd(),
@@ -27,6 +28,9 @@ export type Photo = {
   filename: string;
   seriesSlug: string;
   tags: string[];
+  width: number;
+  height: number;
+  blurDataURL: string;
   exif?: PhotoExif;
 };
 
@@ -62,6 +66,27 @@ async function readSeriesMeta(dir: string): Promise<SeriesMeta> {
     return JSON.parse(raw) as SeriesMeta;
   } catch {
     return {};
+  }
+}
+
+async function generateBlurAndDims(
+  absPath: string,
+): Promise<{ blurDataURL: string; width: number; height: number }> {
+  try {
+    const meta = await sharp(absPath).metadata();
+    const width = meta.width ?? 1600;
+    const height = meta.height ?? 1200;
+    const buffer = await sharp(absPath)
+      .resize(12, 12, { fit: "inside" })
+      .jpeg({ quality: 45 })
+      .toBuffer();
+    return {
+      blurDataURL: `data:image/jpeg;base64,${buffer.toString("base64")}`,
+      width,
+      height,
+    };
+  } catch {
+    return { blurDataURL: "", width: 1600, height: 1200 };
   }
 }
 
@@ -123,7 +148,10 @@ async function readSeries(slug: string): Promise<Series> {
   const photos: Photo[] = await Promise.all(
     images.map(async (filename) => {
       const absPath = path.join(dir, filename);
-      const exif = await readExif(absPath);
+      const [exif, dims] = await Promise.all([
+        readExif(absPath),
+        generateBlurAndDims(absPath),
+      ]);
       const photoMeta = meta.photos?.[filename];
       const nameNoExt = filename.replace(/\.[^.]+$/, "");
       return {
@@ -132,6 +160,9 @@ async function readSeries(slug: string): Promise<Series> {
         filename,
         seriesSlug: slug,
         tags: photoMeta?.tags ?? [],
+        width: dims.width,
+        height: dims.height,
+        blurDataURL: dims.blurDataURL,
         exif,
       };
     }),

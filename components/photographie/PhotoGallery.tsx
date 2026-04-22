@@ -132,6 +132,8 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
                       alt={photo.alt}
                       fill
                       sizes="(max-width: 640px) 78vw, (max-width: 1024px) 33vw, 25vw"
+                      placeholder={photo.blurDataURL ? "blur" : "empty"}
+                      blurDataURL={photo.blurDataURL || undefined}
                       className="object-cover transition-[filter] group-hover:grayscale-0 sm:grayscale"
                     />
                   </button>
@@ -243,7 +245,8 @@ function Lightbox({
           fill
           sizes="100vw"
           priority
-          unoptimized
+          placeholder={photo.blurDataURL ? "blur" : "empty"}
+          blurDataURL={photo.blurDataURL || undefined}
           className="object-contain"
         />
       </div>
@@ -373,6 +376,9 @@ function PhotoPile({ photos, onOpen, paused = false }: PhotoPileProps) {
                   alt={photo.alt}
                   fill
                   sizes="240px"
+                  priority={i < 6}
+                  placeholder={photo.blurDataURL ? "blur" : "empty"}
+                  blurDataURL={photo.blurDataURL || undefined}
                   className="object-cover"
                 />
               </div>

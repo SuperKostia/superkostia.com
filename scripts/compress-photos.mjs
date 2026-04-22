@@ -22,6 +22,9 @@ const ROOT = path.join(__dirname, "..", "public", "images", "photographie");
 const MANIFEST_PATH = path.join(ROOT, ".watermarked.json");
 const MAX_DIMENSION = 2400;
 const MIN_DIMENSION_WARN = 1600;
+// Sous ce seuil on refuse la photo (déplacée dans _rejects/ pour que Kostia
+// la re-exporte en Actual Size iPhone). Zéro photo pourrave en ligne.
+const MIN_DIMENSION_REJECT = 1000;
 const JPEG_QUALITY = 82;
 
 async function loadManifest() {
@@ -107,7 +110,25 @@ async function processOne(filePath, manifest) {
   const longest = Math.max(w, h);
   const needsResize = longest > MAX_DIMENSION;
   const isLowRes = longest > 0 && longest < MIN_DIMENSION_WARN;
+  const mustReject = longest > 0 && longest < MIN_DIMENSION_REJECT;
   const alreadyWatermarked = manifest.has(rel);
+
+  if (mustReject) {
+    const rejectDir = path.join(ROOT, "_rejects", path.dirname(rel));
+    await fs.mkdir(rejectDir, { recursive: true });
+    const rejectPath = path.join(rejectDir, path.basename(rel));
+    await fs.rename(filePath, rejectPath);
+    manifest.delete(rel);
+    return {
+      action: "REJECT",
+      path: rejectPath,
+      originalSize,
+      newSize: originalSize,
+      dims: `${w}×${h}`,
+      lowRes: true,
+      watermarked: false,
+    };
+  }
 
   let pipeline = sharp(filePath, { failOn: "none" }).withMetadata();
   if (needsResize) {
@@ -151,7 +172,11 @@ async function processOne(filePath, manifest) {
     ]);
   }
 
-  pipeline = pipeline.jpeg({ quality: JPEG_QUALITY, mozjpeg: true });
+  pipeline = pipeline.jpeg({
+    quality: JPEG_QUALITY,
+    mozjpeg: true,
+    progressive: true,
+  });
 
   const buffer = await pipeline.toBuffer();
 
