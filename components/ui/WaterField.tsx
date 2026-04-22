@@ -45,6 +45,12 @@ type WaterFieldProps = {
  */
 export function WaterField({ density = 1 }: WaterFieldProps = {}) {
   const reduced = useReducedMotion();
+  const isSafari = useIsSafari();
+  // Dégradation progressive : Safari calcule lentement la chaîne de filter
+  // SVG (feTurbulence + feMorphology + feDisplacementMap), et la recomputer
+  // à chaque frame d'animation tank tout. Sur Safari on rend statique : le
+  // pattern garde sa complexité visuelle mais ne bouge plus.
+  const animate = !reduced && !isSafari;
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const idBase = `wf-${uid}-base`;
   const idGlint = `wf-${uid}-glint`;
@@ -130,7 +136,7 @@ export function WaterField({ density = 1 }: WaterFieldProps = {}) {
             seed="3"
             result="n1"
           >
-            {!reduced && (
+            {animate && (
               <animate
                 attributeName="baseFrequency"
                 dur="73s"
@@ -150,7 +156,7 @@ export function WaterField({ density = 1 }: WaterFieldProps = {}) {
             seed="11"
             result="n2"
           >
-            {!reduced && (
+            {animate && (
               <animate
                 attributeName="baseFrequency"
                 dur="47s"
@@ -214,7 +220,7 @@ export function WaterField({ density = 1 }: WaterFieldProps = {}) {
             seed="17"
             result="warp"
           >
-            {!reduced && (
+            {animate && (
               <animate
                 attributeName="baseFrequency"
                 dur="19s"
@@ -259,4 +265,25 @@ function useReducedMotion(): boolean {
     return () => mq.removeEventListener("change", onChange);
   }, []);
   return reduced;
+}
+
+/**
+ * Détecte Safari (desktop ou iOS) pour basculer le WaterField en mode statique.
+ * Justification : la chaîne de filter SVG (feTurbulence × 3 + feMorphology +
+ * feDisplacementMap) recomputée chaque frame est très coûteuse sur Safari
+ * (notoirement plus lent que Chromium sur les filter primitives), ce qui fait
+ * lagger toute la page. Le pattern figé reste visuellement riche.
+ *
+ * Détection UA (pas idéal mais fiable) : Safari = WebKit sans "Chrome" dans
+ * l'UA, ce qui exclut Chrome (qui contient "Safari" dans son UA aussi) et
+ * Edge / Opera / etc. Couvre desktop Safari + tous les navigateurs iOS qui
+ * sont obligatoirement sur WebKit (donc même perfs).
+ */
+function useIsSafari(): boolean {
+  const [isSafari, setIsSafari] = useState(false);
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    setIsSafari(/^((?!chrome|android).)*safari/i.test(ua));
+  }, []);
+  return isSafari;
 }

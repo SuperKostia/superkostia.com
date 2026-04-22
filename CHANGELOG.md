@@ -8,6 +8,10 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Perf — `WaterField` statique sur Safari (2026-04-22)
+- Safari calcule lentement la chaîne de filter SVG (`feTurbulence` × 3 + `feMorphology` + `feDisplacementMap`), et la recomputer à chaque frame d'animation tank toute la page (pas seulement le curseur). Détection UA via un nouveau hook `useIsSafari` → sur Safari uniquement, on omet les `<animate>` SMIL → le pattern garde sa complexité visuelle (gradient cobalt + glint + réseau de caustiques) mais reste figé. Sur Chrome/Firefox/Edge : aucun changement, animations préservées.
+- Limite identifiée et documentée dans `DECISIONS.md #009`.
+
 ### Fix — Curseur custom invisible / laggy sur Safari (2026-04-22)
 - `components/layout/CustomCursor.tsx` : Safari ne fire pas `pointerenter`/`pointerleave` sur `document` de façon fiable → `setVisible(true)` ne s'exécutait jamais → curseur invisible. Bascule sur `setVisible(true)` au premier `pointermove` (event 100% reliable cross-browser), et remplacement de `pointerenter`/`leave` par `mouseenter`/`leave` sur `documentElement`.
 - `styles/globals.css` : retrait de `mix-blend-mode: difference` sur `.custom-cursor`. Sur Safari, blend sur `position: fixed` au-dessus d'un compositing lourd (le `WaterField` avec ses 3 turbulences animées) tank les perfs et fait lagger le curseur. La palette du site (cream/anthracite/cyan/jaune) garantit la visibilité d'un point `var(--color-fg)` solide partout.
