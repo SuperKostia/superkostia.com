@@ -8,6 +8,14 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Style — Hero piscine Hockney (2026-04-22)
+- Nouveau composant `components/home/HeroSandField.tsx` : SVG inline rendu derrière le `DisplayTitle`. Reproduit l'aesthetic eau de piscine de "Portrait of an Artist" de David Hockney : fond bleu cobalt-cyan avec réseau de squiggles blancs en surface qui ondulent.
+- Couleurs : 8 bleus échantillonnés sur le tableau de Hockney, répartis entre une **base verticale** (deep cobalt → pale aqua : `#0087C4` → `#0087C5` → `#009BD1` → `#63C1CC`) et un **glint radial top-left** (cobalts brillants en opacités décroissantes : `#00A7DF` 0.40 → `#00A8D8` 0.22 → `#00B0CF` 0.10 → `#009EDB` 0). L'asymétrie du glint donne le côté reluisant.
+- Caustiques : chaîne SVG de 8 primitives — 2× `feTurbulence` animés (73s et 47s, périodes coprime, mélangés en `feBlend` mode `difference` pour produire un motif d'interférence non-périodique) → `feColorMatrix` qui pousse le contraste vers binaire → `feMorphology erode radius=3` puis `feComposite arithmetic` (binary - eroded) qui retourne les **contours** des blobs (= le réseau de squiggles épaisses) → 3e `feTurbulence` animé (19s) consommé par `feDisplacementMap scale=14` qui warpe localement les bords des squiggles → ils se tordent et boullonnent comme à travers la surface ondulante de l'eau. PPCM des 3 périodes ≈ 18h, l'œil ne perçoit pas la répétition.
+- Profondeur : `box-shadow inset` cobalt 80px au sein de `.hero-sand` qui suggère les bords du bassin.
+- Accessibilité : `useReducedMotion` côté client retire les `<animate>` SMIL pour les utilisateurs en `prefers-reduced-motion: reduce` → le réseau apparaît figé. `aria-hidden` sur le SVG (purement décoratif).
+- Zéro dépendance ajoutée. Décision archivée en `#009`.
+
 ### Contenu — grand renommage SEO des 75 photos (2026-04-22)
 - Toutes les photos sources (dans `.source-photos/<serie>/`) et leurs dest correspondantes (dans `public/images/photographie/<serie>/`) renommées d'UUIDs opaques (`44BEB6EF-...jpeg`) vers des slugs descriptifs FR (`astypalee-chora-kastro.jpeg`, `burj-khalifa-fontaines-nuit.jpeg`, `panagia-chozoviotissa-amorgos.jpeg`, etc.).
 - Règle posée : **une URL publiée ne change plus** (Cool URIs). Le nommage se fait une seule fois au niveau source, filename = URL, append-only ensuite.

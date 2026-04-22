@@ -147,3 +147,50 @@ Format :
 **Décision.** On écrit un helper maison `cn` dans `lib/utils.ts`, sans dépendance.
 
 **Raison.** Le helper fait 10 lignes, couvre le besoin (strings, arrays, faux-y filtered) et n'a pas besoin du merging de Tailwind tant qu'on passe par des CSS vars (pas de conflit `bg-red-500 bg-blue-500` à résoudre). Si un conflit émerge plus tard, on ajoutera `tailwind-merge` avec une justification explicite dans une nouvelle décision.
+
+---
+
+## #009 — Effets visuels procéduraux : SVG filter chain natif plutôt que WebGL
+
+**Date** : 2026-04-22.
+**Statut** : Acceptée.
+
+**Contexte.** Pour le hero de la home, besoin d'un effet d'eau / piscine vivant et organique (référence : "Portrait of an Artist (Pool with Two Figures)" de David Hockney — bleu cobalt + réseau de squiggles blanches qui ondulent en surface). Premières tentatives en CSS pur avec `data:` URI + `transform: translate3d` ont buté contre un plafond structurel : le noise est gelé dans l'image, on ne peut que la translater → ça lit comme "une texture qui glisse", jamais comme "une matière qui ondule". Trois familles de techniques disponibles dans la nature :
+1. **Shader GLSL via WebGL** (Three.js / OGL) — le standard sur les sites Awwwards, GPU-accéléré, le plus fluide.
+2. **SVG filter chain natif** (`feTurbulence` + `feDisplacementMap` + `feMorphology` + `feComposite` + SMIL `<animate>`) — natif navigateur, zéro JS.
+3. **Canvas 2D** avec calcul de noise en JS — moyen sur tous les axes.
+
+**Décision.** **Voie 2 : chaîne de filtres SVG inline animée par SMIL.** Chaîne finale du composant `HeroSandField` (8 primitives) :
+
+```
+n1 (turbulence 73s) ─┐
+                     ├─→ feBlend difference → feColorMatrix threshold → feMorphology erode
+n2 (turbulence 47s) ─┘                                                        │
+                                                                              ↓
+                                                          feComposite (binary − eroded) = "lines"
+                                                                              │
+warp (turbulence 19s) ────────────────────────────────────→ feDisplacementMap ←┘
+                                                                              ↓
+                                                                          output
+```
+
+3 turbulences avec périodes coprime (73 · 47 · 19 secondes, toutes premières) → PPCM ≈ 18h, pattern jamais répétée à l'œil.
+
+**Raison.**
+- **Voie 1 (WebGL) écartée** car Three.js / OGL = dépendance lourde (>100 kb) qui contredit la règle CDC §4 et CLAUDE.md §4 ("pas de dépendances superflues"). Aucun autre besoin sur le site ne justifierait de payer ce coût.
+- **Voie 3 (Canvas + JS noise) écartée** car perf moins bonne que SVG (pas accéléré GPU sur la majorité des navigateurs) et code plus verbeux pour le même rendu.
+- **Voie 2 retenue** parce que :
+  - Zéro dépendance — entièrement natif, supporté évergreens (filter region, SMIL animate, displacement map sont tous spec SVG 1.1, support universel modulo bugs anciens).
+  - GPU-accéléré sur Chromium et Safari moderne pour `feTurbulence` et `feDisplacementMap`.
+  - SSR-friendly : le SVG part dans le HTML initial, pas de FOUC.
+  - Compatible `prefers-reduced-motion` via un `useReducedMotion` hook qui omet conditionnellement les `<animate>` enfants des `<feTurbulence>` → le réseau apparaît figé pour les utilisateurs concernés.
+
+**Limites identifiées.**
+- Performance : la chaîne complète (3 turbulences animées + morphologie + displacement) est cher. Mesuré OK sur desktop récent, à surveiller sur mobile bas de gamme. Si problème : abaisser `numOctaves` ou n'animer que `n1` (laisser `n2` et `warp` statiques).
+- SMIL est techniquement déprécié dans certaines specs mais largement supporté en pratique (Chrome, Firefox, Safari). Pas de polyfill nécessaire.
+- L'effet est circonscrit au hero. Si on veut décliner ailleurs, factoriser le composant en passant les paramètres (couleurs des stops, périodes, scale du displacement) en props.
+
+**Impact.**
+- Établit la convention : **pour les visuels génératifs / texturés, on cherche d'abord la solution SVG filter avant d'envisager une lib graphique**. Cette décision peut servir de référence si le besoin se représente (autres heroes, transitions, accents visuels).
+- Aucune dépendance ajoutée.
+- 1 nouveau composant `components/home/HeroSandField.tsx` (~140 lignes, doc inline expliquant chaque maillon de la chaîne).
