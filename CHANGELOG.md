@@ -8,6 +8,11 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Contenu — nouveau projet `axiom-family-swap` (2026-04-22)
+- Ajout du projet **Axiom Family Swap** dans `/projets` (mise en ligne avril 2026, 20+ familles, 15 pays, 4,7/5).
+- `content/projets/axiom-family-swap.mdx` : programme d'échange linguistique et culturel entre familles (un enfant part 1-2 semaines à l'étranger + réciprocité = pas de tarif d'hébergement, plateforme 100 % gratuite). Cross-link vers `/projets/axiom-academic` (satellite du même écosystème).
+- Screenshot capturé via `npm run screenshot:projets` → `public/images/projets/axiom-family-swap.jpg` (139 ko, hero "Offrez à vos enfants le monde comme école" bien cadré).
+
 ### Style — Hero piscine Hockney (2026-04-22)
 - Nouveau composant `components/home/HeroSandField.tsx` : SVG inline rendu derrière le `DisplayTitle`. Reproduit l'aesthetic eau de piscine de "Portrait of an Artist" de David Hockney : fond bleu cobalt-cyan avec réseau de squiggles blancs en surface qui ondulent.
 - Couleurs : 8 bleus échantillonnés sur le tableau de Hockney, répartis entre une **base verticale** (deep cobalt → pale aqua : `#0087C4` → `#0087C5` → `#009BD1` → `#63C1CC`) et un **glint radial top-left** (cobalts brillants en opacités décroissantes : `#00A7DF` 0.40 → `#00A8D8` 0.22 → `#00B0CF` 0.10 → `#009EDB` 0). L'asymétrie du glint donne le côté reluisant.
