@@ -43,13 +43,34 @@ async function saveManifest(set) {
   await fs.writeFile(MANIFEST_PATH, JSON.stringify(payload, null, 2) + "\n");
 }
 
-const WATERMARK_WIDTH = 150;
-const WATERMARK_HEIGHT = 24;
-const WATERMARK_PADDING = 18;
+// Cible 10% de la largeur de la photo, bornée pour rester lisible
+// et ne jamais dominer la composition. Aspect ratio 150:24 = 6.25:1.
+// Cible ~11% de la largeur de la photo, bornée pour rester lisible
+// sans dominer. Aspect ratio 150:24 = 6.25:1. Photos < 320 px sautent.
+const WATERMARK_TARGET_RATIO = 0.11;
+const WATERMARK_MIN_WIDTH = 85;
+const WATERMARK_MAX_WIDTH = 220;
+const WATERMARK_MIN_PHOTO_WIDTH = 320;
+const WATERMARK_ASPECT = 24 / 150;
 
-function watermarkSvg() {
+function computeWatermarkSize(photoWidth) {
+  const targetW = photoWidth * WATERMARK_TARGET_RATIO;
+  const w = Math.round(
+    Math.min(WATERMARK_MAX_WIDTH, Math.max(WATERMARK_MIN_WIDTH, targetW)),
+  );
+  const h = Math.round(w * WATERMARK_ASPECT);
+  return { w, h };
+}
+
+function computeWatermarkPadding(photoWidth) {
+  return Math.max(12, Math.round(photoWidth * 0.014));
+}
+
+function watermarkSvg(renderWidth, renderHeight) {
+  // Le viewBox interne reste 150×24 pour garder les proportions internes
+  // (bandeau, barre jaune, lettrage). La taille rendue est ajustée par photo.
   return Buffer.from(
-    `<svg width="${WATERMARK_WIDTH}" height="${WATERMARK_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+    `<svg width="${renderWidth}" height="${renderHeight}" viewBox="0 0 150 24" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="black" fill-opacity="0.78"/>
       <rect width="3" height="100%" fill="#E4FF3A"/>
       <text x="12" y="17" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="900" letter-spacing="0.8" fill="white">SUPERKOSTIA</text>
@@ -111,17 +132,21 @@ async function processOne(filePath, manifest) {
     : h;
 
   // Watermark UNIQUEMENT si la photo n'a pas déjà été traitée (via manifest).
-  // Évite l'empilement de watermarks au re-run.
+  // Taille proportionnelle à la largeur de la photo.
+  const { w: wmW, h: wmH } = computeWatermarkSize(finalW);
+  const wmPad = computeWatermarkPadding(finalW);
   const canFitWatermark =
-    finalW >= WATERMARK_WIDTH + 2 * WATERMARK_PADDING && finalH >= 200;
+    finalW >= WATERMARK_MIN_PHOTO_WIDTH &&
+    finalW >= wmW + 2 * wmPad &&
+    finalH >= wmH + 2 * wmPad;
   const applyWatermark = canFitWatermark && !alreadyWatermarked;
 
   if (applyWatermark) {
     pipeline = pipeline.composite([
       {
-        input: watermarkSvg(),
-        top: finalH - WATERMARK_HEIGHT - WATERMARK_PADDING,
-        left: finalW - WATERMARK_WIDTH - WATERMARK_PADDING,
+        input: watermarkSvg(wmW, wmH),
+        top: finalH - wmH - wmPad,
+        left: finalW - wmW - wmPad,
       },
     ]);
   }
