@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Originaux photos (source de vérité locale, non-poussés)
+# Le script compress:photos les lit et écrit les versions processées
+# dans public/images/photographie/<serie>/ qui eux sont commités.
+/.source-photos/

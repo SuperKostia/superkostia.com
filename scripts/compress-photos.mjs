@@ -1,15 +1,21 @@
 #!/usr/bin/env node
 /**
- * Compresse / redimensionne toutes les photos de public/images/photographie
- * pour rester sous la limite de 100 Mo du repo Vercel Hobby.
+ * Pipeline photos source → processed.
+ *
+ * SOURCE  : .source-photos/<serie>/*.jpg (gitignoré, originaux iPhone intacts)
+ * PROCESSED : public/images/photographie/<serie>/*.jpg (commité, servi par Vercel)
  *
  * Usage : npm run compress:photos
  *
- * - Redimensionne à 2400 px (côté le plus long) en gardant le ratio
- * - Réencode en JPEG qualité 82 avec mozjpeg
- * - Préserve EXIF (focale, vitesse, ouverture, ISO, date)
- * - Skip les fichiers déjà compressés correctement
- * - Opère IN PLACE (fichier écrasé uniquement si plus petit)
+ * Pour chaque source :
+ *  - Redimensionne à 2400 px (côté le plus long) en gardant le ratio
+ *  - Réencode en JPEG qualité 82 avec mozjpeg progressive
+ *  - Watermark SUPERKOSTIA proportionnel (~11% de la largeur) en bas-droite
+ *  - Préserve EXIF (focale, vitesse, ouverture, ISO, date)
+ *  - Skip si la source n'a pas changé depuis le dernier run (mtime tracké dans le manifest)
+ *
+ * Idempotent : re-runs → rien ne bouge. Remplace un source par une nouvelle version → détecte mtime → reprocess.
+ * Photos < 1000 px → déplacées dans .source-photos/_rejects/<serie>/ (à re-exporter Actual Size iPhone).
  */
 
 import fs from "node:fs/promises";
@@ -18,8 +24,15 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.join(__dirname, "..", "public", "images", "photographie");
-const MANIFEST_PATH = path.join(ROOT, ".watermarked.json");
+const PROJECT_ROOT = path.join(__dirname, "..");
+const SOURCE_ROOT = path.join(PROJECT_ROOT, ".source-photos");
+const DEST_ROOT = path.join(
+  PROJECT_ROOT,
+  "public",
+  "images",
+  "photographie",
+);
+const MANIFEST_PATH = path.join(DEST_ROOT, ".processed.json");
 const MAX_DIMENSION = 2400;
 const MIN_DIMENSION_WARN = 1600;
 // Sous ce seuil on refuse la photo (déplacée dans _rejects/ pour que Kostia
@@ -31,17 +44,25 @@ async function loadManifest() {
   try {
     const raw = await fs.readFile(MANIFEST_PATH, "utf8");
     const data = JSON.parse(raw);
-    return new Set(Array.isArray(data.watermarked) ? data.watermarked : []);
+    return typeof data.entries === "object" && data.entries !== null
+      ? data.entries
+      : {};
   } catch {
-    return new Set();
+    return {};
   }
 }
 
-async function saveManifest(set) {
+async function saveManifest(entries) {
+  const sorted = Object.keys(entries)
+    .sort()
+    .reduce((acc, k) => {
+      acc[k] = entries[k];
+      return acc;
+    }, {});
   const payload = {
     _note:
-      "Fichier généré automatiquement. Liste les photos déjà watermarkées pour éviter les doublons au re-run.",
-    watermarked: [...set].sort(),
+      "Généré par compress-photos.mjs. Clé = path relatif dans public/images/photographie/, mtime = timestamp du source dans .source-photos/.",
+    entries: sorted,
   };
   await fs.writeFile(MANIFEST_PATH, JSON.stringify(payload, null, 2) + "\n");
 }
@@ -87,6 +108,7 @@ async function walk(dir) {
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
+      if (entry.name.startsWith("_")) continue;
       files.push(...(await walk(full)));
     } else if (/\.(jpe?g|png)$/i.test(entry.name) && !entry.name.startsWith("_")) {
       files.push(full);
@@ -101,24 +123,48 @@ function fmt(bytes) {
   return `${(bytes / 1024 / 1024).toFixed(2)} Mb`;
 }
 
-async function processOne(filePath, manifest) {
-  const rel = path.relative(ROOT, filePath);
-  const originalSize = (await fs.stat(filePath)).size;
-  const meta = await sharp(filePath, { failOn: "none" }).metadata();
+async function processOne(sourcePath, manifest) {
+  const rel = path.relative(SOURCE_ROOT, sourcePath).replace(/\\/g, "/");
+  const destPath = path.join(DEST_ROOT, rel).replace(/\.png$/i, ".jpg");
+  const destRel = path.relative(DEST_ROOT, destPath).replace(/\\/g, "/");
+  const sourceStat = await fs.stat(sourcePath);
+  const sourceMtime = sourceStat.mtimeMs;
+  const originalSize = sourceStat.size;
+
+  // Idempotence : si manifest a la même mtime ET que le dest existe, skip.
+  const cached = manifest[destRel];
+  const destExists = await fs
+    .access(destPath)
+    .then(() => true)
+    .catch(() => false);
+  if (cached && cached.mtime === sourceMtime && destExists) {
+    return {
+      action: "skip",
+      path: destPath,
+      originalSize,
+      newSize: (await fs.stat(destPath)).size,
+      dims: cached.dims ?? "?×?",
+      lowRes: false,
+      watermarked: true,
+    };
+  }
+
+  const meta = await sharp(sourcePath, { failOn: "none" }).metadata();
   const w = meta.width ?? 0;
   const h = meta.height ?? 0;
   const longest = Math.max(w, h);
   const needsResize = longest > MAX_DIMENSION;
   const isLowRes = longest > 0 && longest < MIN_DIMENSION_WARN;
   const mustReject = longest > 0 && longest < MIN_DIMENSION_REJECT;
-  const alreadyWatermarked = manifest.has(rel);
 
   if (mustReject) {
-    const rejectDir = path.join(ROOT, "_rejects", path.dirname(rel));
+    // Déplace la source vers .source-photos/_rejects/<serie>/ — le dest
+    // n'est pas modifié (si une ancienne version y existait, elle reste)
+    const rejectDir = path.join(SOURCE_ROOT, "_rejects", path.dirname(rel));
     await fs.mkdir(rejectDir, { recursive: true });
     const rejectPath = path.join(rejectDir, path.basename(rel));
-    await fs.rename(filePath, rejectPath);
-    manifest.delete(rel);
+    await fs.rename(sourcePath, rejectPath);
+    delete manifest[destRel];
     return {
       action: "REJECT",
       path: rejectPath,
@@ -130,7 +176,7 @@ async function processOne(filePath, manifest) {
     };
   }
 
-  let pipeline = sharp(filePath, { failOn: "none" }).withMetadata();
+  let pipeline = sharp(sourcePath, { failOn: "none" }).withMetadata();
   if (needsResize) {
     pipeline = pipeline.resize({
       width: MAX_DIMENSION,
@@ -152,17 +198,15 @@ async function processOne(filePath, manifest) {
       : Math.round((h / w) * MAX_DIMENSION)
     : h;
 
-  // Watermark UNIQUEMENT si la photo n'a pas déjà été traitée (via manifest).
-  // Taille proportionnelle à la largeur de la photo.
+  // Watermark systématique (source non touchée, donc zéro risque de doublage)
   const { w: wmW, h: wmH } = computeWatermarkSize(finalW);
   const wmPad = computeWatermarkPadding(finalW);
   const canFitWatermark =
     finalW >= WATERMARK_MIN_PHOTO_WIDTH &&
     finalW >= wmW + 2 * wmPad &&
     finalH >= wmH + 2 * wmPad;
-  const applyWatermark = canFitWatermark && !alreadyWatermarked;
 
-  if (applyWatermark) {
+  if (canFitWatermark) {
     pipeline = pipeline.composite([
       {
         input: watermarkSvg(wmW, wmH),
@@ -179,59 +223,48 @@ async function processOne(filePath, manifest) {
   });
 
   const buffer = await pipeline.toBuffer();
+  await fs.mkdir(path.dirname(destPath), { recursive: true });
+  await fs.writeFile(destPath, buffer);
 
-  // FORCE=1 npm run compress:photos → réécrit même si le gain est marginal
-  // (utile pour (re)watermark toutes les photos existantes)
-  const force = process.env.FORCE === "1";
-  const action = (() => {
-    if (!force && buffer.length >= originalSize * 0.95) return "skip";
-    return needsResize ? "resize" : "compress";
-  })();
-
-  if (action !== "skip") {
-    const target = filePath.replace(/\.png$/i, ".jpg");
-    await fs.writeFile(target, buffer);
-    if (target !== filePath) await fs.unlink(filePath);
-    const targetRel = path.relative(ROOT, target);
-    if (applyWatermark) manifest.add(targetRel);
-    return {
-      action,
-      path: target,
-      originalSize,
-      newSize: buffer.length,
-      dims: `${w}×${h}`,
-      lowRes: isLowRes,
-      watermarked: applyWatermark,
-    };
-  }
+  manifest[destRel] = {
+    mtime: sourceMtime,
+    dims: `${finalW}×${finalH}`,
+  };
 
   return {
-    action,
-    path: filePath,
+    action: needsResize ? "resize" : "compress",
+    path: destPath,
     originalSize,
-    newSize: originalSize,
+    newSize: buffer.length,
     dims: `${w}×${h}`,
     lowRes: isLowRes,
-    watermarked: false,
+    watermarked: canFitWatermark,
   };
 }
 
 async function main() {
   let files;
   try {
-    files = await walk(ROOT);
+    files = await walk(SOURCE_ROOT);
   } catch {
-    console.log(`Aucun dossier ${ROOT} — rien à faire.`);
+    console.log(
+      `Aucun dossier ${SOURCE_ROOT} — crée-le et dépose tes originaux iPhone (Actual Size) dedans.`,
+    );
     return;
   }
   if (files.length === 0) {
-    console.log(`Aucune photo trouvée dans ${ROOT}.`);
+    console.log(`Aucune photo dans ${SOURCE_ROOT}.`);
     return;
   }
 
   const manifest = await loadManifest();
 
-  console.log(`Compression de ${files.length} fichier(s)...\n`);
+  console.log(
+    `Traitement de ${files.length} fichier(s) source vers ${path.relative(
+      PROJECT_ROOT,
+      DEST_ROOT,
+    )}/\n`,
+  );
   let totalBefore = 0;
   let totalAfter = 0;
   const lowResList = [];
@@ -241,7 +274,7 @@ async function main() {
       const result = await processOne(file, manifest);
       totalBefore += result.originalSize;
       totalAfter += result.newSize;
-      const rel = path.relative(ROOT, result.path);
+      const rel = path.relative(DEST_ROOT, result.path);
       const flag = result.lowRes ? " ⚠ basse résolution" : "";
       const wm = result.watermarked ? " ✓ watermark" : "";
       console.log(
@@ -251,7 +284,9 @@ async function main() {
       );
       if (result.lowRes) lowResList.push(rel);
     } catch (err) {
-      console.error(`  [ERROR]    ${path.relative(ROOT, file)} — ${err.message}`);
+      console.error(
+        `  [ERROR]    ${path.relative(SOURCE_ROOT, file)} — ${err.message}`,
+      );
     }
   }
 
