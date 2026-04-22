@@ -1,0 +1,253 @@
+{
+  "_note": "Généré par compress-photos.mjs. Clé = path relatif dans public/images/photographie/, mtime = timestamp du source dans .source-photos/.",
+  "entries": {
+    "australie/111CA3B1-9D39-497B-955C-0FF72C9AA624_1_105_c.jpeg": {
+      "mtime": 1776818455253.5518,
+      "dims": "768×1024"
+    },
+    "australie/44BEB6EF-9D43-47F5-8B31-11E0A5D22CDA_1_102_a.jpeg": {
+      "mtime": 1776818507251.4744,
+      "dims": "1536×2048"
+    },
+    "australie/5E6CA591-7EC8-4805-9C4A-87B48BC38053_1_105_c.jpeg": {
+      "mtime": 1776818492097.4846,
+      "dims": "768×1024"
+    },
+    "australie/CB6C9F8B-7856-4A63-98EE-7C725C75B0F5_1_102_a.jpeg": {
+      "mtime": 1776818507257.5037,
+      "dims": "2048×1536"
+    },
+    "australie/FC278FDB-1936-4246-B9AA-80227DEA8D5A_1_102_a.jpeg": {
+      "mtime": 1776818479437.9268,
+      "dims": "2048×1536"
+    },
+    "dubai/1A06CD94-3BBA-4374-8FC5-F9CB43F7E2C9_1_102_a.jpeg": {
+      "mtime": 1776818635469.07,
+      "dims": "2048×1536"
+    },
+    "dubai/3BCBD223-51FC-4050-A47A-EB102A862FD4_1_105_c.jpeg": {
+      "mtime": 1776818616228.7756,
+      "dims": "768×1024"
+    },
+    "dubai/5C30F6FE-921D-4CF3-A9FC-76248EA5BF86_1_105_c.jpeg": {
+      "mtime": 1776818625704.1704,
+      "dims": "1024×768"
+    },
+    "dubai/949DD1BE-3DA6-4154-95AF-17111798C5F0_1_102_a.jpeg": {
+      "mtime": 1776818594822.9736,
+      "dims": "1536×2048"
+    },
+    "grece/247872CD-BECE-4FF9-838F-CD5E8526544B_1_102_a.jpeg": {
+      "mtime": 1776818404102.4949,
+      "dims": "1536×2048"
+    },
+    "grece/2BFC23D3-31C8-4252-8F83-4713DDBFE8DF_1_105_c.jpeg": {
+      "mtime": 1776818336985.056,
+      "dims": "768×1024"
+    },
+    "grece/493CC960-4CB3-4AD7-98BF-CE3C56BA3443_1_105_c.jpeg": {
+      "mtime": 1776818253314.1833,
+      "dims": "768×1024"
+    },
+    "grece/53AC5ADB-A6DB-4CDF-BA0E-14E17FD290BA_1_105_c.jpeg": {
+      "mtime": 1776818332852.8662,
+      "dims": "768×1024"
+    },
+    "grece/58DA9B7E-3BAA-43E5-BEA6-2CAF9DC8B6BE_1_105_c copy.jpeg": {
+      "mtime": 1776818878524.7312,
+      "dims": "1024×768"
+    },
+    "grece/58DA9B7E-3BAA-43E5-BEA6-2CAF9DC8B6BE_1_105_c.jpeg": {
+      "mtime": 1776818867433.2239,
+      "dims": "1024×768"
+    },
+    "grece/945D5303-0DA7-4F3F-A7E4-4DB0F7ABD856_1_105_c.jpeg": {
+      "mtime": 1776818260192.483,
+      "dims": "768×1024"
+    },
+    "grece/95BEEFA5-AE99-4F52-A34A-0D676A587216_1_105_c.jpeg": {
+      "mtime": 1776818329515.0195,
+      "dims": "768×1024"
+    },
+    "grece/976E4E96-5E17-40DB-83A2-DC7E99975F4B_1_105_c.jpeg": {
+      "mtime": 1776818322450.124,
+      "dims": "768×1024"
+    },
+    "grece/A457ADC3-5FE7-405C-BFA6-328C1A6C2541_1_105_c.jpeg": {
+      "mtime": 1776818884944.357,
+      "dims": "768×1024"
+    },
+    "grece/BC8681DD-C4A6-4DE8-A4F4-785554F6727E_1_105_c.jpeg": {
+      "mtime": 1776818243784.386,
+      "dims": "1024×768"
+    },
+    "grece/DE286FE8-F8AF-4A04-B793-C7346F3F91A2_1_105_c.jpeg": {
+      "mtime": 1776818326445.3125,
+      "dims": "768×1024"
+    },
+    "patmos/22C89E98-6B89-4DE3-B561-206E66FC60D3_1_105_c.jpeg": {
+      "mtime": 1776818551578.5908,
+      "dims": "768×1024"
+    },
+    "patmos/5A45F56D-F562-4E1F-9E10-90D435EEE65F_1_102_a.jpeg": {
+      "mtime": 1776818538156.6477,
+      "dims": "1536×2048"
+    },
+    "patmos/617EDACC-8CAD-4CD6-B0C6-7D1B3D458D0B_1_105_c.jpeg": {
+      "mtime": 1776818769275.26,
+      "dims": "768×1024"
+    },
+    "patmos/6CF58DFA-1C60-46A0-88CB-6C7F8DDCFF05_1_102_a.jpeg": {
+      "mtime": 1776818538161.1562,
+      "dims": "1536×2048"
+    },
+    "patmos/CBCA6324-E464-4D46-A26E-18D749E4B0FC_1_105_c.jpeg": {
+      "mtime": 1776818857353.3196,
+      "dims": "1024×768"
+    },
+    "paysages/282B5D5A-F40B-4E2E-9E84-5AF3C48FEB19_1_105_c.jpeg": {
+      "mtime": 1776818361242.7476,
+      "dims": "1024×768"
+    },
+    "paysages/65086EF0-D7BC-4129-AA5D-3D2EBFF2C74B_1_105_c.jpeg": {
+      "mtime": 1776818340554.9124,
+      "dims": "1024×768"
+    },
+    "paysages/7CF2F392-ADE6-4D25-97ED-FFFF45C24A30_1_102_a.jpeg": {
+      "mtime": 1776818365493.736,
+      "dims": "2048×1536"
+    },
+    "paysages/96DE80E2-1419-4985-93E2-3AAFF2A47DBC_1_102_a.jpeg": {
+      "mtime": 1776818375257.219,
+      "dims": "2048×1536"
+    },
+    "people/03956590-07AD-4D9F-9815-C26D1E53D8BB_1_105_c.jpeg": {
+      "mtime": 1776818227247.6233,
+      "dims": "1024×768"
+    },
+    "people/068E36F6-B61D-45E0-B5B1-7E484B71F520_1_105_c.jpeg": {
+      "mtime": 1776819287063.0818,
+      "dims": "768×1024"
+    },
+    "people/146CC66D-8987-4696-99F2-144ECBE1F172_1_105_c.jpeg": {
+      "mtime": 1776819404360.0396,
+      "dims": "1024×768"
+    },
+    "people/1583BE53-493C-4B52-86F1-873A489EFDB1_1_102_a.jpeg": {
+      "mtime": 1776819128745.8015,
+      "dims": "2048×1535"
+    },
+    "people/37059D47-DA4D-4CD3-9E57-77AEF1A43150_1_105_c.jpeg": {
+      "mtime": 1776818301761.593,
+      "dims": "768×1024"
+    },
+    "people/530A33C6-663A-427C-A475-8990A464B4C1_1_105_c.jpeg": {
+      "mtime": 1776819254477.0078,
+      "dims": "1024×768"
+    },
+    "people/61315B77-549C-4F86-9B8D-49CD56A81A4E_1_102_a.jpeg": {
+      "mtime": 1776818904832.6614,
+      "dims": "1536×2048"
+    },
+    "people/82E3AD64-2E02-41D4-8B3F-A68D4DB30135_1_105_c.jpeg": {
+      "mtime": 1776818385698.1155,
+      "dims": "768×1024"
+    },
+    "people/977F520B-BF33-47B9-870D-15264FF82AE0_1_105_c.jpeg": {
+      "mtime": 1776818792657.1052,
+      "dims": "768×1024"
+    },
+    "people/9F72389E-781F-40CC-B5BD-213CE4DCE852_1_105_c.jpeg": {
+      "mtime": 1776818916437.041,
+      "dims": "768×1024"
+    },
+    "people/A38CBE0E-24A8-462A-9B0B-E19DA457FD56_1_105_c.jpeg": {
+      "mtime": 1776818247956.1917,
+      "dims": "768×1024"
+    },
+    "people/E0480550-85C7-40F6-B1EE-B934B9A9A35D_1_105_c.jpeg": {
+      "mtime": 1776819417542.0732,
+      "dims": "665×1182"
+    },
+    "people/FB492886-9FA6-4279-8A4C-CA38A5EC28FD_1_105_c.jpeg": {
+      "mtime": 1776819185748.0525,
+      "dims": "768×1024"
+    },
+    "portraits/2D816282-64FF-4414-A49A-7640B0BD187C_1_105_c.jpeg": {
+      "mtime": 1776819151258.6936,
+      "dims": "768×1024"
+    },
+    "portraits/390AFB13-7FCE-4479-BD17-7620148C1ACB_1_105_c.jpeg": {
+      "mtime": 1776819083656.3154,
+      "dims": "768×1024"
+    },
+    "portraits/49181D3F-B586-4AB3-9D5F-C151E98BC82C_1_105_c.jpeg": {
+      "mtime": 1776818308431.9387,
+      "dims": "1024×768"
+    },
+    "portraits/5CBA193C-8F50-4355-B3DA-F08E5E476B0A_1_105_c.jpeg": {
+      "mtime": 1776819487717.0317,
+      "dims": "768×1024"
+    },
+    "portraits/6221CBCE-F2C0-4F46-93CD-C45E820157D6_1_105_c.jpeg": {
+      "mtime": 1776818427588.991,
+      "dims": "768×1024"
+    },
+    "portraits/C5F8448C-9FCA-4EF7-8BB2-82B98589B99F_1_105_c.jpeg": {
+      "mtime": 1776819021749.564,
+      "dims": "768×1024"
+    },
+    "portraits/D88AABEE-E00C-441D-9A39-3CD682EB3487_1_105_c.jpeg": {
+      "mtime": 1776819064942.6636,
+      "dims": "768×1024"
+    },
+    "portraits/F3B7E710-E635-4A49-9200-A72393D5D1A1_1_105_c.jpeg": {
+      "mtime": 1776818234449.4695,
+      "dims": "768×1024"
+    },
+    "summer/0B709BF6-8AB6-4DAA-9B1A-EE2ECD93371B_1_105_c.jpeg": {
+      "mtime": 1776818276372.9265,
+      "dims": "768×1024"
+    },
+    "summer/C81FF3FA-7B75-4442-A442-76E19DBC66A7_1_102_a.jpeg": {
+      "mtime": 1776818967630.8945,
+      "dims": "1536×2048"
+    },
+    "voyages/14A07662-2246-4208-8B82-35C3E9CEB00D_1_105_c.jpeg": {
+      "mtime": 1776818691518.9783,
+      "dims": "1024×768"
+    },
+    "voyages/3F208246-B8D1-427D-906A-A0813701EB39_1_105_c.jpeg": {
+      "mtime": 1776818736424.782,
+      "dims": "1024×768"
+    },
+    "voyages/40C9F143-63AE-4821-8EF2-2A3D40C35DCF_1_105_c.jpeg": {
+      "mtime": 1776819224696.5344,
+      "dims": "768×1024"
+    },
+    "voyages/4F6B706E-D175-46DF-81FF-B9B236907EAB_1_105_c.jpeg": {
+      "mtime": 1776818207702.329,
+      "dims": "768×1024"
+    },
+    "voyages/6355FBBB-FD09-4602-A6D8-BDC2A07FC179_1_102_a.jpeg": {
+      "mtime": 1776819341311.2615,
+      "dims": "2048×1536"
+    },
+    "voyages/695C9FD6-191F-4C43-A771-6980D7F34F66_1_102_a.jpeg": {
+      "mtime": 1776818996869.634,
+      "dims": "1536×2048"
+    },
+    "voyages/D118ACF0-A871-416F-A624-5D15E69D9514_1_102_a.jpeg": {
+      "mtime": 1776818039996.8826,
+      "dims": "2172×1448"
+    },
+    "voyages/DE5746BD-7510-463E-825D-010C18ADD821_1_102_a.jpeg": {
+      "mtime": 1776818743808.6428,
+      "dims": "1586×1982"
+    },
+    "voyages/E0AD57B7-C621-4413-AD1F-AC716EE01C3E_1_102_a.jpeg": {
+      "mtime": 1776818184732.2397,
+      "dims": "1586×1982"
+    }
+  }
+}
