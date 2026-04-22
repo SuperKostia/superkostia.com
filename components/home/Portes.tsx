@@ -17,18 +17,24 @@ const PORTES: Porte[] = [
   },
   {
     numero: "03",
+    label: "Photo",
+    href: "/hobbies/photographie",
+    teaser: "Tout à l'iPhone, en voyage. L'autre univers visuel du site.",
+  },
+  {
+    numero: "04",
     label: "Voyages",
     href: "/voyages",
     teaser: "22 pays, 33 villes, 156 000 km. Carte live depuis nomads.com.",
   },
   {
-    numero: "04",
+    numero: "05",
     label: "Écrits",
     href: "/ecrits",
     teaser: "Notes, essais, trucs à moitié pensés que je mets quand même en ligne.",
   },
   {
-    numero: "05",
+    numero: "06",
     label: "À propos",
     href: "/a-propos",
     teaser: "Pas un CV. Une bio qui respire.",
@@ -37,7 +43,7 @@ const PORTES: Porte[] = [
 
 export function Portes() {
   return (
-    <ul className="-mb-[2px] -mr-[2px] grid grid-cols-1 border-t-2 border-[color:var(--color-border)] sm:grid-cols-2 lg:grid-cols-4">
+    <ul className="-mb-[2px] -mr-[2px] grid grid-cols-1 border-t-2 border-[color:var(--color-border)] sm:grid-cols-2 lg:grid-cols-5">
       {PORTES.map((porte) => (
         <li
           key={porte.href}

@@ -8,6 +8,13 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Style — Portes home : 5e carte `Photo` (2026-04-22)
+- Ajout d'une 5e carte `Photo` dans `components/home/Portes.tsx`, position 2 (après Projets, avant Voyages — alignée sur l'ordre de la nav). Lien direct vers `/hobbies/photographie` (skip de l'index `/hobbies` qui n'a qu'un seul item peuplé).
+- Grille passée à `lg:grid-cols-5` (5 cartes sur une ligne en desktop). Label raccourci à `Photo` pour tenir au même gabarit typo que les autres cartes (option C, cf. discussion).
+- Renumérotation des cases : Voyages 03→04, Écrits 04→05, À propos 05→06.
+- Teaser : "Tout à l'iPhone, en voyage. L'autre univers visuel du site." — assume la posture iPhone-only (pas d'argentique / Leica), cohérent avec la DA "brutaliste honnête".
+- Motivation : sur mobile sans menu ouvert, la section photo n'était plus discoverable depuis la home. Maintenant elle est dans le scroll naturel.
+
 ### Contenu — nouveau projet `axiom-family-swap` (2026-04-22)
 - Ajout du projet **Axiom Family Swap** dans `/projets` (mise en ligne avril 2026, 20+ familles, 15 pays, 4,7/5).
 - `content/projets/axiom-family-swap.mdx` : programme d'échange linguistique et culturel entre familles (un enfant part 1-2 semaines à l'étranger + réciprocité = pas de tarif d'hébergement, plateforme 100 % gratuite). Cross-link vers `/projets/axiom-academic` (satellite du même écosystème).
