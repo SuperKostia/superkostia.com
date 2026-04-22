@@ -40,15 +40,27 @@ export function CustomCursor() {
     let raf = 0;
     let nextX = 0;
     let nextY = 0;
+    // Drapeau local pour ne pas re-trigger setVisible à chaque move après le 1er.
+    let isVisible = false;
 
     const apply = () => {
       track.style.transform = `translate3d(${nextX}px, ${nextY}px, 0)`;
       raf = 0;
     };
 
+    const showOnFirstMove = () => {
+      if (!isVisible) {
+        isVisible = true;
+        setVisible(true);
+      }
+    };
+
     const onMove = (e: PointerEvent) => {
       nextX = e.clientX;
       nextY = e.clientY;
+      // Safari ne fire pas pointerenter/leave sur `document` de façon fiable
+      // → on bascule sur visible au premier pointermove (cross-browser solide).
+      showOnFirstMove();
       if (!raf) raf = window.requestAnimationFrame(apply);
     };
 
@@ -56,19 +68,27 @@ export function CustomCursor() {
       setLabel(pickLabel(e.target as HTMLElement));
     };
 
-    const onEnter = () => setVisible(true);
-    const onLeave = () => setVisible(false);
+    const onEnter = () => {
+      isVisible = true;
+      setVisible(true);
+    };
+    const onLeave = () => {
+      isVisible = false;
+      setVisible(false);
+    };
 
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("pointerover", onOver, { passive: true });
-    document.addEventListener("pointerenter", onEnter);
-    document.addEventListener("pointerleave", onLeave);
+    // mouseenter/mouseleave sur documentElement = behavior fiable partout,
+    // contrairement à pointerenter/leave sur document (cassé sur Safari).
+    document.documentElement.addEventListener("mouseenter", onEnter);
+    document.documentElement.addEventListener("mouseleave", onLeave);
 
     return () => {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerover", onOver);
-      document.removeEventListener("pointerenter", onEnter);
-      document.removeEventListener("pointerleave", onLeave);
+      document.documentElement.removeEventListener("mouseenter", onEnter);
+      document.documentElement.removeEventListener("mouseleave", onLeave);
       if (raf) window.cancelAnimationFrame(raf);
       document.body.classList.remove("has-custom-cursor");
     };

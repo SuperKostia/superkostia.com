@@ -1,6 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
+
+type WaterFieldProps = {
+  /**
+   * Densité du réseau de caustiques.
+   * - `1` (défaut) = échelle hero home : grosses squiggles, lecture lointaine.
+   * - `> 1` = squiggles plus fines et plus nombreuses (utile quand le champ
+   *   est petit ou superposé à du contenu fin, ex: carte du monde).
+   * - `< 1` = squiggles plus larges, à éviter en général.
+   *
+   * Mécaniquement : multiplie les `baseFrequency` des 3 turbulences
+   * (cellules plus serrées), divise le `radius` de l'érosion (anneaux plus
+   * fins) et le `scale` du displacement (warp proportionnellement plus court).
+   */
+  density?: number;
+};
 
 /**
  * WaterField — champ d'eau procédural en SVG natif (façon piscine Hockney).
@@ -23,11 +38,49 @@ import { useEffect, useState } from "react";
  * Respect prefers-reduced-motion : le hook `useReducedMotion` retire les
  * `<animate>` SMIL pour les utilisateurs concernés (le réseau apparaît figé).
  *
- * Usages : `<HeroPool>` sur la home, sous `<WorldMap>` sur /voyages.
+ * IDs SVG (gradients, filter) sont préfixés par un `useId` pour garantir
+ * l'unicité quand plusieurs `<WaterField>` coexistent sur la même page.
+ *
  * Décision archivée en DECISIONS.md #009.
  */
-export function WaterField() {
+export function WaterField({ density = 1 }: WaterFieldProps = {}) {
   const reduced = useReducedMotion();
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const idBase = `wf-${uid}-base`;
+  const idGlint = `wf-${uid}-glint`;
+  const idCaustics = `wf-${uid}-caustics`;
+
+  // Tuning dérivé de la densité. Les valeurs nominales (density=1)
+  // correspondent au calage initial Hockney sur le hero home.
+  const fmt = (n: number) => n.toFixed(4);
+  const scaleFreq = (f: number) => fmt(f * density);
+  const erodeRadius = Math.max(0.5, 3 / density);
+  const dispScale = Math.max(2, 14 / density);
+
+  // baseFrequency animations : on multiplie chaque pair X Y par la densité.
+  const animateN1 = [
+    `${scaleFreq(0.016)} ${scaleFreq(0.02)}`,
+    `${scaleFreq(0.022)} ${scaleFreq(0.014)}`,
+    `${scaleFreq(0.014)} ${scaleFreq(0.024)}`,
+    `${scaleFreq(0.02)} ${scaleFreq(0.018)}`,
+    `${scaleFreq(0.016)} ${scaleFreq(0.02)}`,
+  ].join("; ");
+
+  const animateN2 = [
+    `${scaleFreq(0.02)} ${scaleFreq(0.018)}`,
+    `${scaleFreq(0.014)} ${scaleFreq(0.024)}`,
+    `${scaleFreq(0.024)} ${scaleFreq(0.014)}`,
+    `${scaleFreq(0.018)} ${scaleFreq(0.022)}`,
+    `${scaleFreq(0.02)} ${scaleFreq(0.018)}`,
+  ].join("; ");
+
+  const animateWarp = [
+    scaleFreq(0.05),
+    scaleFreq(0.09),
+    scaleFreq(0.04),
+    scaleFreq(0.08),
+    scaleFreq(0.05),
+  ].join("; ");
 
   return (
     <svg
@@ -43,7 +96,7 @@ export function WaterField() {
             Base verticale = profondeur (deep cobalt haut → pale aqua bas).
             Glint radial top-left = soleil qui frappe la surface en biais.
             Les 8 bleus échantillonnés sont répartis entre les deux couches. */}
-        <linearGradient id="pool-base" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={idBase} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#0087C4" />
           <stop offset="0.35" stopColor="#0087C5" />
           <stop offset="0.7" stopColor="#009BD1" />
@@ -51,7 +104,7 @@ export function WaterField() {
         </linearGradient>
 
         <radialGradient
-          id="pool-glint"
+          id={idGlint}
           cx="30%"
           cy="25%"
           r="75%"
@@ -69,16 +122,10 @@ export function WaterField() {
             (PPCM ≈ 57 min, l'œil ne perçoit jamais la répétition).
             Chaîne : 2× turbulence → difference → seuillage binaire → érosion
             → soustraction pour récupérer le réseau de contours. */}
-        <filter
-          id="pool-caustics"
-          x="0%"
-          y="0%"
-          width="100%"
-          height="100%"
-        >
+        <filter id={idCaustics} x="0%" y="0%" width="100%" height="100%">
           <feTurbulence
             type="fractalNoise"
-            baseFrequency="0.018 0.020"
+            baseFrequency={`${scaleFreq(0.018)} ${scaleFreq(0.02)}`}
             numOctaves="2"
             seed="3"
             result="n1"
@@ -87,7 +134,7 @@ export function WaterField() {
               <animate
                 attributeName="baseFrequency"
                 dur="73s"
-                values="0.016 0.020; 0.022 0.014; 0.014 0.024; 0.020 0.018; 0.016 0.020"
+                values={animateN1}
                 keyTimes="0; 0.27; 0.51; 0.76; 1"
                 calcMode="spline"
                 keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
@@ -98,7 +145,7 @@ export function WaterField() {
 
           <feTurbulence
             type="fractalNoise"
-            baseFrequency="0.022 0.016"
+            baseFrequency={`${scaleFreq(0.022)} ${scaleFreq(0.016)}`}
             numOctaves="2"
             seed="11"
             result="n2"
@@ -107,7 +154,7 @@ export function WaterField() {
               <animate
                 attributeName="baseFrequency"
                 dur="47s"
-                values="0.020 0.018; 0.014 0.024; 0.024 0.014; 0.018 0.022; 0.020 0.018"
+                values={animateN2}
                 keyTimes="0; 0.21; 0.48; 0.73; 1"
                 calcMode="spline"
                 keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
@@ -140,7 +187,7 @@ export function WaterField() {
           <feMorphology
             in="binary"
             operator="erode"
-            radius="3"
+            radius={erodeRadius}
             result="eroded"
           />
 
@@ -162,7 +209,7 @@ export function WaterField() {
               à travers une surface d'eau qui ondule. */}
           <feTurbulence
             type="fractalNoise"
-            baseFrequency="0.06"
+            baseFrequency={scaleFreq(0.06)}
             numOctaves="2"
             seed="17"
             result="warp"
@@ -171,7 +218,7 @@ export function WaterField() {
               <animate
                 attributeName="baseFrequency"
                 dur="19s"
-                values="0.05; 0.09; 0.04; 0.08; 0.05"
+                values={animateWarp}
                 keyTimes="0; 0.24; 0.49; 0.77; 1"
                 calcMode="spline"
                 keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"
@@ -183,7 +230,7 @@ export function WaterField() {
           <feDisplacementMap
             in="lines"
             in2="warp"
-            scale="14"
+            scale={dispScale}
             xChannelSelector="R"
             yChannelSelector="G"
           />
@@ -191,13 +238,13 @@ export function WaterField() {
       </defs>
 
       {/* Couche 1 : profondeur de l'eau (vertical deep → shallow) */}
-      <rect width="100%" height="100%" fill="url(#pool-base)" />
+      <rect width="100%" height="100%" fill={`url(#${idBase})`} />
 
       {/* Couche 2 : glint radial = sun catch en biais */}
-      <rect width="100%" height="100%" fill="url(#pool-glint)" />
+      <rect width="100%" height="100%" fill={`url(#${idGlint})`} />
 
       {/* Couche 3 : les caustiques blanches qui ondulent */}
-      <rect width="100%" height="100%" filter="url(#pool-caustics)" />
+      <rect width="100%" height="100%" filter={`url(#${idCaustics})`} />
     </svg>
   );
 }

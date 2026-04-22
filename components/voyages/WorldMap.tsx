@@ -62,7 +62,7 @@ export function WorldMap({ trips, visitedAlpha2 }: WorldMapProps) {
 
   return (
     <div className="relative isolate overflow-hidden border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
-      <WaterField />
+      <WaterField density={4} />
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         preserveAspectRatio="xMidYMid meet"
@@ -79,19 +79,19 @@ export function WorldMap({ trips, visitedAlpha2 }: WorldMapProps) {
         />
 
         <g>
-          {countriesFC.features.map((f) => {
+          {countriesFC.features.map((f, i) => {
             const d = pathGen(f);
             if (!d) return null;
             const id = String(f.id ?? "");
             const isVisited = visitedNumeric.has(id);
+            // Certaines features de world-atlas n'ont pas d'`id` (ex. Antarctique).
+            // On fallback sur l'index pour garantir l'unicité de la key React.
             return (
               <path
-                key={id}
+                key={id || `anon-${i}`}
                 d={d}
                 fill={
-                  isVisited
-                    ? "color-mix(in oklab, var(--color-fg) 85%, transparent)"
-                    : "var(--color-bg)"
+                  isVisited ? "var(--color-fg)" : "var(--color-bg)"
                 }
                 stroke="var(--color-border)"
                 strokeWidth={0.5}

@@ -8,11 +8,19 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Fix — Curseur custom invisible / laggy sur Safari (2026-04-22)
+- `components/layout/CustomCursor.tsx` : Safari ne fire pas `pointerenter`/`pointerleave` sur `document` de façon fiable → `setVisible(true)` ne s'exécutait jamais → curseur invisible. Bascule sur `setVisible(true)` au premier `pointermove` (event 100% reliable cross-browser), et remplacement de `pointerenter`/`leave` par `mouseenter`/`leave` sur `documentElement`.
+- `styles/globals.css` : retrait de `mix-blend-mode: difference` sur `.custom-cursor`. Sur Safari, blend sur `position: fixed` au-dessus d'un compositing lourd (le `WaterField` avec ses 3 turbulences animées) tank les perfs et fait lagger le curseur. La palette du site (cream/anthracite/cyan/jaune) garantit la visibilité d'un point `var(--color-fg)` solide partout.
+
+### Fix — React duplicate key warning sur `WorldMap` (2026-04-22)
+- Certaines features de `world-atlas/countries-110m.json` (Antarctique notamment) n'ont pas d'`id` → `String(f.id ?? "")` retournait `""` pour toutes ces features → React voyait des keys dupliquées. Fallback sur l'index de la map (`anon-${i}`) quand l'`id` manque. Aucune conséquence visuelle, juste hygiène de console.
+
 ### Style — Effet d'océan Hockney sous la carte `/voyages` + refactor `WaterField` (2026-04-22)
 - Le composant `HeroSandField` (créé pour le hero home) est renommé en `WaterField` et déplacé en `components/ui/WaterField.tsx` — c'est un effet visuel générique réutilisable, plus "Hero" ni "Sand" dans le nom, ni dans `components/home/`.
 - La classe CSS `.hero-fluid` devient `.water-field` ; tout le reste de la chaîne SVG (3 turbulences animées, blend `difference`, threshold matrix, érosion, soustraction, displacement final) est intacte au caractère près.
 - 2e usage : embarqué dans `components/voyages/WorldMap.tsx` derrière le SVG monde (le conteneur passe en `relative isolate` pour contenir le `z-index: -1`). Visuellement → océans entre les continents montrent l'eau Hockney qui ondule, la carte garde son rendu d3-geo / topojson.
-- Pays non-visités : leur `fill` passe de `transparent` à `var(--color-bg)` (cream en light, anthracite en dark). Sans ça, ils auraient disparu dans l'océan et la carte serait devenue illisible. Hiérarchie visuelle finale : océan cyan animé · pays non-visités neutres · pays visités en `--color-fg 85%` · villes en carrés jaunes accent.
+- Prop `density?: number` (défaut `1` = échelle hero, passé à `4` sur la carte) : multiplie les `baseFrequency` des 3 turbulences et divise inversement le `radius` de l'érosion + le `scale` du displacement → sur la carte les squiggles sont 4× plus serrées, à l'échelle des continents. IDs SVG préfixés via `useId` pour éviter les collisions quand 2 instances coexistent (cas multi-page).
+- Pays non-visités : `fill` passe de `transparent` à `var(--color-bg)` (cream en light, anthracite en dark) — sinon ils disparaissent dans l'océan. Pays visités passent de `--color-fg 85%` à `--color-fg` plein (l'eau ne doit pas transparaître à travers les continents, sinon l'effet a l'air d'être *sur* la terre). Hiérarchie visuelle : océan cyan animé · pays non-visités neutres · pays visités opaques foncés · villes en carrés jaunes accent.
 - Décision `#009` mise à jour avec le nouveau nom de composant et la mention de la portée multi-pages.
 
 ### Style — Portes home : 5e carte `Photo` (2026-04-22)

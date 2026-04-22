@@ -219,7 +219,11 @@ body {
   height: 12px;
   border-radius: 9999px;
   background: var(--color-fg);
-  mix-blend-mode: difference;
+  /* Pas de mix-blend-mode : sur Safari, blend sur fixed-position au-dessus
+     d'un compositing lourd (WaterField + ses 3 turbulences animées) tank
+     les perfs et fait lagger le curseur. La palette du site (cream/
+     anthracite/cyan/jaune) garantit la visibilité d'un point fg solide
+     partout. */
   transition:
     width 180ms ease-out,
     height 180ms ease-out,
