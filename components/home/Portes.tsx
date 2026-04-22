@@ -17,9 +17,9 @@ const PORTES: Porte[] = [
   },
   {
     numero: "03",
-    label: "Laboratoire",
-    href: "/laboratoire",
-    teaser: "Mini-apps qui peuvent casser. C'est le principe.",
+    label: "Voyages",
+    href: "/voyages",
+    teaser: "22 pays, 33 villes, 156 000 km. Carte live depuis nomads.com.",
   },
   {
     numero: "04",

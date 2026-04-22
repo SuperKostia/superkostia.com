@@ -22,7 +22,7 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 
 ## Phase 1 — Squelette
 
-- [x] Header sticky (logo cliquable, 5 entrées : Projets/Hobbies/Laboratoire/Écrits/À propos — cf. #005, `ThemeToggle`)
+- [x] Header sticky (logo cliquable, 5 entrées : Projets/Hobbies/Voyages/Écrits/À propos — cf. #005, #008, `ThemeToggle`)
 - [x] Footer minimal (Contact, Colophon, lien GitHub)
 - [x] Menu mobile plein écran (overlay, typo énorme, Esc + body scroll lock)
 - [x] Pipeline MDX : lecture `content/*` via gray-matter, types frontmatter, helpers `getProjets` / `getHobbies` / `getEcrits`
@@ -30,7 +30,7 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 - [x] `PageShell` : header de page commun (eyebrow + titre display + intro)
 - [x] Page `/projets` (lit et affiche le frontmatter des MDX)
 - [x] Page `/hobbies` (lit et affiche le frontmatter des MDX)
-- [x] Page `/laboratoire` (liste statique des 5 expérimentations CDC §6)
+- [-] Page `/laboratoire` — supprimée (cf. #008 : remplacée par `/voyages`)
 - [x] Page `/ecrits` (lit et affiche le frontmatter des MDX, tri date descendante)
 - [x] Page `/a-propos` (stub)
 - [x] Page `/contact` (stub)
@@ -43,7 +43,7 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 - [x] Composition en deux blocs (8/4) sur desktop, stack sur mobile
 - [x] `DisplayTitle` : titre display énorme (taille viewport), variation aléatoire au mount, accent inline rotaté
 - [x] `Intro` : pavé manuscrit / monospace, 1re personne, 3 lignes courtes
-- [x] `Portes` : 4 cartes d'entrée (Projets · Laboratoire · Écrits · À propos) avec hover jaune acide plein et flèche qui bouge
+- [x] `Portes` : 4 cartes d'entrée (Projets · Voyages · Écrits · À propos) avec hover jaune acide plein et flèche qui bouge
 
 ### Chunk 2b — vivant
 - [x] Marquee projets `featured: true` (pause au hover, CSS pur, respect `prefers-reduced-motion`)
@@ -87,14 +87,13 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 - [ ] Remplir les capsules thématiques quand Kostia m'envoie les angles
 - [ ] Switch EN : reporté à Phase 5 polish (décision tacite, pas de demande urgente)
 
-## Phase 4 — Laboratoire
+## Phase 4 — /voyages (remplace l'ex-Phase 4 Laboratoire — cf. #008)
 
-- [ ] Template `/laboratoire/[slug]`
-- [ ] `mur-des-visiteurs` (Supabase + honeypot)
-- [ ] `quel-kostia-est-tu` (matching déterministe client-side)
-- [ ] `generateur-de-noms-absurdes` (random client-side)
-- [ ] `radio-kostia` (post-lancement)
-- [ ] `galerie-des-polices` (post-lancement)
+- [x] `lib/nomads.ts` étendu : trips complets, countries agrégées, frequent_visits, longest_stays, firstTrip/lastTrip
+- [x] `lib/iso-countries.ts` : mapping alpha-2 → ISO numeric pour matcher le topojson
+- [x] `components/voyages/WorldMap.tsx` : SVG server-rendered, geoEqualEarth (d3-geo + topojson-client + world-atlas), pays visités remplis, villes en carrés accent dimensionnés au nombre de visites
+- [x] `/voyages` : hero, map, grid stats, "X tours de Terre" narratif, 3 top-lists (pays/villes/longues étapes) avec barres brutalistes, timeline par année inversée jusqu'en 1989, capsule "point de départ", CTA nomads.com
+- [-] Laboratoire mini-apps (mur-des-visiteurs, quel-kostia, générateur, radio, galerie) — annulés, déplacés dans parking lot
 
 ## Phase 5 — Polish
 
@@ -124,3 +123,4 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 
 - Version EN (à trancher — cf. CDC §13).
 - `one photo per day` ou série du moment mise en avant sur la home (extension possible de `/hobbies/photographie`).
+- Ex-labo : `mur-des-visiteurs`, `quel-kostia-est-tu`, `generateur-de-noms-absurdes`, `radio-kostia`, `galerie-des-polices` — idées conservées pour un éventuel retour, sans page dédiée pour l'instant.

@@ -111,6 +111,32 @@ Format :
 
 ---
 
+## #008 — `/laboratoire` supprimée, `/voyages` prend la place + carte monde SVG brutaliste
+
+**Date** : 2026-04-22.
+**Statut** : Acceptée. Supplante #005 sur la composition du header.
+
+**Contexte.** Le CDC (§6) prévoyait une section `/laboratoire` avec 5 mini-apps (mur-des-visiteurs, quel-kostia, générateur, radio, galerie). Aucune n'avait été implémentée, et à la relecture Kostia a tranché que ce n'était **pas vraiment ce qu'il voulait**. En parallèle, `nomads.com/@kostialevine` agrège en live ses 61 voyages, 22 pays, 33 villes, 156 404 km — tout ce contenu restait sous-exploité (juste un bloc compact sur `/a-propos` + un ticker home). Kostia a explicitement demandé d'intégrer sa carte nomads sur le site.
+
+**Décision.**
+1. **Supprimer `/laboratoire`** purement et simplement. Les 5 idées passent en parking lot.
+2. **Créer `/voyages`** à sa place dans la nav principale (même slot, position 3).
+3. **Reconstruire la carte nomads** côté superkostia.com à partir du JSON public, plutôt que d'iframer nomads.com ou de charger leur token Mapbox. Stack : topojson `world-atlas` + `topojson-client` + `d3-geo` (projection `geoEqualEarth`) rendus en SVG côté serveur. Zéro JS client, zéro appel tuiles externes.
+4. **DA assumée brutaliste** : pays visités remplis plein (var --color-fg), villes en carrés jaunes dimensionnés au nombre de passages, stats géantes, narration ("X tours de Terre") et timeline inversée jusqu'à 1989.
+
+**Raison.**
+- **Pourquoi reconstruire au lieu d'iframer** : la map sur nomads.com est une Mapbox GL avec leur token privé. Iframer la page entière = fragile (X-Frame-Options, ruptures silencieuses, DA cassée). Reconstruire = on contrôle le rendu et ça colle à notre typographie.
+- **Pourquoi d3-geo + topojson plutôt que Leaflet/MapLibre** : pas besoin de zoom/pan. On veut une image statique impactante, très brutaliste, avec un projet SVG rendu côté serveur. MapLibre/Leaflet = bundle client de 100-200 kb + tuiles externes + look "Google Maps" antinomique. `d3-geo` + `topojson-client` + `world-atlas` = tout-server, zéro bytes client au runtime, 177 pays dessinés à plat.
+- **Pourquoi conserver les idées de labo au parking lot** : certaines (mur-des-visiteurs, galerie-des-polices) peuvent revenir comme easter eggs ou pages standalone plus tard. Pas de suppression morale, juste de priorisation.
+
+**Impact.**
+- Nav principale reste à 5 entrées (Projets · Hobbies · **Voyages** · Écrits · À propos) — décision #005 reste valide avec Voyages à la place de Laboratoire.
+- Ajout 3 deps runtime (d3-geo, topojson-client, world-atlas) + 4 deps types dev, toutes justifiées par l'usage (CDC rule #4).
+- Les deux consommateurs existants de `lib/nomads.ts` (`/a-propos` card, home `Ticker`) sont rétrocompatibles — on a enrichi le type sans retirer de champ.
+- CDC §6 obsolète : ce registre fait foi pour l'arborescence actuelle.
+
+---
+
 ## #004 — Pas de dépendance `clsx` / `tailwind-merge`
 
 **Date** : 2026-04-21.

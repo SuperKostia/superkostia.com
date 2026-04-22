@@ -8,6 +8,18 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Ajouté — /voyages (remplace /laboratoire, cf. #008)
+- Nouvelle page `/voyages` : carte monde SVG brutaliste (pays visités remplis, villes en carrés jaunes dimensionnés au nombre de passages), stats géantes (22 pays, 33 villes, 156 404 km, 61 voyages), narration "X tours de Terre" (distance / équateur terrestre), trois top-lists avec barres brutalistes (pays les plus arpentés, villes de retour, étapes les plus longues), timeline inversée par année jusqu'à 1989, capsule "point de départ" (Paris, 20 juin 1989).
+- `components/voyages/WorldMap.tsx` : composant server-only, projection `geoEqualEarth` (d3-geo) sur topojson `countries-110m` (world-atlas), 177 pays rendus comme paths, matching par ISO numeric via `lib/iso-countries.ts`. Zero JS côté client, tooltip natif via `<title>`.
+- `lib/nomads.ts` étendu : agrégation countries (avec visitCount), frequent_visits, longest_stays, firstTrip, yearsSpan. Rétrocompat préservée pour `a-propos` et `Ticker`.
+- Nav, Portes home, sitemap, metadata OG : `Laboratoire` remplacé par `Voyages` partout.
+
+### Supprimé
+- Page `/laboratoire` (5 mini-apps placeholder, aucune jamais implémentée). Les idées restent dans le parking lot du ROADMAP.
+
+### Deps
+- `d3-geo`, `topojson-client`, `world-atlas` + types associés (`@types/d3-geo`, `@types/topojson-client`, `@types/topojson-specification`, `@types/geojson`). Tous utilisés uniquement côté serveur au rendu, zéro impact sur le bundle client.
+
 ## [0.6.0] — 2026-04-21 — Mise en ligne
 
 ### Ajouté

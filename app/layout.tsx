@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     default: "superkostia",
     template: "%s — superkostia",
   },
-  description: "Le terrain de jeu public de Kostia — projets, hobbies, laboratoire, écrits.",
+  description: "Le terrain de jeu public de Kostia — projets, hobbies, voyages, écrits.",
   alternates: {
     canonical: "/",
   },
@@ -36,13 +36,13 @@ export const metadata: Metadata = {
     siteName: "superkostia",
     title: "superkostia",
     description:
-      "Le terrain de jeu public de Kostia — projets, hobbies, laboratoire, écrits.",
+      "Le terrain de jeu public de Kostia — projets, hobbies, voyages, écrits.",
   },
   twitter: {
     card: "summary_large_image",
     title: "superkostia",
     description:
-      "Le terrain de jeu public de Kostia — projets, hobbies, laboratoire, écrits.",
+      "Le terrain de jeu public de Kostia — projets, hobbies, voyages, écrits.",
   },
   robots: {
     index: true,

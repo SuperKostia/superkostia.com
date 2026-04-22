@@ -118,7 +118,7 @@ export default async function Image() {
               maxWidth: 900,
             }}
           >
-            Projets, hobbies, laboratoire, écrits — le terrain de jeu public de
+            Projets, hobbies, voyages, écrits — le terrain de jeu public de
             Kostia.
           </div>
         </div>
