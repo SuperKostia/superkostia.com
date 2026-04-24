@@ -26,6 +26,68 @@ const VIEWPORT = { width: 1440, height: 900 };
 
 const force = process.argv.includes("--force");
 
+// Patterns de boutons "refuser" sur les bannières cookies courantes.
+// Meta (Instagram, Facebook) → "Decline optional cookies".
+// Sites FR/EU → "Refuser tout", "Tout refuser", "Reject all".
+// On clique le premier match trouvé, on laisse le banner sinon.
+const COOKIE_DECLINE_PATTERNS = [
+  /Decline optional cookies/i,
+  /Refuser tout/i,
+  /Tout refuser/i,
+  /Reject all( cookies)?/i,
+];
+
+async function dismissCookieBanner(page) {
+  // Tenter de cliquer un bouton "refuser" si présent (variations FR/EN).
+  for (const pattern of COOKIE_DECLINE_PATTERNS) {
+    try {
+      let target = page.getByRole("button", { name: pattern });
+      if ((await target.count()) === 0) {
+        // Meta (IG/FB) utilise des <div> stylés au lieu de vrais <button>
+        target = page.getByText(pattern, { exact: false });
+      }
+      if ((await target.count()) > 0) {
+        await target.first().click({ timeout: 2000, force: true });
+        await page.waitForTimeout(600);
+        return true;
+      }
+    } catch {
+      // continue
+    }
+  }
+  return false;
+}
+
+async function removeBlockingDialogs(page) {
+  // Suppression chirurgicale : modales sémantiques + leurs backdrops.
+  // On évite d'être plus large (cf. tentative "tout fixed plein écran")
+  // sinon on supprime parfois le main content (IG construit ses pages
+  // avec des containers fixed). Reset du body bg + filters CSS au cas où.
+  await page.evaluate(() => {
+    document
+      .querySelectorAll('[role="dialog"], [aria-modal="true"], dialog')
+      .forEach((el) => el.remove());
+    document.querySelectorAll('[role="presentation"]').forEach((el) => {
+      const cs = window.getComputedStyle(el);
+      if (cs.position === "fixed" && cs.zIndex !== "auto") {
+        el.remove();
+      }
+    });
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
+    // Reset défensif des filters/opacity au cas où le site appliquerait
+    // un dimming pendant qu'une modale est "pending" (vu sur IG).
+    const overrideStyle = document.createElement("style");
+    overrideStyle.textContent = `
+      html, body, body * {
+        filter: none !important;
+        backdrop-filter: none !important;
+      }
+    `;
+    document.head.appendChild(overrideStyle);
+  });
+}
+
 async function fileExists(p) {
   try {
     await fs.access(p);
@@ -70,8 +132,17 @@ async function main() {
       const page = await context.newPage();
       try {
         console.log(`[shoot] ${slug.padEnd(30)} → ${link}`);
+        // 1. Navigate, wait for network to settle.
         await page.goto(link, { waitUntil: "networkidle", timeout: 30000 });
-        await page.waitForTimeout(1200);
+        // 2. Laisser les images lazy-loadées finir de charger. ~2.5s reste
+        //    sous le seuil d'apparition du signup wall IG (typiquement 4-5s).
+        await page.waitForTimeout(2500);
+        // 3. Click decline cookies si présent (pose le cookie de consent).
+        await dismissCookieBanner(page);
+        // 4. Suppression chirurgicale des dialogs/backdrops + reset filters.
+        //    Pas de reload : on perdrait le lazy loading des images.
+        await removeBlockingDialogs(page);
+        await page.waitForTimeout(400);
         await page.screenshot({
           path: target,
           type: "jpeg",

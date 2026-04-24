@@ -8,6 +8,17 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Contenu — Nouveau projet `fixieshop-moscow` (2026-04-24)
+- Ajout du projet **Fixieshop Moscow** dans `/projets` : compte Instagram animé en 2016 à Moscou, idée initiale de magasin de fixies non concrétisée, photos de tous les vélos de rue (notamment fixies underground Moscou + Saint-Pétersbourg).
+- `content/projets/fixieshop-moscow.mdx` : type `perso`, status `publie`, year 2016, `<Social platform="instagram">` vers `@fixieshopmoscow`.
+- Screenshot capturé via la nouvelle pipeline améliorée du script (cf. ci-dessous).
+
+### Outil — `scripts/screenshot-projets.mjs` : dismiss bannières cookies + modales (2026-04-24)
+- Le script de capture des projets affichait des screenshots pollués par les bandeaux cookies (Eventbrite, Instagram). Ajout d'une étape `dismissCookieBanner` qui tente de cliquer un bouton "Decline optional cookies / Refuser tout / Reject all" via `getByRole("button")` puis fallback `getByText` (Meta utilise des `<div>` stylés non-sémantiques).
+- Stratégie en 2 passes : navigate → dismiss → reload (le cookie de consent posé persiste dans le contexte) → screenshot rapide avant qu'un éventuel 2e prompt (signup wall IG) n'apparaisse.
+- Étape `removeBlockingDialogs` qui supprime à la fois `[role="dialog"]`/`[aria-modal]`/`<dialog>`, les backdrops `[role="presentation"]` fixed, et plus généralement les fixed-overlays plein écran qui ne sont pas la nav du haut. Inject aussi du CSS `!important` pour reset les `filter`/`backdrop-filter`/opacité.
+- Couvre Eventbrite (Dictée Dubaï re-shooté propre), réduit l'impact IG (Fixieshop reste légèrement dimmé — limites de l'anti-scrape Meta, acceptable).
+
 ### Contenu — Liens sociaux Axiom sur la page projet (2026-04-24)
 - Section "Suivre Axiom" ajoutée à `/projets/axiom-academic` avec 3 cartes `<Social>` (Instagram, Facebook, LinkedIn) pointant vers les comptes officiels (`@axiom.academic` + `linkedin.com/company/axiom-academic`).
 - Extension du composant `<Social>` pour supporter Facebook : ajout du `FacebookMark` SVG dans `components/icons/BrandMarks.tsx` + `'facebook'` dans le type `Platform` et les maps `MARKS`/`LABELS` de `components/mdx/Social.tsx`.
