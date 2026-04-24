@@ -8,6 +8,10 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Contenu — Liens sociaux Axiom sur la page projet (2026-04-24)
+- Section "Suivre Axiom" ajoutée à `/projets/axiom-academic` avec 3 cartes `<Social>` (Instagram, Facebook, LinkedIn) pointant vers les comptes officiels (`@axiom.academic` + `linkedin.com/company/axiom-academic`).
+- Extension du composant `<Social>` pour supporter Facebook : ajout du `FacebookMark` SVG dans `components/icons/BrandMarks.tsx` + `'facebook'` dans le type `Platform` et les maps `MARKS`/`LABELS` de `components/mdx/Social.tsx`.
+
 ### Perf — `WaterField` statique sur Safari (2026-04-22)
 - Safari calcule lentement la chaîne de filter SVG (`feTurbulence` × 3 + `feMorphology` + `feDisplacementMap`), et la recomputer à chaque frame d'animation tank toute la page (pas seulement le curseur). Détection UA via un nouveau hook `useIsSafari` → sur Safari uniquement, on omet les `<animate>` SMIL → le pattern garde sa complexité visuelle (gradient cobalt + glint + réseau de caustiques) mais reste figé. Sur Chrome/Firefox/Edge : aucun changement, animations préservées.
 - Limite identifiée et documentée dans `DECISIONS.md #009`.

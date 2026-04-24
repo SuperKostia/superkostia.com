@@ -1,20 +1,23 @@
 import type { ComponentType, SVGProps } from "react";
 import { ArrowUpRight } from "lucide-react";
 import {
+  FacebookMark,
   InstagramMark,
   LinkedInMark,
   SubstackMark,
 } from "@/components/icons/BrandMarks";
 
-type Platform = "instagram" | "linkedin" | "substack";
+type Platform = "facebook" | "instagram" | "linkedin" | "substack";
 
 const MARKS: Record<Platform, ComponentType<SVGProps<SVGSVGElement>>> = {
+  facebook: FacebookMark,
   instagram: InstagramMark,
   linkedin: LinkedInMark,
   substack: SubstackMark,
 };
 
 const LABELS: Record<Platform, string> = {
+  facebook: "Facebook",
   instagram: "Instagram",
   linkedin: "LinkedIn",
   substack: "Substack",
