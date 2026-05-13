@@ -8,6 +8,14 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Outil — `scripts/generate-linkedin-assets.mjs` : visuels page Entreprise LinkedIn (2026-05-13)
+- Nouveau script Playwright qui génère deux PNG prêts à uploader sur la page Entreprise LinkedIn de superkostia :
+  - **`banner.png`** 1584×396 (ratio recommandé LinkedIn) : fond `WaterField` plein écran (version statique du composant `components/ui/WaterField.tsx`, density 0.55 pour des squiggles lisibles à grande échelle), wordmark `super` cream + `kostia` chiclet jaune `#E4FF3A` rotation -1.5° (reprise stricte du traitement de l'OG image), chiclet `sk` en haut-droite, tagline mono `terrain de jeu public · superkostia.com · athènes`.
+  - **`icon.png`** 400×400 : monogramme `sk` lowercase Space Grotesk 700 noir sur cream `#f4f1ea`, tracking -24px, soulignement jaune à la base tilté -2° (signature brutaliste qui se fond proprement quand LinkedIn downscale à 48 px dans le feed). Aucun corner-tick.
+- Sortie dans `public/images/linkedin/` (ignoré par git, cf. `.gitignore`) — les PNG sont des assets one-shot uploadés directement sur LinkedIn, pas servis par le site.
+- Réutilise le pattern du script `screenshot-projets.mjs` (Playwright headless, viewport exact, `deviceScaleFactor: 2` pour la netteté). Aucune API externe (règle 0 € respectée).
+- Entrée `npm run generate:linkedin` dans `package.json` pour régénérer à la demande si la DA évolue ou pour décliner d'autres formats (Instagram, Twitter, etc.).
+
 ### Contenu — Nouveau projet `fixieshop-moscow` (2026-04-24)
 - Ajout du projet **Fixieshop Moscow** dans `/projets` : compte Instagram animé en 2016 à Moscou, idée initiale de magasin de fixies non concrétisée, photos de tous les vélos de rue (notamment fixies underground Moscou + Saint-Pétersbourg).
 - `content/projets/fixieshop-moscow.mdx` : type `perso`, status `publie`, year 2016, `<Social platform="instagram">` vers `@fixieshopmoscow`.

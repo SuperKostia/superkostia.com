@@ -45,3 +45,8 @@ next-env.d.ts
 # Le script compress:photos les lit et écrit les versions processées
 # dans public/images/photographie/<serie>/ qui eux sont commités.
 /.source-photos/
+
+# Assets LinkedIn (page Entreprise) : générés par generate:linkedin et
+# uploadés directement sur LinkedIn, pas servis par le site. Le script
+# reste tracé, les PNG sont régénérables à la demande.
+/public/images/linkedin/
