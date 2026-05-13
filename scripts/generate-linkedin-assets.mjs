@@ -2,8 +2,13 @@
 /**
  * Génère les visuels LinkedIn de la page Entreprise.
  *
- *   public/images/linkedin/banner.png   1584 × 396  (ratio 4:1, recommandé LinkedIn)
+ *   public/images/linkedin/banner.png   4200 × 700  (ratio 6:1, page Entreprise)
  *   public/images/linkedin/icon.png      400 × 400  (logo de page, affiché en cercle)
+ *
+ * Attention : le ratio 4:1 (1584 × 396) qu'on voit partout cité c'est pour
+ * le **profil personnel**. La page Entreprise utilise 6:1 (display 1128×191,
+ * upload recommandé 4200×700). Source : LinkedIn Help "Image specifications
+ * for your LinkedIn Pages and Career Pages".
  *
  * Pattern : on ouvre Chromium headless sur des `data:` URL HTML construites
  * inline, on screenshote au viewport exact, on écrit le PNG. Aucune API
@@ -36,8 +41,11 @@ const FONT_BOLD = path.join(
   "node_modules/@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff2",
 );
 
-const BANNER = { width: 1584, height: 396, file: "banner.png" };
-const ICON = { width: 400, height: 400, file: "icon.png" };
+// Bannière à la spec page Entreprise LinkedIn : ratio 6:1, upload 4200×700.
+// On rend au viewport natif (pas de deviceScaleFactor sur la bannière) parce
+// qu'on est déjà à 4× la taille d'affichage (1128×191) → suffisamment retina.
+const BANNER = { width: 4200, height: 700, file: "banner.png", scale: 1 };
+const ICON = { width: 400, height: 400, file: "icon.png", scale: 2 };
 
 async function fontDataUri(p) {
   const buf = await fs.readFile(p);
@@ -92,13 +100,23 @@ function waterFieldSvg(density = 0.55) {
 }
 
 /**
- * Bannière 1584 × 396. Fond WaterField, wordmark `superkostia` lowercase
- * façon OG image (Space Grotesk 700, "super" cream et "kostia" en chiclet
- * jaune avec bordure noire et rotation -1.5°). Tagline mono en bas.
+ * Bannière 4200 × 700 (ratio 6:1, page Entreprise LinkedIn). Fond WaterField,
+ * wordmark `superkostia` lowercase façon OG image (Space Grotesk 700, "super"
+ * cream et "kostia" en chiclet jaune avec bordure noire, rotation -1.5°).
+ * Tagline mono sous le wordmark.
  *
- * Le wordmark est calé à gauche avec marge généreuse — la moitié droite du
- * banner peut être croppée sur des écrans LinkedIn étroits, on ne met rien
- * d'essentiel à droite.
+ * Safe zone profil : LinkedIn empile la photo de profil (≈ 168 × 168 en
+ * display 1128) en bas-gauche de la bannière, avec 50 px de marge gauche et
+ * débord vers le bas. Ramené en upload 4200, ça mange tout le coin
+ * bas-gauche jusqu'à ≈ x = 900. On laisse donc 1080 px de gutter à gauche
+ * pour que le wordmark vive entièrement à droite de l'icône profil.
+ *
+ * Le `sk` chiclet à droite a été supprimé : la photo de profil EST déjà un
+ * `sk`, c'était un doublon. On gagne en plus de la respiration pour le
+ * wordmark dans la zone visible.
+ *
+ * Densité WaterField = 0.35 (squiggles plus larges qu'à density=0.55) pour
+ * que les caustiques restent lisibles à 6:1 sans saturer l'image.
  */
 function bannerHtml(fontRegular, fontBold) {
   return `<!doctype html><html><head><meta charset="utf-8"><style>
@@ -108,23 +126,19 @@ function bannerHtml(fontRegular, fontBold) {
 html,body{width:${BANNER.width}px;height:${BANNER.height}px;overflow:hidden;background:#0087C4;}
 .stage{position:relative;width:100%;height:100%;isolation:isolate;font-family:'Space Grotesk',system-ui,sans-serif;}
 .water{position:absolute;inset:0;z-index:-1;}
-.content{position:relative;height:100%;padding:0 96px;display:flex;flex-direction:column;justify-content:center;gap:18px;}
-.wordmark{display:flex;align-items:flex-end;font-weight:700;font-size:180px;line-height:0.88;letter-spacing:-8px;text-transform:lowercase;}
-.wordmark .super{color:#f4f1ea;text-shadow:0 4px 20px rgba(0,0,0,0.18);}
-.wordmark .kostia{background:#E4FF3A;color:#111;padding:0 22px 8px 22px;margin-left:14px;border:5px solid #111;transform:rotate(-1.5deg);box-shadow:0 8px 0 rgba(0,0,0,0.18);}
-.tagline{font-family:ui-monospace,Menlo,monospace;font-size:22px;letter-spacing:0.32em;text-transform:uppercase;color:#f4f1ea;opacity:0.92;}
-.tagline .sep{display:inline-block;margin:0 14px;opacity:0.55;}
-.cornerMark{position:absolute;top:36px;right:48px;width:64px;height:64px;background:#111;color:#E4FF3A;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px;letter-spacing:-3px;text-transform:lowercase;}
-.bottomRule{position:absolute;left:96px;right:96px;bottom:34px;border-top:3px solid rgba(244,241,234,0.55);}
+.content{position:relative;height:100%;padding:0 240px 0 1080px;display:flex;flex-direction:column;justify-content:center;gap:40px;}
+.wordmark{display:flex;align-items:flex-end;font-weight:700;font-size:300px;line-height:0.86;letter-spacing:-14px;text-transform:lowercase;}
+.wordmark .super{color:#f4f1ea;text-shadow:0 6px 32px rgba(0,0,0,0.22);}
+.wordmark .kostia{background:#E4FF3A;color:#111;padding:0 36px 14px 36px;margin-left:22px;border:8px solid #111;transform:rotate(-1.5deg);box-shadow:0 14px 0 rgba(0,0,0,0.18);}
+.tagline{font-family:ui-monospace,Menlo,monospace;font-size:38px;letter-spacing:0.34em;text-transform:uppercase;color:#f4f1ea;opacity:0.92;}
+.tagline .sep{display:inline-block;margin:0 22px;opacity:0.55;}
 </style></head><body>
 <div class="stage">
-  <div class="water">${waterFieldSvg(0.55)}</div>
-  <div class="cornerMark">sk</div>
+  <div class="water">${waterFieldSvg(0.35)}</div>
   <div class="content">
     <div class="wordmark"><span class="super">super</span><span class="kostia">kostia</span></div>
     <div class="tagline">terrain de jeu public<span class="sep">·</span>superkostia.com<span class="sep">·</span>athènes</div>
   </div>
-  <div class="bottomRule"></div>
 </div>
 </body></html>`;
 }
@@ -163,10 +177,10 @@ html,body{width:${ICON.width}px;height:${ICON.height}px;overflow:hidden;backgrou
 </body></html>`;
 }
 
-async function render(browser, html, viewport, outPath) {
+async function render(browser, html, viewport, outPath, deviceScaleFactor = 2) {
   const context = await browser.newContext({
     viewport,
-    deviceScaleFactor: 2, // PNG @2x → meilleure netteté après downscale LinkedIn
+    deviceScaleFactor, // PNG @scale → contrôle netteté et taille finale
   });
   const page = await context.newPage();
   // data: URL pour éviter tout fichier temporaire
@@ -197,16 +211,18 @@ async function main() {
       bannerHtml(fontRegular, fontBold),
       { width: BANNER.width, height: BANNER.height },
       bannerOut,
+      BANNER.scale,
     );
-    console.log(`✓ ${path.relative(ROOT, bannerOut)}  (${BANNER.width}×${BANNER.height})`);
+    console.log(`✓ ${path.relative(ROOT, bannerOut)}  (${BANNER.width * BANNER.scale}×${BANNER.height * BANNER.scale})`);
 
     await render(
       browser,
       iconHtml(fontBold),
       { width: ICON.width, height: ICON.height },
       iconOut,
+      ICON.scale,
     );
-    console.log(`✓ ${path.relative(ROOT, iconOut)}  (${ICON.width}×${ICON.height})`);
+    console.log(`✓ ${path.relative(ROOT, iconOut)}  (${ICON.width * ICON.scale}×${ICON.height * ICON.scale})`);
   } finally {
     await browser.close();
   }
