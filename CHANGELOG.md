@@ -8,6 +8,14 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Contenu — Nouveau projet `choose-france-2026` : dashboard cartographique (2026-06-10)
+- Ajout du projet **Choose France 2026** dans `/projets` : dashboard interactif des 71 investissements étrangers annoncés au sommet de Versailles (93 Md€), géolocalisés site par site, cercles proportionnels au CAPEX, vues projets/régions, filtres par famille de secteur.
+- `content/projets/choose-france-2026.mdx` : type `experimental`, status `publie`, year 2026, dashboard embarqué en iframe + lien plein écran.
+- `public/projets/choose-france-2026/dashboard.html` : artefact single-file autonome (MapLibre GL JS via unpkg, tuiles vectorielles OpenFreeMap Positron, données embarquées en JSON). Sans clé API ni backend, règle 0 € respectée. DA propre au dashboard (encre + ambre, Bricolage Grotesque), assumée distincte de celle du site : c'est un artefact embarqué, pas une page du site.
+- Pipeline data hors repo : extraction du dossier de presse officiel + enrichissement (présence des investisseurs en France) + géocodage vérifié, le tout par flotte d'agents Claude orchestrée en workflows.
+- Revue multi-agents avant déploiement (20 agents, 5 axes : données, géo, code, UX, intégration site) : KPIs recalculés depuis les données, palette retravaillée (collisions orange/brun et gris/gris), bug de rafraîchissement du chip national, régions dérivées des sites, garde-fous NaN, SRI sur les CDN épinglés, contenus traduits en français (72 fiches). Branding tiers retiré de la variante publiée.
+- `body { overflow-x: clip }` dans `styles/globals.css` : les breakouts 100vw (iframe projet) créaient un scroll horizontal sur les navigateurs à scrollbar classique.
+
 ### Outil — `scripts/generate-linkedin-assets.mjs` : visuels page Entreprise LinkedIn (2026-05-13)
 - Nouveau script Playwright qui génère deux PNG prêts à uploader sur la page Entreprise LinkedIn de superkostia :
   - **`banner.png`** 4200×700 (ratio 6:1, spec page Entreprise — pas 4:1 qui est le profil personnel) : fond `WaterField` plein écran (version statique du composant `components/ui/WaterField.tsx`, density 0.35 pour des squiggles plus larges adaptés au format étiré), wordmark `super` cream + `kostia` chiclet jaune `#E4FF3A` rotation -1.5° (reprise stricte du traitement de l'OG image), tagline mono `terrain de jeu public · superkostia.com · athènes`. Wordmark calé à droite avec gutter gauche de 1080 px pour libérer la safe zone du logo profil que LinkedIn empile en bas-gauche du banner.

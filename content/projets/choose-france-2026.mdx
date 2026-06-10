@@ -1,0 +1,75 @@
+---
+title: "Choose France 2026"
+slug: "choose-france-2026"
+type: "experimental"
+status: "publie"
+year: 2026
+tags: ["data-viz", "cartographie", "ia", "économie"]
+summary: "Dashboard cartographique des 71 investissements étrangers annoncés au sommet Choose France 2026 : 93 Md€ géolocalisés site par site, cercles proportionnels au CAPEX, construit par une flotte d'agents IA."
+stack: ["MapLibre GL", "OpenFreeMap", "agents Claude", "single-file HTML"]
+links:
+  - label: "Dashboard plein écran"
+    url: "https://superkostia.com/projets/choose-france-2026/dashboard.html"
+---
+
+## Le pitch
+
+Le 1er juin 2026, le sommet Choose France de Versailles annonce **71
+investissements étrangers, 93 milliards d'euros, plus de 15 600 emplois**.
+Tout est dans un dossier de presse PDF de 45 pages : illisible pour décider
+où regarder.
+
+Ce projet transforme le PDF en un dashboard cartographique interactif :
+chaque projet d'investissement est géolocalisé au site près (l'usine, pas
+juste la ville), avec un cercle proportionnel au montant investi.
+
+<div className="w-[calc(100vw-3rem)] sm:w-[calc(100vw-5rem)] lg:w-[calc(100vw-6rem)] -rotate-[0.3deg] border-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] shadow-[var(--shadow-hard)]">
+  <iframe
+    src="/projets/choose-france-2026/dashboard.html"
+    title="Dashboard Choose France 2026 : carte des investissements étrangers en France"
+    className="block h-[700px] w-full"
+    loading="lazy"
+  />
+</div>
+
+<p className="mt-3 font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)]">↑ Le dashboard est interactif. <a href="/projets/choose-france-2026/dashboard.html" className="underline" data-cursor="ouvrir">Version plein écran</a> recommandée.</p>
+
+## Ce qu'on peut y faire
+
+- **Vue projets** : un cercle par site d'implantation, taille en échelle log
+  du CAPEX (de 2 M€ à 75 Md€, il faut bien ça), couleur par famille de
+  secteur.
+- **Vue régions** : agrégation des montants par région administrative.
+- **Filtres** par famille de secteur, recherche libre, fiche détaillée par
+  projet avec l'historique d'implantation de l'investisseur en France.
+- Un détour par **Kourou** pour le pas de tir de PLD Space, seul projet hors
+  métropole.
+
+## Comment c'est fabriqué
+
+Tout le pipeline de données est l'œuvre d'une flotte d'agents IA orchestrée
+en trois vagues :
+
+1. **Extraction** : lecture parallèle du dossier de presse, contrôle de
+   couverture contre la liste officielle des 71 annonces, déduplication.
+2. **Enrichissement** : un agent par projet vérifie chaque champ contre la
+   source et recherche sur le web la présence existante de l'investisseur
+   en France.
+3. **Géocodage** : un agent par projet localise le site exact (la friche
+   Bridgestone de Béthune, la base aérienne reconvertie d'E-Valley à
+   Cambrai...), avec garde-fous géométriques et relance corrective.
+
+Le rendu est un seul fichier HTML sans framework : MapLibre GL JS pour la
+carte, tuiles vectorielles [OpenFreeMap](https://openfreemap.org/) (gratuites,
+sans clé API, dans l'esprit de ce site), données embarquées en JSON.
+
+<Stack items={["MapLibre GL JS", "OpenFreeMap (Positron)", "flotte d'agents Claude", "extraction PDF", "géocodage vérifié", "HTML single-file"]} />
+
+## Les chiffres
+
+Sources : dossier de presse officiel Choose France 2026. Les montants
+cartographiés sont les maxima annoncés par les investisseurs ; les
+implantations existantes viennent d'une recherche complémentaire et restent
+à confirmer. Données publiques, dashboard partageable.
+
+<Links items={[{ label: "Dashboard plein écran", url: "/projets/choose-france-2026/dashboard.html" }, { label: "openfreemap.org", url: "https://openfreemap.org/" }]} />

@@ -57,6 +57,9 @@ body {
   color: var(--color-fg);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* Les breakouts en 100vw (ex : iframe projet) débordent de la largeur
+     du scrollbar classique (Windows) ; clip évite le scroll horizontal. */
+  overflow-x: clip;
 }
 
 /* Focus épais accent — §8.3 */
