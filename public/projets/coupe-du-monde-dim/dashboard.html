@@ -49,7 +49,9 @@
   .shead .c { font-size: 11px; color: #6b6457; }
   .dayhead { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .16em; color: var(--accent); margin: 16px 0 8px; padding-left: 2px; }
 
-  .match { border: 3px solid var(--border); background: #fff; box-shadow: var(--shadow); padding: 12px 14px; margin-bottom: 12px; }
+  .matchgrid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 680px) { .matchgrid { grid-template-columns: repeat(2, 1fr); } }
+  .match { border: 3px solid var(--border); background: #fff; box-shadow: var(--shadow); padding: 12px 14px; margin-bottom: 0; }
   .match.done { background: #f0f7f1; }
   .match.live { background: #fff4f3; border-color: var(--live); }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
@@ -198,14 +200,14 @@ function groupByDay(events){
 
 function sectionFlat(title, items){
   if (!items.length) return "";
-  return `<section><div class="shead"><h2>${title}</h2><span class="c">${items.length}</span></div>${items.map(matchCard).join("")}</section>`;
+  return `<section><div class="shead"><h2>${title}</h2><span class="c">${items.length}</span></div><div class="matchgrid">${items.map(matchCard).join("")}</div></section>`;
 }
 
 function sectionDays(title, sub, groups){
   if (!groups.length) return "";
   const total = groups.reduce((n, g) => n + g.items.length, 0);
   const body = groups.map(g =>
-    `<div class="dayhead">${esc(g.label)}</div>${g.items.map(matchCard).join("")}`
+    `<div class="dayhead">${esc(g.label)}</div><div class="matchgrid">${g.items.map(matchCard).join("")}</div>`
   ).join("");
   return `<section><div class="shead"><h2>${title}</h2><span class="c">${total} match${total>1?"s":""} · ${sub}</span></div>${body}</section>`;
 }
