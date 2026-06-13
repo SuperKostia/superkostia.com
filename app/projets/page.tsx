@@ -10,6 +10,18 @@ export const metadata: Metadata = {
   description: "Tout ce que Kostia a monté : pro, perso, expérimental.",
 };
 
+/** Affiche "mois année" si une date précise est connue, sinon juste l'année. */
+function formatPeriode(fm: { date?: string; year: number }): string {
+  if (fm.date) {
+    const [y, m = "1"] = fm.date.split("-");
+    return new Intl.DateTimeFormat("fr-FR", {
+      month: "long",
+      year: "numeric",
+    }).format(new Date(Number(y), Number(m) - 1, 1));
+  }
+  return String(fm.year);
+}
+
 export default async function ProjetsPage() {
   const projets = await getProjets();
 
@@ -46,7 +58,7 @@ export default async function ProjetsPage() {
                       {entry.frontmatter.type}
                     </Tag>
                     <span className="font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
-                      {entry.frontmatter.year}
+                      {formatPeriode(entry.frontmatter)}
                     </span>
                   </div>
                   <h2 className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">

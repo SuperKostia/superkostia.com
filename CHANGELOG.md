@@ -8,6 +8,10 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Site — `/projets` trié par date avec affichage du mois (2026-06-13)
+- `/projets` ne triait que par année (ordre arbitraire au sein d'une même année). Ajout d'un champ optionnel `date` (`"YYYY-MM-DD"`) au frontmatter projet (`lib/types.ts`), tri par date décroissante avec repli sur l'année (`lib/mdx.ts` via `projetSortKey`), et affichage « mois année » quand la date est connue, sinon l'année seule (`app/projets/page.tsx`, helper `formatPeriode` + `Intl.DateTimeFormat`).
+- Dates renseignées d'après le **premier commit du repo de chaque projet** : axiom-hub (mars), wedding-patmos (mars), axiom-family-swap / guide-etudes-superieures / mercatofirst / bookeeper (avril), choose-france / coupe-du-monde-dim (juin). Les 3 plus anciens (Life is Patmos 2020, Axiom Academic 2017, Fixieshop 2016) restent en année seule. 2 sans repo propre identifiable (Dashboard SEO Axiom, Dictée de Dubaï) restent en année seule en attendant un mois.
+
 ### Contenu — Nouveau projet `coupe-du-monde-dim` : récaps WhatsApp automatiques (2026-06-13)
 - Ajout du projet **Les récaps WhatsApp de Dim** dans `/projets` : un robot qui envoie à un ami le score de chaque match de la Coupe du Monde 2026 sur WhatsApp, automatiquement, dès le coup de sifflet final.
 - `content/projets/coupe-du-monde-dim.mdx` : type `perso`, status `en-cours`, year 2026. Explication technique complète (bridge WhatsApp en Go/whatsmeow recompilé sur le serveur, notifier Python sans dépendance, planification systemd calée sur le calendrier réel des matchs). Dashboard live embarqué en iframe + lien plein écran.

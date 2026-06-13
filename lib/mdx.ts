@@ -43,10 +43,17 @@ async function readAll<T>(category: Category): Promise<Array<ContentEntry<T>>> {
   return entries;
 }
 
+/** Clé de tri "YYYY-MM-DD" : `date` si fournie (mois, voire jour), sinon l'année seule. */
+function projetSortKey(fm: ProjetFrontmatter): string {
+  const raw = fm.date ?? String(fm.year ?? 0);
+  const [y = "0", m = "01", d = "01"] = raw.split("-");
+  return `${y.padStart(4, "0")}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+}
+
 export async function getProjets() {
   const entries = await readAll<ProjetFrontmatter>("projets");
-  return entries.sort(
-    (a, b) => (b.frontmatter.year ?? 0) - (a.frontmatter.year ?? 0),
+  return entries.sort((a, b) =>
+    projetSortKey(b.frontmatter).localeCompare(projetSortKey(a.frontmatter)),
   );
 }
 
