@@ -47,6 +47,7 @@
   .shead { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; border-bottom: 2px dashed var(--border); padding-bottom: 6px; }
   .shead h2 { font-family: system-ui, sans-serif; font-weight: 900; text-transform: uppercase; font-size: 15px; letter-spacing: .04em; }
   .shead .c { font-size: 11px; color: #6b6457; }
+  .dayhead { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .16em; color: var(--accent); margin: 16px 0 8px; padding-left: 2px; }
 
   .match { border: 3px solid var(--border); background: #fff; box-shadow: var(--shadow); padding: 12px 14px; margin-bottom: 12px; }
   .match.done { background: #f0f7f1; }
@@ -80,7 +81,7 @@
   <header>
     <div class="kicker">Automatisation WhatsApp · en direct</div>
     <h1>Les récaps de Dim</h1>
-    <p class="sub">Ce qu'un robot envoie automatiquement à Dim sur WhatsApp à la fin de chaque match de la Coupe du Monde 2026. Scores tirés en direct de l'API ESPN.</p>
+    <p class="sub">Ce qu'un robot envoie automatiquement à Dim sur WhatsApp à la fin de chaque match de la Coupe du Monde 2026. Calendrier complet et scores tirés en direct de l'API ESPN.</p>
     <div class="meta">
       <span><span class="dot"></span> Auto-actualisé toutes les 60 s</span>
       <span id="updated">Chargement…</span>
@@ -96,12 +97,14 @@
   <div id="content"><p class="empty">Chargement des matchs…</p></div>
 
   <footer>
-    Source : <b>API publique ESPN</b> (fifa.world). Un match est marqué « récap envoyé » dès qu'il passe à l'état terminé.
-    Pour la liste précise déjà notifiée, le serveur tient son propre journal anti-doublon.
+    Source : <b>API publique ESPN</b> (fifa.world), tournoi complet du 11 juin au 19 juillet 2026. Un match passe en « récap envoyé à Dim » dès qu'il est terminé.
   </footer>
 </div>
 
 <script>
+const START = "20260611", END = "20260719";
+const URL = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${START}-${END}&limit=400`;
+
 const TEAMS = {
   "Mexico":["Mexique","🇲🇽"],"South Africa":["Afrique du Sud","🇿🇦"],
   "South Korea":["Corée du Sud","🇰🇷"],"Korea Republic":["Corée du Sud","🇰🇷"],
@@ -129,27 +132,22 @@ const TEAMS = {
   "Chile":["Chili","🇨🇱"],"Cameroon":["Cameroun","🇨🇲"],"Mali":["Mali","🇲🇱"]
 };
 const team = n => TEAMS[n] || [n, "⚽"];
-const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const api = d => `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${d}`;
-const utcYmd = dt => dt.getUTCFullYear() + String(dt.getUTCMonth()+1).padStart(2,"0") + String(dt.getUTCDate()).padStart(2,"0");
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const stateOf = e => e.competitions[0].status.type.state;
+const dayKey = iso => new Date(iso).toLocaleDateString("fr-CA");
+const dayLabel = iso => { const s = new Date(iso).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }); return s.charAt(0).toUpperCase() + s.slice(1); };
+const timeLabel = iso => new Date(iso).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 
-async function fetchDay(d){
-  const r = await fetch(api(d), { headers: { "Accept": "application/json" } });
+async function fetchAll(){
+  const r = await fetch(URL, { headers: { "Accept": "application/json" } });
   if (!r.ok) throw new Error("HTTP " + r.status);
   return (await r.json()).events || [];
-}
-
-function whenLabel(iso){
-  const d = new Date(iso);
-  const day = d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "short" });
-  const hm = d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-  return day.charAt(0).toUpperCase() + day.slice(1) + " · " + hm;
 }
 
 function matchCard(ev){
   const comp = ev.competitions[0];
   const st = comp.status.type;
-  const state = st.state; // pre | in | post
+  const state = st.state;
   const cs = comp.competitors;
   const home = cs.find(c => c.homeAway === "home") || cs[0];
   const away = cs.find(c => c.homeAway === "away") || cs[1];
@@ -178,7 +176,7 @@ function matchCard(ev){
   }
 
   return `<div class="${cls}">
-    <div class="top"><span class="when">${esc(whenLabel(ev.date))}</span>${badge}</div>
+    <div class="top"><span class="when">${esc(timeLabel(ev.date))}</span>${badge}</div>
     <div class="teams">
       <div class="team home"><span class="flag">${hf}</span><span class="name">${esc(hn)}</span></div>
       ${scoreHtml}
@@ -188,40 +186,59 @@ function matchCard(ev){
   </div>`;
 }
 
-function section(title, items, extra){
+function groupByDay(events){
+  const map = new Map();
+  for (const e of events) {
+    const k = dayKey(e.date);
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(e);
+  }
+  return [...map.values()].map(items => ({ label: dayLabel(items[0].date), items }));
+}
+
+function sectionFlat(title, items){
   if (!items.length) return "";
-  return `<section><div class="shead"><h2>${title}</h2><span class="c">${items.length} match${items.length>1?"s":""}${extra?" · "+extra:""}</span></div>${items.map(matchCard).join("")}</section>`;
+  return `<section><div class="shead"><h2>${title}</h2><span class="c">${items.length}</span></div>${items.map(matchCard).join("")}</section>`;
+}
+
+function sectionDays(title, sub, groups){
+  if (!groups.length) return "";
+  const total = groups.reduce((n, g) => n + g.items.length, 0);
+  const body = groups.map(g =>
+    `<div class="dayhead">${esc(g.label)}</div>${g.items.map(matchCard).join("")}`
+  ).join("");
+  return `<section><div class="shead"><h2>${title}</h2><span class="c">${total} match${total>1?"s":""} · ${sub}</span></div>${body}</section>`;
 }
 
 async function load(){
   const now = new Date();
-  const events = {};
-  for (const off of [-1, 0, 1]) {
-    const dt = new Date(now); dt.setUTCDate(dt.getUTCDate() + off);
-    try { (await fetchDay(utcYmd(dt))).forEach(e => events[e.id] = e); }
-    catch (e) { /* on continue */ }
+  let events;
+  try { events = await fetchAll(); }
+  catch (e) {
+    document.getElementById("content").innerHTML = `<p class="empty">Impossible de charger les matchs pour le moment (${esc(e.message)}). Nouvel essai dans 60 s.</p>`;
+    return;
   }
-  let list = Object.values(events);
-  const lo = now.getTime() - 26*3600e3, hi = now.getTime() + 50*3600e3;
-  list = list.filter(e => { const t = new Date(e.date).getTime(); return t >= lo && t <= hi; });
-  list.sort((a, b) => new Date(a.date) - new Date(b.date));
+  events.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  const stOf = e => e.competitions[0].status.type.state;
-  const done = list.filter(e => stOf(e) === "post").reverse();
-  const live = list.filter(e => stOf(e) === "in");
-  const soon = list.filter(e => stOf(e) === "pre");
+  const done = events.filter(e => stateOf(e) === "post");
+  const live = events.filter(e => stateOf(e) === "in");
+  const soon = events.filter(e => stateOf(e) === "pre");
 
   document.getElementById("n-done").textContent = done.length;
   document.getElementById("n-live").textContent = live.length;
   document.getElementById("n-soon").textContent = soon.length;
   document.getElementById("updated").textContent = "Mis à jour à " + now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
+  const doneGroups = groupByDay([...done].reverse());   // jour le plus récent en premier
+  const soonGroups = groupByDay(soon);                  // chronologique
+
   const html =
-    section("🔴 En cours", live) +
-    section("✅ Déjà notifiés", done, "récap envoyé") +
-    section("🕒 À venir", soon);
+    sectionFlat("🔴 En cours", live) +
+    sectionDays("✅ Déjà notifiés", "récap envoyé à Dim", doneGroups) +
+    sectionDays("🕒 À venir", "calendrier complet", soonGroups);
+
   document.getElementById("content").innerHTML = html ||
-    '<p class="empty">Aucun match dans la fenêtre des dernières 24 h / prochaines 48 h. Le calendrier se remplit au fil du tournoi.</p>';
+    '<p class="empty">Le calendrier n\'est pas encore disponible.</p>';
 }
 
 load();
