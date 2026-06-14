@@ -8,6 +8,12 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Dashboard coupe-du-monde : titre « de Kostia » + encart « le flux » avec dates (2026-06-14)
+- Titre du dashboard passé à « Les récaps de Kostia » (l'expéditeur). Ajout d'un encart stylé « Le flux » qui liste chaque membre avec sa **date d'ajout** (chips brutalistes), plus une invitation « Rejoins Dim, Karim, PAF et Valentin 👇 ». Données centralisées dans un tableau `MEMBERS` (nom + date) d'où `RECIPIENTS_LABEL` est dérivé : ajouter un membre = une ligne.
+
+### Contenu — Titre du projet : « de Dim » → « de Kostia » (2026-06-14)
+- Le titre de `coupe-du-monde-dim` devient « Les récaps WhatsApp de **Kostia** » (c'est l'expéditeur, pas un destinataire). Le slug/URL `coupe-du-monde-dim` reste inchangé.
+
 ### Contenu — Valentin rejoint le flux Coupe du Monde (2026-06-14)
 - 4e destinataire ajouté. Dashboard : liste mise à jour partout (« Dim, Karim, PAF et Valentin », via la constante `RECIPIENTS_LABEL` + spans `.rcpt`). Page projet : badge « Déjà 4 potes dans le flux ». Teaser de la home (`WorldCupPromo`) passé en « Mes potes reçoivent... » (évolutif, plus besoin de le toucher à chaque ajout).
 
