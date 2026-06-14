@@ -8,6 +8,9 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Contenu — Zander (7e membre, via le formulaire) rejoint le flux (2026-06-14)
+- Zander Mickael ajouté (1re demande passée par le formulaire de cooptation du dashboard) : serveur + encart « Le flux » (7 membres) + badge « 7 potes ». Prose toujours figée à 4.
+
 ### Contenu — Yas (6e membre) rejoint le flux (2026-06-14)
 - Yas (pote marocaine d'Emma, Tanger) ajoutée : serveur + encart « Le flux » (6 membres) + badge « 6 potes ». Prose toujours figée sur « Dim, Karim, PAF et Valentin ».
 
