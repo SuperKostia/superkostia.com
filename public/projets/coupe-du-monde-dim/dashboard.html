@@ -126,7 +126,7 @@
       <span class="c" id="flux-count">– membres</span>
     </div>
     <ul class="flux-list" id="flux-list"></ul>
-    <p class="flux-cta">Rejoins <span class="rcpt">Dim, Karim, PAF et Valentin</span> 👇</p>
+    <p class="flux-cta">Rejoins <span class="rcpt">Dim, Karim, PAF et Valentin</span><span id="flux-more"></span> 👇</p>
   </div>
 
   <div class="join">
@@ -309,6 +309,10 @@ async function renderFlux(){
   } catch (e) { /* on garde l'affichage precedent */ }
   if (!Array.isArray(members) || !members.length) return;
   document.getElementById("flux-count").textContent = members.length + " membre" + (members.length > 1 ? "s" : "");
+  // Les 4 premiers prenoms (Dim, Karim, PAF, Valentin) restent figes dans la prose ; on accole le reste comme un compteur vivant.
+  const extra = members.length - 4;
+  const more = document.getElementById("flux-more");
+  if (more) more.textContent = extra > 0 ? ` + ${extra} autre${extra > 1 ? "s" : ""} pote${extra > 1 ? "s" : ""}` : "";
   document.getElementById("flux-list").innerHTML = members.map(m =>
     `<li class="flux-member"><span class="fm-name">${esc(m.name)}</span><span class="fm-date">depuis le ${esc(fluxDate(m.since))}</span></li>`
   ).join("");
