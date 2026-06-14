@@ -8,6 +8,9 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Contenu — Anastasia rejoint + découplage prose / encart « Le flux » (2026-06-14)
+- 5e membre (Anastasia). **Découplage** : l'encart « Le flux » (tableau `MEMBERS`) liste tous les membres avec leur date et grandit à chaque ajout ; les textes en prose (sous-titre, cartes, pied de page, invitation) utilisent un libellé **figé** `RECIPIENTS_LABEL = "Dim, Karim, PAF et Valentin"` qui ne grandit pas à l'infini. Badge page projet passé à « 5 potes ».
+
 ### Feat — Dashboard coupe-du-monde : titre « de Kostia » + encart « le flux » avec dates (2026-06-14)
 - Titre du dashboard passé à « Les récaps de Kostia » (l'expéditeur). Ajout d'un encart stylé « Le flux » qui liste chaque membre avec sa **date d'ajout** (chips brutalistes), plus une invitation « Rejoins Dim, Karim, PAF et Valentin 👇 ». Données centralisées dans un tableau `MEMBERS` (nom + date) d'où `RECIPIENTS_LABEL` est dérivé : ajouter un membre = une ligne.
 

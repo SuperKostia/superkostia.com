@@ -155,16 +155,16 @@
 const START = "20260611", END = "20260719";
 const URL = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${START}-${END}&limit=400`;
 
-// Membres du flux. Source unique : pour ajouter quelqu'un, ajouter une ligne ici.
+// Membres du flux pour l'encart "Le flux" (chips + dates + compteur). VIVANT : ajouter une ligne ici a chaque nouveau membre.
 const MEMBERS = [
   { name: "Dim", since: "2026-06-13" },
   { name: "Karim", since: "2026-06-13" },
   { name: "PAF", since: "2026-06-14" },
   { name: "Valentin", since: "2026-06-14" },
+  { name: "Anastasia", since: "2026-06-14" },
 ];
-const RECIPIENTS_LABEL = MEMBERS.length === 1
-  ? MEMBERS[0].name
-  : MEMBERS.slice(0, -1).map(m => m.name).join(", ") + " et " + MEMBERS[MEMBERS.length - 1].name;
+// Libelle FIGE pour les textes en prose (sous-titre, cartes, pied de page, invitation). On ne le fait PAS grandir a l'infini : il reste sur les 4 premiers.
+const RECIPIENTS_LABEL = "Dim, Karim, PAF et Valentin";
 document.querySelectorAll(".rcpt").forEach(el => { el.textContent = RECIPIENTS_LABEL; });
 
 const TEAMS = {
