@@ -6,7 +6,7 @@ status: "en-cours"
 year: 2026
 date: "2026-06-13"
 tags: ["automatisation", "whatsapp", "football", "serveur", "api-espn"]
-summary: "Un robot qui envoie à un ami, Dim, le score de chaque match de la Coupe du Monde 2026 sur WhatsApp, automatiquement, dès le coup de sifflet final. Bridge WhatsApp en Go sur un serveur, notifier Python calé sur le calendrier, zéro intervention."
+summary: "Un robot qui envoie à une bande de potes le score de chaque match de la Coupe du Monde 2026 sur WhatsApp, automatiquement, dès le coup de sifflet final. Parti d'un seul ami, Dim, le flux grandit match après match. Bridge WhatsApp en Go sur un serveur, notifier Python calé sur le calendrier, zéro intervention."
 tagline: "🏆 Coupe du Monde 2026 : le score de chaque match sur WhatsApp, dès le coup de sifflet final."
 flux: "Déjà 7 potes dans le flux ⚽"
 stack: ["Go / whatsmeow", "Python", "systemd", "API ESPN", "WhatsApp Web", "Hetzner CX23"]
@@ -26,16 +26,21 @@ Le résultat est un petit système autonome qui tourne 24h/24 sur un serveur :
 il connaît le calendrier, surveille la fin de chaque match, et envoie le score
 à Dim. Pendant tout le tournoi. Tout seul.
 
-<div className="w-[calc(100vw-3rem)] sm:w-[calc(100vw-5rem)] lg:w-[calc(100vw-6rem)] -rotate-[0.3deg] border-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] shadow-[var(--shadow-hard)]">
+Sauf que ça n'est pas resté entre Dim et moi. D'autres potes ont voulu en être,
+et le flux s'est ouvert : aujourd'hui chacun peut rejoindre la liste en deux
+clics, et elle grandit match après match.
+
+<div className="relative w-[calc(100vw-3rem)] sm:w-[calc(100vw-5rem)] lg:w-[calc(100vw-6rem)] -rotate-[0.3deg] border-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] shadow-[var(--shadow-hard)]">
+  <a href="/projets/coupe-du-monde-dim/dashboard.html" target="_blank" rel="noopener noreferrer" data-cursor="ouvrir" className="absolute right-3 top-3 z-20 inline-flex items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-wider text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard)] transition-transform hover:-translate-y-0.5 sm:text-sm">⤢ Plein écran</a>
   <iframe
     src="/projets/coupe-du-monde-dim/dashboard.html"
-    title="Dashboard live des récaps Coupe du Monde 2026 envoyés à Dim sur WhatsApp"
+    title="Dashboard live des récaps Coupe du Monde 2026 envoyés sur WhatsApp"
     className="block h-[760px] w-full"
     loading="lazy"
   />
 </div>
 
-<p className="mt-3 font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)]">↑ En direct, scores tirés de l'API ESPN. <a href="/projets/coupe-du-monde-dim/dashboard.html" className="underline" data-cursor="ouvrir">Version plein écran</a>.</p>
+<p className="mt-3 font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)]">↑ En direct, scores tirés de l'API ESPN. <a href="/projets/coupe-du-monde-dim/dashboard.html" target="_blank" rel="noopener noreferrer" className="font-black text-[color:var(--color-fg)] underline decoration-2 underline-offset-2" data-cursor="ouvrir">Ouvrir en plein écran ↗</a></p>
 
 ## Comment c'est fabriqué
 
