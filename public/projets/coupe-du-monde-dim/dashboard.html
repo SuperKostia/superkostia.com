@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Récaps Coupe du Monde de Dim — en direct</title>
+<title>Récaps Coupe du Monde 2026, en direct</title>
 <style>
   :root {
     --bg: #f4f1e8;
@@ -83,7 +83,7 @@
   <header>
     <div class="kicker">Automatisation WhatsApp · en direct</div>
     <h1>Les récaps de Dim</h1>
-    <p class="sub">Ce qu'un robot envoie automatiquement à Dim sur WhatsApp à la fin de chaque match de la Coupe du Monde 2026. Calendrier complet et scores tirés en direct de l'API ESPN.</p>
+    <p class="sub">Ce qu'un robot envoie automatiquement à <span class="rcpt">Dim, Karim et PAF</span> sur WhatsApp à la fin de chaque match de la Coupe du Monde 2026. Calendrier complet et scores tirés en direct de l'API ESPN. <strong>Envie de le recevoir toi aussi ? Demande à être ajouté au flux 😉</strong></p>
     <div class="meta">
       <span><span class="dot"></span> Auto-actualisé toutes les 60 s</span>
       <span id="updated">Chargement…</span>
@@ -91,7 +91,7 @@
   </header>
 
   <div class="stats">
-    <div class="stat"><div class="n" id="n-done">–</div><div class="l">Récaps envoyés à Dim</div></div>
+    <div class="stat"><div class="n" id="n-done">–</div><div class="l">Récaps envoyés</div></div>
     <div class="stat"><div class="n" id="n-live">–</div><div class="l">En cours</div></div>
     <div class="stat"><div class="n" id="n-soon">–</div><div class="l">À venir</div></div>
   </div>
@@ -99,13 +99,17 @@
   <div id="content"><p class="empty">Chargement des matchs…</p></div>
 
   <footer>
-    Source : <b>API publique ESPN</b> (fifa.world), tournoi complet du 11 juin au 19 juillet 2026. Un match passe en « récap envoyé à Dim » dès qu'il est terminé.
+    Source : <b>API publique ESPN</b> (fifa.world), tournoi complet du 11 juin au 19 juillet 2026. Un match passe en « récap envoyé à <span class="rcpt">Dim, Karim et PAF</span> » dès qu'il est terminé. Le flux grandit par cooptation.
   </footer>
 </div>
 
 <script>
 const START = "20260611", END = "20260719";
 const URL = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${START}-${END}&limit=400`;
+
+// Destinataires des recaps. Source unique : pour ajouter quelqu'un, modifier cette ligne.
+const RECIPIENTS_LABEL = "Dim, Karim et PAF";
+document.querySelectorAll(".rcpt").forEach(el => { el.textContent = RECIPIENTS_LABEL; });
 
 const TEAMS = {
   "Mexico":["Mexique","🇲🇽"],"South Africa":["Afrique du Sud","🇿🇦"],
@@ -164,7 +168,7 @@ function matchCard(ev){
     cls += " done";
     badge = '<span class="badge done">Terminé</span>';
     scoreHtml = `<div class="score">${esc(home.score)}–${esc(away.score)}</div>`;
-    foot = `<span class="sent">✅ Récap envoyé à Dim</span>`;
+    foot = `<span class="sent">✅ Récap envoyé à ${RECIPIENTS_LABEL}</span>`;
   } else if (state === "in") {
     cls += " live";
     const clk = esc(st.shortDetail || st.detail || "En cours");
@@ -236,7 +240,7 @@ async function load(){
 
   const html =
     sectionFlat("🔴 En cours", live) +
-    sectionDays("✅ Déjà notifiés", "récap envoyé à Dim", doneGroups) +
+    sectionDays("✅ Déjà notifiés", "récap envoyé à " + RECIPIENTS_LABEL, doneGroups) +
     sectionDays("🕒 À venir", "calendrier complet", soonGroups);
 
   document.getElementById("content").innerHTML = html ||

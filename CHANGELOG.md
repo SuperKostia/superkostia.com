@@ -8,6 +8,10 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Style — Dashboard coupe-du-monde : tous les destinataires + cooptation (2026-06-14)
+- Le dashboard affichait « récap envoyé à Dim ». Remplacé par la liste complète des destinataires (Dim, Karim, PAF) via une constante JS unique `RECIPIENTS_LABEL` + spans `.rcpt` (sous-titre, cartes terminées, section « Déjà notifiés », pied de page). Pour ajouter quelqu'un, une seule ligne à changer.
+- Ajout d'un clin d'oeil cooptation (« Envie de le recevoir toi aussi ? Demande à être ajouté au flux 😉 »). Tiret cadratin retiré du `<title>`.
+
 ### Site — `/projets` trié par date avec affichage du mois (2026-06-13)
 - `/projets` ne triait que par année (ordre arbitraire au sein d'une même année). Ajout d'un champ optionnel `date` (`"YYYY-MM-DD"`) au frontmatter projet (`lib/types.ts`), tri par date décroissante avec repli sur l'année (`lib/mdx.ts` via `projetSortKey`), et affichage « mois année » quand la date est connue, sinon l'année seule (`app/projets/page.tsx`, helper `formatPeriode` + `Intl.DateTimeFormat`).
 - Dates renseignées d'après le **premier commit du repo de chaque projet** : axiom-hub (mars), wedding-patmos (mars), axiom-family-swap / guide-etudes-superieures / mercatofirst / bookeeper (avril), choose-france / coupe-du-monde-dim (juin). Les 3 plus anciens (Life is Patmos 2020, Axiom Academic 2017, Fixieshop 2016) restent en année seule. 2 sans repo propre identifiable (Dashboard SEO Axiom, Dictée de Dubaï) restent en année seule en attendant un mois.
