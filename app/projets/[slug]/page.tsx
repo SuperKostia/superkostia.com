@@ -106,6 +106,18 @@ export default async function ProjetDetailPage({ params }: PageProps) {
           {frontmatter.title}
         </h1>
 
+        {frontmatter.tagline ? (
+          <p className="max-w-2xl text-xl font-bold leading-tight text-[color:var(--color-fg)] sm:text-2xl">
+            {frontmatter.tagline}
+          </p>
+        ) : null}
+
+        {frontmatter.flux ? (
+          <p className="inline-flex w-fit items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--color-accent-fg)]">
+            {frontmatter.flux}
+          </p>
+        ) : null}
+
         <p className="max-w-2xl text-lg leading-relaxed text-[color:var(--color-muted)]">
           {frontmatter.summary}
         </p>

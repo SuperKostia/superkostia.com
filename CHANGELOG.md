@@ -8,6 +8,9 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Contenu — Page projet coupe-du-monde : sous-titre contexte + badge social (2026-06-14)
+- Sous le titre, ajout d'un **sous-titre prominent** donnant le contexte Coupe du Monde 2026, et d'un **badge** « Déjà 3 potes dans le flux ». Deux champs frontmatter optionnels `tagline` et `flux` (`lib/types.ts`), rendus conditionnellement dans l'en-tête de `app/projets/[slug]/page.tsx` (générique, n'affecte que les projets qui les renseignent).
+
 ### Contenu — Home : badge Coupe du Monde 2026 dans le panneau d'intro (2026-06-14)
 - Le panneau de droite de la home (`components/home/Intro.tsx`) avait un espace vide au-dessus du « 01 · manifeste ». Ajout d'un **badge promo cliquable** (`components/home/WorldCupPromo.tsx`) qui dirige vers `/projets/coupe-du-monde-dim` : bandeau accent « ⚽ Coupe du Monde 2026 · en direct » (point rouge pulsant `motion-safe`), accroche « Un bot texte les scores à mes potes », et « Voir le projet → ». Manifeste poussé en bas (`mt-auto`).
 
