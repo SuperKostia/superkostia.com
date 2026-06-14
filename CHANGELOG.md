@@ -8,6 +8,9 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Contenu — Home : badge Coupe du Monde 2026 dans le panneau d'intro (2026-06-14)
+- Le panneau de droite de la home (`components/home/Intro.tsx`) avait un espace vide au-dessus du « 01 · manifeste ». Ajout d'un **badge promo cliquable** (`components/home/WorldCupPromo.tsx`) qui dirige vers `/projets/coupe-du-monde-dim` : bandeau accent « ⚽ Coupe du Monde 2026 · en direct » (point rouge pulsant `motion-safe`), accroche « Un bot texte les scores à mes potes », et « Voir le projet → ». Manifeste poussé en bas (`mt-auto`).
+
 ### Feat — Dashboard coupe-du-monde : bouton « rejoindre le flux » + notif Telegram (2026-06-14)
 - L'invitation à rejoindre le flux est devenue un vrai **bouton** qui ouvre un formulaire (prénom + numéro WhatsApp) dans le dashboard.
 - Nouvelle route API `app/api/join-flux/route.ts` : reçoit la demande, valide (+ pot de miel anti-bot), et **notifie Constantin sur Telegram** (avec contexte ville/navigateur + rappel de la procédure d'ajout). Le dashboard statique l'appelle en `fetch` (même origine).
