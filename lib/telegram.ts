@@ -11,8 +11,11 @@ export function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-/** Envoie un message HTML au chat Telegram configuré (TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID). */
-export async function sendTelegram(text: string): Promise<TelegramResult> {
+/** Envoie un message HTML au chat Telegram configuré (TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID). Boutons inline optionnels. */
+export async function sendTelegram(
+  text: string,
+  replyMarkup?: unknown,
+): Promise<TelegramResult> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) {
@@ -29,6 +32,7 @@ export async function sendTelegram(text: string): Promise<TelegramResult> {
         text,
         parse_mode: "HTML",
         disable_web_page_preview: true,
+        ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
       }),
       cache: "no-store",
     });

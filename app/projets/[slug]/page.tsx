@@ -27,6 +27,20 @@ async function hasScreenshot(slug: string): Promise<boolean> {
   }
 }
 
+/** Badge "Déjà N potes" calculé depuis la liste publique des membres du flux, si elle existe. Sinon le `flux` du frontmatter. */
+async function fluxBadge(slug: string, fallback?: string): Promise<string | null> {
+  const file = path.join(process.cwd(), "public", "projets", slug, "members.json");
+  try {
+    const members = JSON.parse(await fs.readFile(file, "utf8")) as unknown[];
+    if (Array.isArray(members) && members.length > 0) {
+      return `Déjà ${members.length} potes dans le flux ⚽`;
+    }
+  } catch {
+    // pas de members.json pour ce projet
+  }
+  return fallback ?? null;
+}
+
 export async function generateStaticParams() {
   const projets = await getProjets();
   return projets.map((p) => ({ slug: p.frontmatter.slug }));
@@ -72,6 +86,7 @@ export default async function ProjetDetailPage({ params }: PageProps) {
   const { frontmatter, body } = projet;
   const primaryLink = frontmatter.links?.[0];
   const showHero = Boolean(primaryLink?.url) && (await hasScreenshot(slug));
+  const flux = await fluxBadge(slug, frontmatter.flux);
 
   const currentIndex = allProjets.findIndex(
     (p) => p.frontmatter.slug === slug,
@@ -112,9 +127,9 @@ export default async function ProjetDetailPage({ params }: PageProps) {
           </p>
         ) : null}
 
-        {frontmatter.flux ? (
+        {flux ? (
           <p className="inline-flex w-fit items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--color-accent-fg)]">
-            {frontmatter.flux}
+            {flux}
           </p>
         ) : null}
 

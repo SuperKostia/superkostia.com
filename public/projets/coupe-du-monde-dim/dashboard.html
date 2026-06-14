@@ -155,16 +155,7 @@
 const START = "20260611", END = "20260719";
 const URL = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${START}-${END}&limit=400`;
 
-// Membres du flux pour l'encart "Le flux" (chips + dates + compteur). VIVANT : ajouter une ligne ici a chaque nouveau membre.
-const MEMBERS = [
-  { name: "Dim", since: "2026-06-13" },
-  { name: "Karim", since: "2026-06-13" },
-  { name: "PAF", since: "2026-06-14" },
-  { name: "Valentin", since: "2026-06-14" },
-  { name: "Anastasia", since: "2026-06-14" },
-  { name: "Yas", since: "2026-06-14" },
-  { name: "Zander", since: "2026-06-14" },
-];
+// L'encart "Le flux" lit la liste publique vivante des membres (mise a jour auto par l'approbateur). Voir renderFlux().
 // Libelle FIGE pour les textes en prose (sous-titre, cartes, pied de page, invitation). On ne le fait PAS grandir a l'infini : il reste sur les 4 premiers.
 const RECIPIENTS_LABEL = "Dim, Karim, PAF et Valentin";
 document.querySelectorAll(".rcpt").forEach(el => { el.textContent = RECIPIENTS_LABEL; });
@@ -308,12 +299,22 @@ async function load(){
 load();
 setInterval(load, 60000);
 
-// Affiche les membres du flux avec leur date d'ajout.
+// Affiche les membres du flux (liste publique vivante) avec leur date d'ajout.
 const fluxDate = iso => new Date(iso + "T00:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
-document.getElementById("flux-count").textContent = MEMBERS.length + " membre" + (MEMBERS.length > 1 ? "s" : "");
-document.getElementById("flux-list").innerHTML = MEMBERS.map(m =>
-  `<li class="flux-member"><span class="fm-name">${esc(m.name)}</span><span class="fm-date">depuis le ${esc(fluxDate(m.since))}</span></li>`
-).join("");
+async function renderFlux(){
+  let members = [];
+  try {
+    const r = await fetch("/projets/coupe-du-monde-dim/members.json?cb=" + Date.now());
+    if (r.ok) members = await r.json();
+  } catch (e) { /* on garde l'affichage precedent */ }
+  if (!Array.isArray(members) || !members.length) return;
+  document.getElementById("flux-count").textContent = members.length + " membre" + (members.length > 1 ? "s" : "");
+  document.getElementById("flux-list").innerHTML = members.map(m =>
+    `<li class="flux-member"><span class="fm-name">${esc(m.name)}</span><span class="fm-date">depuis le ${esc(fluxDate(m.since))}</span></li>`
+  ).join("");
+}
+renderFlux();
+setInterval(renderFlux, 60000);
 
 // Formulaire de cooptation : une demande d'ajout au flux notifie Constantin sur Telegram.
 const joinBtn = document.getElementById("join-btn");

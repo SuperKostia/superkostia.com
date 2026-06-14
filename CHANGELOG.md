@@ -8,6 +8,11 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Approbation 1 tap des demandes du flux + normalisation des numéros (2026-06-14)
+- Le formulaire de cooptation passe en mode « 1 tap » : la notif Telegram porte des boutons « ✅ Ajouter au flux » / « ✖️ Ignorer ». Un service approbateur (long-polling) sur le serveur ajoute la personne + envoie le welcome automatiquement au tap, ou via une réponse Telegram pour corriger le numéro et ajouter une note.
+- Normalisation des numéros saisis sans indicatif (`lib/phone.ts`), via le pays de connexion (ex : `0627941615` + MA → `212627941615`). La notif affiche brut + normalisé + drapeau.
+- Membres dynamiques : liste publique `public/projets/coupe-du-monde-dim/members.json` que le dashboard « Le flux » lit en live et que la page projet lit pour le badge « N potes ». `lib/telegram.ts` : `sendTelegram` accepte des boutons inline.
+
 ### Contenu — Zander (7e membre, via le formulaire) rejoint le flux (2026-06-14)
 - Zander Mickael ajouté (1re demande passée par le formulaire de cooptation du dashboard) : serveur + encart « Le flux » (7 membres) + badge « 7 potes ». Prose toujours figée à 4.
 
