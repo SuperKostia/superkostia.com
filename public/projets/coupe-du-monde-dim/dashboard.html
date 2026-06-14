@@ -160,6 +160,14 @@ const URL = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/sco
 const RECIPIENTS_LABEL = "Dim, Karim, PAF et Valentin";
 document.querySelectorAll(".rcpt").forEach(el => { el.textContent = RECIPIENTS_LABEL; });
 
+// Compteur vivant pour la queue "+ N autres potes" au-dela des 4 prenoms figes. Rempli par renderFlux().
+let memberCount = null;
+const extraPotes = () => {
+  const x = (memberCount || 0) - 4;
+  return x > 0 ? ` + ${x} autre${x > 1 ? "s" : ""} pote${x > 1 ? "s" : ""}` : "";
+};
+const recipientsLabel = () => RECIPIENTS_LABEL + extraPotes();
+
 const TEAMS = {
   "Mexico":["Mexique","🇲🇽"],"South Africa":["Afrique du Sud","🇿🇦"],
   "South Korea":["Corée du Sud","🇰🇷"],"Korea Republic":["Corée du Sud","🇰🇷"],
@@ -217,7 +225,7 @@ function matchCard(ev){
     cls += " done";
     badge = '<span class="badge done">Terminé</span>';
     scoreHtml = `<div class="score">${esc(home.score)}–${esc(away.score)}</div>`;
-    foot = `<span class="sent">✅ Récap envoyé à ${RECIPIENTS_LABEL}</span>`;
+    foot = `<span class="sent">✅ Récap envoyé à ${recipientsLabel()}</span>`;
   } else if (state === "in") {
     cls += " live";
     const clk = esc(st.shortDetail || st.detail || "En cours");
@@ -289,14 +297,13 @@ async function load(){
 
   const html =
     sectionFlat("🔴 En cours", live) +
-    sectionDays("✅ Déjà notifiés", "récap envoyé à " + RECIPIENTS_LABEL, doneGroups) +
+    sectionDays("✅ Déjà notifiés", "récap envoyé à " + recipientsLabel(), doneGroups) +
     sectionDays("🕒 À venir", "calendrier complet", soonGroups);
 
   document.getElementById("content").innerHTML = html ||
     '<p class="empty">Le calendrier n\'est pas encore disponible.</p>';
 }
 
-load();
 setInterval(load, 60000);
 
 // Affiche les membres du flux (liste publique vivante) avec leur date d'ajout.
@@ -308,16 +315,16 @@ async function renderFlux(){
     if (r.ok) members = await r.json();
   } catch (e) { /* on garde l'affichage precedent */ }
   if (!Array.isArray(members) || !members.length) return;
+  memberCount = members.length;   // source unique pour la queue "+ N autres potes" (pied de match, sous-titre, invitation)
   document.getElementById("flux-count").textContent = members.length + " membre" + (members.length > 1 ? "s" : "");
   // Les 4 premiers prenoms (Dim, Karim, PAF, Valentin) restent figes dans la prose ; on accole le reste comme un compteur vivant.
-  const extra = members.length - 4;
   const more = document.getElementById("flux-more");
-  if (more) more.textContent = extra > 0 ? ` + ${extra} autre${extra > 1 ? "s" : ""} pote${extra > 1 ? "s" : ""}` : "";
+  if (more) more.textContent = extraPotes();
   document.getElementById("flux-list").innerHTML = members.map(m =>
     `<li class="flux-member"><span class="fm-name">${esc(m.name)}</span><span class="fm-date">depuis le ${esc(fluxDate(m.since))}</span></li>`
   ).join("");
 }
-renderFlux();
+renderFlux().then(load);   // on connait le nombre de membres avant le 1er rendu des matchs (pied "+ N autres potes" correct des le depart)
 setInterval(renderFlux, 60000);
 
 // Formulaire de cooptation : une demande d'ajout au flux notifie Constantin sur Telegram.
