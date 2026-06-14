@@ -8,6 +8,9 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Contenu — Valentin rejoint le flux Coupe du Monde (2026-06-14)
+- 4e destinataire ajouté. Dashboard : liste mise à jour partout (« Dim, Karim, PAF et Valentin », via la constante `RECIPIENTS_LABEL` + spans `.rcpt`). Page projet : badge « Déjà 4 potes dans le flux ». Teaser de la home (`WorldCupPromo`) passé en « Mes potes reçoivent... » (évolutif, plus besoin de le toucher à chaque ajout).
+
 ### Contenu — Page projet coupe-du-monde : sous-titre contexte + badge social (2026-06-14)
 - Sous le titre, ajout d'un **sous-titre prominent** donnant le contexte Coupe du Monde 2026, et d'un **badge** « Déjà 3 potes dans le flux ». Deux champs frontmatter optionnels `tagline` et `flux` (`lib/types.ts`), rendus conditionnellement dans l'en-tête de `app/projets/[slug]/page.tsx` (générique, n'affecte que les projets qui les renseignent).
 

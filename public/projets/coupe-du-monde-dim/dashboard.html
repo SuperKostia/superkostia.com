@@ -96,8 +96,8 @@
 <div class="wrap">
   <header>
     <div class="kicker">Automatisation WhatsApp · en direct</div>
-    <h1>Les récaps de <span class="rcpt">Dim, Karim et PAF</span></h1>
-    <p class="sub">Ce qu'un robot envoie automatiquement à <span class="rcpt">Dim, Karim et PAF</span> sur WhatsApp à la fin de chaque match de la Coupe du Monde 2026. Calendrier complet et scores tirés en direct de l'API ESPN.</p>
+    <h1>Les récaps de <span class="rcpt">Dim, Karim, PAF et Valentin</span></h1>
+    <p class="sub">Ce qu'un robot envoie automatiquement à <span class="rcpt">Dim, Karim, PAF et Valentin</span> sur WhatsApp à la fin de chaque match de la Coupe du Monde 2026. Calendrier complet et scores tirés en direct de l'API ESPN.</p>
     <div class="meta">
       <span><span class="dot"></span> Auto-actualisé toutes les 60 s</span>
       <span id="updated">Chargement…</span>
@@ -112,7 +112,7 @@
 
   <div class="join">
     <h3>📲 Reçois les récaps toi aussi</h3>
-    <p>Le score de chaque match sur WhatsApp, comme <span class="rcpt">Dim, Karim et PAF</span>. Le flux grandit par cooptation.</p>
+    <p>Le score de chaque match sur WhatsApp, comme <span class="rcpt">Dim, Karim, PAF et Valentin</span>. Le flux grandit par cooptation.</p>
     <button type="button" id="join-btn" class="btn">Demander à être ajouté →</button>
     <form id="join-form" hidden novalidate>
       <div class="row">
@@ -128,7 +128,7 @@
   <div id="content"><p class="empty">Chargement des matchs…</p></div>
 
   <footer>
-    Source : <b>API publique ESPN</b> (fifa.world), tournoi complet du 11 juin au 19 juillet 2026. Un match passe en « récap envoyé à <span class="rcpt">Dim, Karim et PAF</span> » dès qu'il est terminé. Le flux grandit par cooptation.
+    Source : <b>API publique ESPN</b> (fifa.world), tournoi complet du 11 juin au 19 juillet 2026. Un match passe en « récap envoyé à <span class="rcpt">Dim, Karim, PAF et Valentin</span> » dès qu'il est terminé. Le flux grandit par cooptation.
   </footer>
 </div>
 
@@ -137,7 +137,7 @@ const START = "20260611", END = "20260719";
 const URL = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${START}-${END}&limit=400`;
 
 // Destinataires des recaps. Source unique : pour ajouter quelqu'un, modifier cette ligne.
-const RECIPIENTS_LABEL = "Dim, Karim et PAF";
+const RECIPIENTS_LABEL = "Dim, Karim, PAF et Valentin";
 document.querySelectorAll(".rcpt").forEach(el => { el.textContent = RECIPIENTS_LABEL; });
 
 const TEAMS = {

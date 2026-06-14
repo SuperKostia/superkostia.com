@@ -21,7 +21,7 @@ export function WorldCupPromo() {
           Un bot texte les scores à mes potes
         </p>
         <p className="mt-2 font-mono text-xs leading-snug text-[color:var(--color-fg)]">
-          Dim, Karim et PAF reçoivent le score de chaque match sur WhatsApp,
+          Mes potes reçoivent le score de chaque match sur WhatsApp,
           automatiquement. Dashboard live + récaps.
         </p>
         <p className="mt-3 font-mono text-[11px] font-bold uppercase tracking-[0.15em] underline decoration-2 underline-offset-4 group-hover:text-[color:var(--color-fg)]">
