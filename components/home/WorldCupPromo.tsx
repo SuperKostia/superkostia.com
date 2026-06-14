@@ -1,8 +1,10 @@
 import NextLink from "next/link";
+import { WorldCupNextMatch } from "@/components/home/WorldCupNextMatch";
 
 /** Badge promo Coupe du Monde 2026 sur la home, dirige vers le projet des récaps WhatsApp. */
 export function WorldCupPromo() {
   return (
+    <div className="flex flex-col gap-2">
     <NextLink
       href="/projets/coupe-du-monde-dim"
       data-cursor="ouvrir"
@@ -29,5 +31,7 @@ export function WorldCupPromo() {
         </p>
       </div>
     </NextLink>
+      <WorldCupNextMatch />
+    </div>
   );
 }
