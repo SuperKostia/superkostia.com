@@ -8,6 +8,12 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Dashboard coupe-du-monde : bouton « rejoindre le flux » + notif Telegram (2026-06-14)
+- L'invitation à rejoindre le flux est devenue un vrai **bouton** qui ouvre un formulaire (prénom + numéro WhatsApp) dans le dashboard.
+- Nouvelle route API `app/api/join-flux/route.ts` : reçoit la demande, valide (+ pot de miel anti-bot), et **notifie Constantin sur Telegram** (avec contexte ville/navigateur + rappel de la procédure d'ajout). Le dashboard statique l'appelle en `fetch` (même origine).
+- DRY : envoi Telegram + contexte factorisés dans `lib/telegram.ts` (`sendTelegram`, `escapeHtml`, `buildRequestContext`), réutilisés par la route **et** la page contact (refactorisée, comportement identique). Réutilise les env vars existantes `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID`. Règle 0 € respectée (API Telegram gratuite).
+- Titre du dashboard passé à « Les récaps de Dim, Karim et PAF ».
+
 ### Style — Dashboard coupe-du-monde : tous les destinataires + cooptation (2026-06-14)
 - Le dashboard affichait « récap envoyé à Dim ». Remplacé par la liste complète des destinataires (Dim, Karim, PAF) via une constante JS unique `RECIPIENTS_LABEL` + spans `.rcpt` (sous-titre, cartes terminées, section « Déjà notifiés », pied de page). Pour ajouter quelqu'un, une seule ligne à changer.
 - Ajout d'un clin d'oeil cooptation (« Envie de le recevoir toi aussi ? Demande à être ajouté au flux 😉 »). Tiret cadratin retiré du `<title>`.

@@ -76,14 +76,28 @@
   footer { margin-top: 26px; border-top: 2px solid var(--border); padding-top: 14px; font-size: 11px; color: #6b6457; }
   footer b { color: var(--fg); }
   a { color: var(--accent); }
+
+  .join { border: 3px solid var(--border); background: var(--accent); color: #fff; box-shadow: var(--shadow); padding: 16px; margin-bottom: 26px; }
+  .join h3 { font-family: system-ui, sans-serif; font-weight: 900; text-transform: uppercase; font-size: clamp(16px, 3.5vw, 20px); letter-spacing: .01em; }
+  .join p { font-size: 12.5px; margin-top: 5px; max-width: 56ch; }
+  .btn { display: inline-block; margin-top: 12px; font-family: ui-monospace, monospace; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: 13px; background: #fff; color: var(--fg); border: 3px solid var(--border); box-shadow: 4px 4px 0 var(--border); padding: 11px 16px; cursor: pointer; }
+  .btn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--border); }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+  .btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  #join-form { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+  #join-form input.field { border: 3px solid var(--border); padding: 11px 12px; font-size: 14px; font-family: inherit; background: #fff; color: var(--fg); width: 100%; }
+  #join-form input.field:focus-visible { outline: 3px solid var(--border); outline-offset: 2px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .jf-msg { font-size: 12.5px; font-weight: 700; margin-top: 2px; min-height: 1em; }
+  @media (min-width: 520px) { #join-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div class="kicker">Automatisation WhatsApp · en direct</div>
-    <h1>Les récaps de Dim</h1>
-    <p class="sub">Ce qu'un robot envoie automatiquement à <span class="rcpt">Dim, Karim et PAF</span> sur WhatsApp à la fin de chaque match de la Coupe du Monde 2026. Calendrier complet et scores tirés en direct de l'API ESPN. <strong>Envie de le recevoir toi aussi ? Demande à être ajouté au flux 😉</strong></p>
+    <h1>Les récaps de <span class="rcpt">Dim, Karim et PAF</span></h1>
+    <p class="sub">Ce qu'un robot envoie automatiquement à <span class="rcpt">Dim, Karim et PAF</span> sur WhatsApp à la fin de chaque match de la Coupe du Monde 2026. Calendrier complet et scores tirés en direct de l'API ESPN.</p>
     <div class="meta">
       <span><span class="dot"></span> Auto-actualisé toutes les 60 s</span>
       <span id="updated">Chargement…</span>
@@ -94,6 +108,21 @@
     <div class="stat"><div class="n" id="n-done">–</div><div class="l">Récaps envoyés</div></div>
     <div class="stat"><div class="n" id="n-live">–</div><div class="l">En cours</div></div>
     <div class="stat"><div class="n" id="n-soon">–</div><div class="l">À venir</div></div>
+  </div>
+
+  <div class="join">
+    <h3>📲 Reçois les récaps toi aussi</h3>
+    <p>Le score de chaque match sur WhatsApp, comme <span class="rcpt">Dim, Karim et PAF</span>. Le flux grandit par cooptation.</p>
+    <button type="button" id="join-btn" class="btn">Demander à être ajouté →</button>
+    <form id="join-form" hidden novalidate>
+      <div class="row">
+        <input class="field" type="text" id="jf-prenom" name="prenom" placeholder="Ton prénom" aria-label="Ton prénom" autocomplete="given-name" maxlength="40" />
+        <input class="field" type="tel" id="jf-wa" name="whatsapp" placeholder="Ton numéro WhatsApp (+33…)" aria-label="Ton numéro WhatsApp" autocomplete="tel" maxlength="30" />
+      </div>
+      <input class="hp" type="text" id="jf-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <button type="submit" id="jf-submit" class="btn">Envoyer ma demande</button>
+      <p class="jf-msg" id="jf-msg" role="status" aria-live="polite"></p>
+    </form>
   </div>
 
   <div id="content"><p class="empty">Chargement des matchs…</p></div>
@@ -249,6 +278,46 @@ async function load(){
 
 load();
 setInterval(load, 60000);
+
+// Formulaire de cooptation : une demande d'ajout au flux notifie Constantin sur Telegram.
+const joinBtn = document.getElementById("join-btn");
+const joinForm = document.getElementById("join-form");
+const jfMsg = document.getElementById("jf-msg");
+const jfSubmit = document.getElementById("jf-submit");
+joinBtn.addEventListener("click", () => {
+  joinForm.hidden = false;
+  joinBtn.hidden = true;
+  document.getElementById("jf-prenom").focus();
+});
+joinForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const prenom = document.getElementById("jf-prenom").value.trim();
+  const whatsapp = document.getElementById("jf-wa").value.trim();
+  const honeypot = document.getElementById("jf-hp").value;
+  if (prenom.length < 2 || whatsapp.replace(/[^0-9]/g, "").length < 8) {
+    jfMsg.textContent = "Indique ton prénom et un numéro WhatsApp valide.";
+    return;
+  }
+  jfSubmit.disabled = true;
+  jfMsg.textContent = "Envoi…";
+  try {
+    const r = await fetch("/api/join-flux", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prenom, whatsapp, honeypot }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (r.ok && data.ok) {
+      joinForm.innerHTML = "<p class=\"jf-msg\">✅ Demande envoyée. Constantin te recontactera pour t'ajouter au flux.</p>";
+    } else {
+      jfMsg.textContent = "Échec de l'envoi. Réessaie dans un instant.";
+      jfSubmit.disabled = false;
+    }
+  } catch (err) {
+    jfMsg.textContent = "Pas de réseau. Réessaie.";
+    jfSubmit.disabled = false;
+  }
+});
 </script>
 </body>
 </html>
