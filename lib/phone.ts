@@ -16,20 +16,46 @@ export type NormalizedPhone = {
   confident: boolean;
 };
 
+// Indicatifs du plus long au plus court, pour repérer le préfixe pays dans un numéro international.
+const CODES_BY_LEN = Array.from(new Set(Object.values(CALLING_CODES))).sort(
+  (a, b) => b.length - a.length,
+);
+
+// Pays qui CONSERVENT le 0 après l'indicatif en E.164 (ex: lignes fixes italiennes +39 06...).
+// On ne touche jamais à leur 0.
+const TRUNK_ZERO_RETAINED = new Set(["39"]);
+
+/**
+ * Retire un 0 parasite collé juste après l'indicatif pays (zéro de courtoisie /
+ * préfixe national). En E.164, il n'y a (presque) jamais de 0 immédiatement après
+ * l'indicatif. Ex: 4407485216933 -> 447485216933 (UK). Exception: cf. TRUNK_ZERO_RETAINED.
+ */
+function stripTrunkZero(digits: string): string {
+  for (const code of CODES_BY_LEN) {
+    if (TRUNK_ZERO_RETAINED.has(code)) continue;
+    if (digits.startsWith(code + "0")) {
+      return code + digits.slice(code.length + 1);
+    }
+  }
+  return digits;
+}
+
 /**
  * Normalise un numéro saisi (souvent sans indicatif international) en E.164 sans +.
  * Utilise le pays détecté (ISO alpha-2) pour les formats nationaux (commençant par 0).
  */
 export function normalizePhone(raw: string, country?: string): NormalizedPhone {
-  const cleaned = (raw || "").replace(/[^\d+]/g, "");
+  // Retire le « zéro de courtoisie » type "+44 (0) 7485 216933" avant tout nettoyage.
+  const pre = (raw || "").replace(/\(\s*0\s*\)/g, "");
+  const cleaned = pre.replace(/[^\d+]/g, "");
   const cc = country ? CALLING_CODES[country.toUpperCase()] : undefined;
 
   if (cleaned.startsWith("+")) {
-    const digits = cleaned.slice(1).replace(/\D/g, "");
+    const digits = stripTrunkZero(cleaned.slice(1).replace(/\D/g, ""));
     return { e164: digits, confident: digits.length >= 8 };
   }
   if (cleaned.startsWith("00")) {
-    const digits = cleaned.slice(2);
+    const digits = stripTrunkZero(cleaned.slice(2));
     return { e164: digits, confident: digits.length >= 8 };
   }
   if (cleaned.startsWith("0")) {
