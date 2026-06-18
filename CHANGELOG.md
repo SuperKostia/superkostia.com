@@ -8,6 +8,12 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Dashboard Choose France : vue Avancement + fix scroll sidebar (2026-06-18)
+- `public/projets/choose-france-2026/dashboard.html` enrichi des données d'avancement de chaque projet (phase, permis obtenu, phase design, travaux démarrés, source) et du secteur T&T, injectés dans le `const DATA` embarqué.
+- Nouvelle 3e vue « Avancement » dans le toggle : les cercles sont recolorés par phase (Annoncé → Études/Design → Permis obtenu → Travaux démarrés → Opérationnel) via une rampe séquentielle, avec une légende dédiée et compteurs. La vue « Projets » garde la couleur par famille de secteur.
+- Popup enrichie : ligne « Secteur T&T » + bloc d'avancement (pastille de phase, 3 badges Permis/Design/Travaux colorés Oui/Non/n.c., note sourcée avec lien). La liste latérale gagne un repère de phase par projet.
+- Fix : la liste « Projets » de la sidebar s'écrasait à ~1 ligne sur écrans courts (impossible de scroller). `#panel` devient scrollable et `.plist` reçoit `flex:1 1 0; min-height:260px`, garantissant une zone de liste utilisable et scrollable à toutes les hauteurs.
+
 ### Feat — Approbation 1 tap des demandes du flux + normalisation des numéros (2026-06-14)
 - Le formulaire de cooptation passe en mode « 1 tap » : la notif Telegram porte des boutons « ✅ Ajouter au flux » / « ✖️ Ignorer ». Un service approbateur (long-polling) sur le serveur ajoute la personne + envoie le welcome automatiquement au tap, ou via une réponse Telegram pour corriger le numéro et ajouter une note.
 - Normalisation des numéros saisis sans indicatif (`lib/phone.ts`), via le pays de connexion (ex : `0627941615` + MA → `212627941615`). La notif affiche brut + normalisé + drapeau.
