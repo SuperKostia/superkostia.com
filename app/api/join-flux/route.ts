@@ -7,6 +7,7 @@ import { normalizePhone, countryFlag } from "@/lib/phone";
 type JoinBody = {
   prenom?: unknown;
   whatsapp?: unknown;
+  team?: unknown;
   honeypot?: unknown;
 };
 
@@ -21,6 +22,8 @@ export async function POST(req: Request) {
 
   const prenom = typeof body.prenom === "string" ? body.prenom.trim() : "";
   const whatsapp = typeof body.whatsapp === "string" ? body.whatsapp.trim() : "";
+  const team =
+    typeof body.team === "string" ? body.team.trim().slice(0, 40) : "";
   const honeypot = typeof body.honeypot === "string" ? body.honeypot : "";
 
   // Pot de miel : un bot le remplit, on fait semblant d'accepter sans rien envoyer.
@@ -41,6 +44,7 @@ export async function POST(req: Request) {
     "📲 <b>Nouvelle demande pour le flux Coupe du Monde</b>",
     "",
     `<b>Prénom :</b> ${escapeHtml(prenom)}`,
+    ...(team ? [`<b>⚽ Équipe :</b> ${escapeHtml(team)}`] : []),
     `<b>Numéro saisi :</b> ${escapeHtml(whatsapp)}`,
     `<b>➕ À ajouter :</b> <code>${escapeHtml(norm.e164)}</code> ${flag}${norm.confident ? "" : "  ⚠️ <i>indicatif déduit, à vérifier</i>"}`,
   ];

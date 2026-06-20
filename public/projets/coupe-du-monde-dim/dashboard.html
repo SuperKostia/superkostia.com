@@ -154,6 +154,8 @@
         <input class="field" type="text" id="jf-prenom" name="prenom" placeholder="Ton prénom" aria-label="Ton prénom" autocomplete="given-name" maxlength="40" />
         <input class="field" type="tel" id="jf-wa" name="whatsapp" placeholder="Ton numéro WhatsApp (+33…)" aria-label="Ton numéro WhatsApp" autocomplete="tel" maxlength="30" />
       </div>
+      <input class="field" type="text" id="jf-team" name="team" placeholder="L'équipe que tu supportes (optionnel)" aria-label="L'équipe que tu supportes" list="teamlist" maxlength="40" autocomplete="off" />
+      <datalist id="teamlist"></datalist>
       <input class="hp" type="text" id="jf-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
       <button type="submit" id="jf-submit" class="btn">Envoyer ma demande</button>
       <p class="jf-msg" id="jf-msg" role="status" aria-live="polite"></p>
@@ -211,6 +213,16 @@ const TEAMS = {
   "Chile":["Chili","🇨🇱"],"Cameroon":["Cameroun","🇨🇲"],"Mali":["Mali","🇲🇱"]
 };
 const team = n => TEAMS[n] || [n, "⚽"];
+
+// Nom FR -> drapeau, pour afficher l'equipe supportee dans "Le flux" + remplir le champ du formulaire.
+const FR_FLAG = {};
+Object.values(TEAMS).forEach(([fr, fl]) => { FR_FLAG[fr] = fl; });
+(function fillTeamList(){
+  const dl = document.getElementById("teamlist");
+  if (!dl) return;
+  const names = [...new Set(Object.values(TEAMS).map(([fr]) => fr))].sort((a, b) => a.localeCompare(b, "fr"));
+  dl.innerHTML = names.map(n => `<option value="${n}"></option>`).join("");
+})();
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const stateOf = e => e.competitions[0].status.type.state;
 const dayKey = iso => new Date(iso).toLocaleDateString("fr-CA");
@@ -336,9 +348,10 @@ async function renderFlux(){
   // Les 4 premiers prenoms (Dim, Karim, PAF, Valentin) restent figes dans la prose ; on accole le reste comme un compteur vivant.
   const more = document.getElementById("flux-more");
   if (more) more.textContent = extraPotes();
-  document.getElementById("flux-list").innerHTML = members.map(m =>
-    `<li class="flux-member"><span class="fm-name">${esc(m.name)}</span><span class="fm-date">depuis le ${esc(fluxDate(m.since))}</span></li>`
-  ).join("");
+  document.getElementById("flux-list").innerHTML = members.map(m => {
+    const fl = m.team ? (FR_FLAG[m.team] || "") : "";
+    return `<li class="flux-member"><span class="fm-name">${fl ? fl + " " : ""}${esc(m.name)}</span><span class="fm-date">depuis le ${esc(fluxDate(m.since))}</span></li>`;
+  }).join("");
 }
 renderFlux().then(load);   // on connait le nombre de membres avant le 1er rendu des matchs (pied "+ N autres potes" correct des le depart)
 setInterval(renderFlux, 60000);
@@ -357,6 +370,7 @@ joinForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const prenom = document.getElementById("jf-prenom").value.trim();
   const whatsapp = document.getElementById("jf-wa").value.trim();
+  const team = document.getElementById("jf-team").value.trim();
   const honeypot = document.getElementById("jf-hp").value;
   if (prenom.length < 2 || whatsapp.replace(/[^0-9]/g, "").length < 8) {
     jfMsg.textContent = "Indique ton prénom et un numéro WhatsApp valide.";
@@ -368,7 +382,7 @@ joinForm.addEventListener("submit", async (e) => {
     const r = await fetch("/api/join-flux", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prenom, whatsapp, honeypot }),
+      body: JSON.stringify({ prenom, whatsapp, team, honeypot }),
     });
     const data = await r.json().catch(() => ({}));
     if (r.ok && data.ok) {
