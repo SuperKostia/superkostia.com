@@ -8,6 +8,11 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Coupe du Monde : alertes but de la France en direct (2026-06-22) — hors repo (serveur)
+- Pendant les matchs de la France **et la France seulement**, le serveur sonde le score **en direct** (API ESPN) et envoie à **tout le flux** une alerte WhatsApp à chaque but français, via le même bridge que les récaps. **Escalade** : à chaque but, +1 « O » et +1 « A » dans GO…A…L, +1 ⚽/🔥/🐓, 🇫🇷 tous les 2 buts, 🎉 dès le 3e, 🥳 dès le 4e. Accroches écrites 1→6 (avec accents : « TRIPLÉ ! LA FRANCE DÉROULE ! ») + filet générique au-delà.
+- Mécanisme (`notify.py`) : `france_alerts()` / `compose_france_goal()`, nouvelle **fenêtre live** (coup d'envoi −2 min → +2h45, couvre prolongations + tab), détection `is_france`, anti-doublon + seed dans `france_goals.json` (1re observation d'un match = seed du score courant **sans envoyer** → zéro backfill ; puis envoi des buts manquants à chaque hausse, gère les buts multiples entre deux sondages). Timer du notifier passé de **5 min à 1 min** (reste no-op hors fenêtre). Le récap de fin de match est inchangé.
+- **100 % serveur (hors dépôt)** : aucun fichier du repo modifié. Architecture cf. `DECISIONS.md #010`.
+
 ### Feat — Coupe du Monde : équipe supportée à l'inscription + autocomplétion maison (2026-06-22)
 - Le formulaire de cooptation demande aussi **l'équipe supportée** (champ optionnel). Transmise à la notif Telegram (`⚽ Équipe : …`), stockée (champ `team`) dans `members.json`, et affichée en **drapeau à côté de chaque pote** dans l'encart « Le flux » (map nom FR → drapeau côté dashboard).
 - Le `<datalist>` natif (rendu navigateur, non stylable, dropdown mal positionné à droite du champ) est remplacé par un **combobox maison** : liste positionnée sous le champ à la charte, drapeau par équipe, recherche insensible aux accents, navigation clavier (↑/↓/Entrée/Échap) + ARIA. Free text toujours possible.
