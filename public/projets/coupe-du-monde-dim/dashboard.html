@@ -100,6 +100,13 @@
   #join-form { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
   #join-form input.field { border: 3px solid var(--border); padding: 11px 12px; font-size: 14px; font-family: inherit; background: #fff; color: var(--fg); width: 100%; }
   #join-form input.field:focus-visible { outline: 3px solid var(--border); outline-offset: 2px; }
+  .combo { position: relative; }
+  .combo-list { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 60; max-height: 240px; overflow-y: auto; margin: 0; padding: 0; list-style: none; background: #fff; border: 3px solid var(--border); box-shadow: var(--shadow); }
+  .combo-list[hidden] { display: none; }
+  .combo-opt { display: flex; align-items: center; gap: 9px; padding: 9px 12px; font-size: 14px; color: var(--fg); cursor: pointer; border-bottom: 1px solid rgba(20,17,13,.1); }
+  .combo-opt:last-child { border-bottom: 0; }
+  .combo-opt.active { background: var(--accent); color: #fff; }
+  .combo-flag { font-size: 17px; line-height: 1; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
   .jf-msg { font-size: 12.5px; font-weight: 700; margin-top: 2px; min-height: 1em; }
   @media (min-width: 520px) { #join-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } }
@@ -154,8 +161,10 @@
         <input class="field" type="text" id="jf-prenom" name="prenom" placeholder="Ton prénom" aria-label="Ton prénom" autocomplete="given-name" maxlength="40" />
         <input class="field" type="tel" id="jf-wa" name="whatsapp" placeholder="Ton numéro WhatsApp (+33…)" aria-label="Ton numéro WhatsApp" autocomplete="tel" maxlength="30" />
       </div>
-      <input class="field" type="text" id="jf-team" name="team" placeholder="L'équipe que tu supportes (optionnel)" aria-label="L'équipe que tu supportes" list="teamlist" maxlength="40" autocomplete="off" />
-      <datalist id="teamlist"></datalist>
+      <div class="combo">
+        <input class="field" type="text" id="jf-team" name="team" placeholder="L'équipe que tu supportes (optionnel)" aria-label="L'équipe que tu supportes" maxlength="40" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="team-options" />
+        <ul class="combo-list" id="team-options" role="listbox" hidden></ul>
+      </div>
       <input class="hp" type="text" id="jf-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
       <button type="submit" id="jf-submit" class="btn">Envoyer ma demande</button>
       <p class="jf-msg" id="jf-msg" role="status" aria-live="polite"></p>
@@ -214,15 +223,12 @@ const TEAMS = {
 };
 const team = n => TEAMS[n] || [n, "⚽"];
 
-// Nom FR -> drapeau, pour afficher l'equipe supportee dans "Le flux" + remplir le champ du formulaire.
+// Nom FR -> drapeau (affichage de l'equipe dans "Le flux") + liste pour l'autocompletion maison.
 const FR_FLAG = {};
 Object.values(TEAMS).forEach(([fr, fl]) => { FR_FLAG[fr] = fl; });
-(function fillTeamList(){
-  const dl = document.getElementById("teamlist");
-  if (!dl) return;
-  const names = [...new Set(Object.values(TEAMS).map(([fr]) => fr))].sort((a, b) => a.localeCompare(b, "fr"));
-  dl.innerHTML = names.map(n => `<option value="${n}"></option>`).join("");
-})();
+const TEAM_LIST = [...new Map(Object.values(TEAMS).map(([fr, fl]) => [fr, fl])).entries()]
+  .map(([name, flag]) => ({ name, flag }))
+  .sort((a, b) => a.name.localeCompare(b.name, "fr"));
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const stateOf = e => e.competitions[0].status.type.state;
 const dayKey = iso => new Date(iso).toLocaleDateString("fr-CA");
@@ -396,6 +402,51 @@ joinForm.addEventListener("submit", async (e) => {
     jfSubmit.disabled = false;
   }
 });
+
+// Autocomplétion maison du champ équipe (le <datalist> natif se positionne mal et n'est pas stylable).
+function setupTeamCombo(){
+  const input = document.getElementById("jf-team");
+  const listEl = document.getElementById("team-options");
+  if (!input || !listEl) return;
+  const norm = s => s.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase();
+  let current = [], active = -1;
+
+  const close = () => { listEl.hidden = true; input.setAttribute("aria-expanded", "false"); input.removeAttribute("aria-activedescendant"); active = -1; };
+  const render = items => {
+    current = items; active = -1;
+    if (!items.length) { close(); return; }
+    listEl.innerHTML = items.map((o, i) =>
+      `<li class="combo-opt" role="option" id="team-opt-${i}" data-i="${i}"><span class="combo-flag">${o.flag}</span>${esc(o.name)}</li>`
+    ).join("");
+    listEl.hidden = false; input.setAttribute("aria-expanded", "true");
+  };
+  const filter = () => {
+    const q = norm(input.value.trim());
+    render(q ? TEAM_LIST.filter(o => norm(o.name).includes(q)) : TEAM_LIST);
+  };
+  const choose = i => { if (i >= 0 && i < current.length) input.value = current[i].name; close(); };
+  const setActive = i => {
+    active = i;
+    [...listEl.children].forEach((el, idx) => el.classList.toggle("active", idx === active));
+    if (active >= 0) { input.setAttribute("aria-activedescendant", "team-opt-" + active); listEl.children[active].scrollIntoView({ block: "nearest" }); }
+  };
+
+  input.addEventListener("input", filter);
+  input.addEventListener("focus", filter);
+  input.addEventListener("keydown", e => {
+    if (listEl.hidden && e.key === "ArrowDown") { filter(); return; }
+    if (e.key === "ArrowDown") { e.preventDefault(); setActive(Math.min(active + 1, current.length - 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setActive(Math.max(active - 1, 0)); }
+    else if (e.key === "Enter" && active >= 0) { e.preventDefault(); choose(active); }
+    else if (e.key === "Escape") { close(); }
+  });
+  listEl.addEventListener("mousedown", e => {
+    const li = e.target.closest(".combo-opt"); if (!li) return;
+    e.preventDefault(); choose(parseInt(li.dataset.i, 10));
+  });
+  input.addEventListener("blur", () => setTimeout(close, 120));
+}
+setupTeamCombo();
 </script>
 </body>
 </html>
