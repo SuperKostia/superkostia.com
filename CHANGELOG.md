@@ -8,6 +8,24 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Coupe du Monde : équipe supportée à l'inscription + autocomplétion maison (2026-06-22)
+- Le formulaire de cooptation demande aussi **l'équipe supportée** (champ optionnel). Transmise à la notif Telegram (`⚽ Équipe : …`), stockée (champ `team`) dans `members.json`, et affichée en **drapeau à côté de chaque pote** dans l'encart « Le flux » (map nom FR → drapeau côté dashboard).
+- Le `<datalist>` natif (rendu navigateur, non stylable, dropdown mal positionné à droite du champ) est remplacé par un **combobox maison** : liste positionnée sous le champ à la charte, drapeau par équipe, recherche insensible aux accents, navigation clavier (↑/↓/Entrée/Échap) + ARIA. Free text toujours possible.
+- Hors repo (serveur approbateur) : `parse_team`, stockage du champ `team`, liste publique enrichie, petite perso du welcome (« Tu supportes … »).
+
+### Fix — Coupe du Monde : robustesse approbation 1 tap + normalisation des numéros (2026-06-15)
+- `lib/phone.ts` : retire le **« 0 » de courtoisie** (`+44 (0) 7485 216933` donnait `4407485216933`, un numéro invalide → welcome qui plantait) et un 0 collé après l'indicatif, **avec exception pour les pays qui le conservent en E.164** (Italie `+39 06…`). Couvert par tests manuels (7 cas).
+- Hors repo (serveur approbateur) : feedback Telegram **instantané** + clavier retiré au tap (évite le « moulinage » qui poussait à re-taper → welcomes en double), welcome envoyé **seulement si l'ajout est réel**, et un welcome qui plante n'affiche plus un spinner bloqué mais un statut explicite (« numéro injoignable, corrige par réponse »). Seed du nouveau membre pour ne pas re-spammer les matchs déjà passés.
+
+### Feat — Home : bande « match en cours / prochain » sous la card Coupe du Monde (2026-06-14)
+- `components/home/WorldCupNextMatch.tsx` (client) interroge l'API ESPN (CORS ouvert, 0 €, refresh 60 s) et affiche sous la card promo le **match en cours** (score + horloge, point rouge pulsé) ou, à défaut, le **prochain match** (date), cliquable vers le dashboard live. `lib/teams.ts` partage les noms FR + drapeaux. La bande disparaît s'il n'y a plus aucun match à venir.
+
+### Contenu — Dashboard Coupe du Monde : bouton retour, favicon, image de partage + compteur « + N potes » (2026-06-14)
+- Bouton **« ← Retour sur superkostia »** (`target="_top"` pour sortir de l'iframe quand le dashboard est embarqué), **favicon ⚽** (SVG data-uri), et **Open Graph + Twitter card** avec une image `og.png` 1200×630 à la DA du site (cream / lime / marque SK, générée via `rsvg-convert`) — le partage du lien affiche enfin un aperçu visuel.
+- Compteur vivant **« + N autres potes »** (membres au-delà des 4 prénoms figés) sur la CTA du flux, le pied de chaque carte match et le sous-titre « Déjà notifiés », calculé sur `members.json`.
+- Bouton **« ⤢ Plein écran »** visible posé sur le frame de l'iframe (page projet), plus lien renforcé sous le preview.
+- Résumé du projet réécrit pour refléter l'évolution (parti pour Dim, devenu un flux de potes qui grandit).
+
 ### Feat — Dashboard Choose France : vue Avancement + fix scroll sidebar (2026-06-18)
 - `public/projets/choose-france-2026/dashboard.html` enrichi des données d'avancement de chaque projet (phase, permis obtenu, phase design, travaux démarrés, source) et du secteur T&T, injectés dans le `const DATA` embarqué.
 - Nouvelle 3e vue « Avancement » dans le toggle : les cercles sont recolorés par phase (Annoncé → Études/Design → Permis obtenu → Travaux démarrés → Opérationnel) via une rampe séquentielle, avec une légende dédiée et compteurs. La vue « Projets » garde la couleur par famille de secteur.
@@ -61,7 +79,7 @@ Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules time
 - Ajout du projet **Les récaps WhatsApp de Dim** dans `/projets` : un robot qui envoie à un ami le score de chaque match de la Coupe du Monde 2026 sur WhatsApp, automatiquement, dès le coup de sifflet final.
 - `content/projets/coupe-du-monde-dim.mdx` : type `perso`, status `en-cours`, year 2026. Explication technique complète (bridge WhatsApp en Go/whatsmeow recompilé sur le serveur, notifier Python sans dépendance, planification systemd calée sur le calendrier réel des matchs). Dashboard live embarqué en iframe + lien plein écran.
 - `public/projets/coupe-du-monde-dim/dashboard.html` : artefact single-file autonome qui interroge l'API publique ESPN (gratuite, CORS ouverte, sans clé) côté navigateur et affiche en direct le **calendrier complet du tournoi** (plage de dates `20260611-20260719` en un seul appel), groupé par jour : matchs déjà notifiés (récap envoyé à Dim) / en cours / à venir, avec drapeaux et noms en français. DA brutaliste propre au dashboard, auto-actualisation toutes les 60 s. Règle 0 € respectée.
-- Système hors repo : bridge Go/whatsmeow + notifier Python + services `systemd` (service bridge KeepAlive + timer notifier 5 min, gate calendrier) sur un serveur Hetzner Cloud CX23.
+- Système hors repo : bridge Go/whatsmeow + notifier Python + services `systemd` (service bridge KeepAlive + timer notifier 5 min, gate calendrier) sur un serveur Hetzner Cloud CX23. Architecture repo ↔ serveur détaillée en `DECISIONS.md #010`.
 
 ### Contenu — Nouveau projet `choose-france-2026` : dashboard cartographique (2026-06-10)
 - Ajout du projet **Choose France 2026** dans `/projets` : dashboard interactif des 71 investissements étrangers annoncés au sommet de Versailles (93 Md€), géolocalisés site par site, cercles proportionnels au CAPEX, vues projets/régions, filtres par famille de secteur.

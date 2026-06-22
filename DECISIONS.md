@@ -196,3 +196,29 @@ warp (turbulence 19s) ───────────────────�
 - Établit la convention : **pour les visuels génératifs / texturés, on cherche d'abord la solution SVG filter avant d'envisager une lib graphique**. Cette décision peut servir de référence si le besoin se représente (autres heroes, transitions, accents visuels).
 - Aucune dépendance ajoutée.
 - Composant `components/ui/WaterField.tsx` (~190 lignes, doc inline expliquant chaque maillon de la chaîne) + classe CSS `.water-field` portable (`position: absolute; inset: 0; z-index: -1; pointer-events: none`). Réutilisable dans n'importe quel parent ayant `position: relative` + `isolation: isolate`. Pas de props pour l'instant — les 2 usages actuels (home hero + carte voyages) veulent exactement la même palette Hockney. Quand un 3e usage demandera autre chose, ajouter des props (palette, periods, displacement scale).
+
+---
+
+## #010 — Récaps Coupe du Monde : dashboard statique dans le repo + système d'envoi hors repo, synchronisés par l'API GitHub
+
+**Date** : 2026-06-13 (architecture posée), enrichie jusqu'au 2026-06-22.
+**Statut** : Acceptée.
+
+**Contexte.** Le projet `coupe-du-monde-dim` a deux besoins de natures opposées : (a) une **page vitrine + un dashboard live public** sur superkostia.com, et (b) un **système qui envoie des récaps WhatsApp 24h/24**, indépendant du Mac de Kostia (donc sur un serveur), avec une boucle de cooptation (formulaire → approbation → ajout). WhatsApp n'a pas d'API d'envoi officielle pour les particuliers, et la règle 0 € (CDC #1) interdit tout service payant.
+
+**Décision.** Séparation nette **repo (public, statique) / serveur (opérationnel, privé)** :
+1. **Dans le repo** : `public/projets/coupe-du-monde-dim/dashboard.html`, un artefact single-file qui interroge l'**API publique ESPN** côté navigateur (CORS ouvert, sans clé) — calendrier + scores en direct, zéro backend. La page projet (`content/projets/coupe-du-monde-dim.mdx`) l'embarque en iframe. Le formulaire de cooptation POST sur une route Next (`app/api/join-flux/route.ts`) qui **notifie via Telegram** (approbation 1 tap).
+2. **Hors repo, sur un serveur Hetzner** : bridge Go/whatsmeow (appareil lié, `POST /api/send`), notifier Python calé sur le calendrier (timer systemd, fenêtre KO+1h45→+3h30), et un approbateur Telegram (long-polling). La **source de vérité des membres** (`members.json` **avec les numéros**) vit sur le serveur, privée.
+3. **Pont repo ↔ serveur** : l'approbateur pousse une **copie publique assainie** de la liste (prénom + date + équipe, **sans numéros**) vers `public/projets/coupe-du-monde-dim/members.json` du repo via l'**API GitHub Contents** (PAT fine-grained, Contents:write) → Vercel redéploie → le dashboard la lit en live (encart « Le flux », badge « N potes »).
+
+**Raison.**
+- **Dashboard statique + ESPN client-side** : impactant, live, zéro coût, zéro backend à maintenir. Cohérent avec le pattern déjà retenu pour `choose-france-2026` (artefact single-file embarqué).
+- **Envoi sur serveur, pas sur le Mac** : un récap doit partir « dès le coup de sifflet final », Mac allumé ou non. systemd garantit le 24h/24 et le redémarrage auto.
+- **Numéros jamais dans le repo** : la liste publique est dérivée et expurgée. Le repo reste la source du *public-facing*, le serveur possède la donnée opérationnelle (numéros, état anti-doublon). On évite tout secret côté site statique.
+- **Sync par l'API GitHub plutôt qu'un backend partagé** : pas de base commune à opérer, le repo Git fait office de canal de publication (versionné, auditable), et Vercel sert la liste via son CDN.
+
+**Limites / impact.**
+- Le **PAT GitHub expire** (~90 j). À l'expiration : l'ajout + le welcome continuent de fonctionner, mais la **liste publique du dashboard cesse de se mettre à jour seule** jusqu'à ce qu'on régénère le PAT dans l'`.env` du serveur. À surveiller.
+- Le couplage repo↔serveur se limite à deux points : (1) la route `/api/join-flux` → Telegram, (2) le push GitHub de la liste publique. Tout le reste du système (bridge, notifier, members.json avec numéros, `sent.json`, normalisation serveur) est **hors repo** — ne pas chercher ce code dans le dépôt.
+- `lib/phone.ts`, `lib/telegram.ts`, `lib/teams.ts` sont la part *repo* de la chaîne (normalisation des numéros à la saisie, envoi Telegram factorisé, noms FR + drapeaux partagés home/dashboard).
+- Détails opérationnels du serveur (chemins, services systemd, gotchas) : voir la mémoire projet `project_wc2026_dim_recaps`, hors dépôt.
