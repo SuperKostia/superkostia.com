@@ -1,0 +1,58 @@
+---
+title: "Parcoursoup"
+slug: "parcoursoup"
+type: "perso"
+status: "publie"
+year: 2026
+date: "2026-10-27"
+tags: ["éducation", "orientation", "ia", "données ouvertes", "veille"]
+summary: "Pour chaque formation de Parcoursup, ce que l'IA fait déjà dans les métiers visés, si les employeurs recrutent toujours, ce que l'État prévoit pour 2030 et ce que deviennent les diplômés. Parodie dans le nom, sérieux dans les chiffres : 982 diplômes, 1 923 métiers, 10 sources publiques, une veille hebdomadaire."
+stack: ["Astro", "Cloudflare Pages", "Python", "Claude Opus", "Grok", "données ouvertes"]
+links:
+  - label: "parcoursoup.fr"
+    url: "https://parcoursoup.fr"
+  - label: "La méthode"
+    url: "https://parcoursoup.fr/methode/"
+featured: true
+---
+
+## Le pitch
+
+Parcoursup aide les lycéens à choisir une formation à partir de ce qui existe
+aujourd'hui. Parcoursoup veut les aider à choisir à partir de ce qui risque
+d'exister demain.
+
+« Tu choisis aujourd'hui des études qui se termineront en 2031. Mais sais-tu
+à quoi ressemblera le marché du travail en 2031 ? »
+
+## Ce qu'il y a dedans
+
+- **982 diplômes** de Parcoursup 2026, soit 25 793 offres de formation, reliés
+  aux **1 923 métiers** du ROME par le répertoire officiel des diplômes.
+- Pour chaque métier, l'**exposition à l'IA** mesurée sur l'usage réel d'un
+  assistant IA, les **intentions d'embauche des employeurs** depuis 2019, ce que
+  l'État **prévoyait pour 2030** avant ChatGPT, et l'**insertion des diplômés**.
+- Un **indice d'avenir sur 100** par formation, quatre sous-scores, et des
+  verdicts à règles écrites noir sur blanc. Aucune probabilité inventée, aucune
+  cote : sur 1 923 métiers, « l'IA sait le faire » et « les employeurs
+  embauchent moins » ne sont pas corrélés, le site montre les deux.
+- Une **veille hebdomadaire**, web et X, qui relève les annonces d'agents, de
+  startups et de suppressions de postes touchant les métiers, avec source et
+  solidité de 1 à 5.
+- Un comparateur, une page Méthode qui détaille chaque pondération et chaque
+  limite, un site en langage courant pour un élève de terminale.
+
+## Comment c'est fait
+
+Dix sources publiques, toutes citées et datées : Parcoursup, RNCP, ROME,
+ESCO et O*NET, l'Anthropic Economic Index, l'enquête Besoins en main-d'œuvre
+de France Travail, Les Métiers en 2030, InserSup, InserJeunes. Le seul maillon
+que les tables officielles ne couvrent pas, la correspondance entre les métiers
+français et américains, est fait par un modèle de langage, confiance affichée
+sur chaque fiche.
+
+Construit en une journée, le 27 octobre 2026, avec Claude Code : données en
+Python, site statique Astro de 2 900 pages, déploiement Cloudflare Pages à
+chaque commit, veille automatique le lundi matin avec notification Telegram.
+
+Site indépendant et non commercial, sans cookie, sans compte, sans publicité.

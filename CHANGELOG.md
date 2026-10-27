@@ -8,6 +8,9 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Projets : fiche Parcoursoup (2026-10-27)
+- Nouvelle fiche `content/projets/parcoursoup.mdx` (type perso, mise en avant) pour parcoursoup.fr, l'observatoire de l'avenir des formations Parcoursup face à l'IA, avec capture d'écran `public/images/projets/parcoursoup.jpg`.
+
 ### Feat — Coupe du Monde : alertes but de la France en direct (2026-06-22) — hors repo (serveur)
 - Pendant les matchs de la France **et la France seulement**, le serveur sonde le score **en direct** (API ESPN) et envoie à **tout le flux** une alerte WhatsApp à chaque but français, via le même bridge que les récaps. **Escalade** : à chaque but, +1 « O » et +1 « A » dans GO…A…L, +1 ⚽/🔥/🐓, 🇫🇷 tous les 2 buts, 🎉 dès le 3e, 🥳 dès le 4e. Accroches écrites 1→6 (avec accents : « TRIPLÉ ! LA FRANCE DÉROULE ! ») + filet générique au-delà.
 - Mécanisme (`notify.py`) : `france_alerts()` / `compose_france_goal()`, nouvelle **fenêtre live** (coup d'envoi −2 min → +2h45, couvre prolongations + tab), détection `is_france`, anti-doublon + seed dans `france_goals.json` (1re observation d'un match = seed du score courant **sans envoyer** → zéro backfill ; puis envoi des buts manquants à chaque hausse, gère les buts multiples entre deux sondages). Timer du notifier passé de **5 min à 1 min** (reste no-op hors fenêtre). Le récap de fin de match est inchangé.
