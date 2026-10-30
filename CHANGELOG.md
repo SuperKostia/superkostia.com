@@ -8,6 +8,10 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Refactor — Voyages devient un hobby (2026-10-30)
+- `/voyages` déménage à `/hobbies/voyages` (redirection permanente depuis l'ancienne adresse), avec un lien retour vers Hobbies. `/hobbies` liste désormais Photographie et Voyages.
+- Nav principale à 4 entrées (Projets · Hobbies · Écrits · À propos) ; sur la home, les portes Photo et Voyages fusionnent en une porte Hobbies. Sitemap à jour. Cf. décision #011.
+
 ### Feat — Projets : fiche MumExpat (2026-10-30)
 - Nouvelle fiche `content/projets/mumexpat.mdx` (type perso, mise en avant) pour mumexpat.com, le guide des mamans francophones expatriées, avec capture d'écran `public/images/projets/mumexpat.jpg`.
 

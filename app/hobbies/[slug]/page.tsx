@@ -3,14 +3,14 @@ import NextLink from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { MDXContent } from "@/components/mdx/MDXContent";
-import { getHobbies, getHobbyBySlug } from "@/lib/mdx";
+import { getHobbies, getHobbyBySlug, ROUTES_DEDIEES } from "@/lib/mdx";
 
 export async function generateStaticParams() {
   const hobbies = await getHobbies();
-  // Le slug "photographie" a sa propre route statique (décision #002)
-  // qui override le catch-all [slug] — on l'exclut ici pour éviter un conflit de prerender.
+  // "photographie" (décision #002) et "voyages" ont leur propre route statique
+  // qui override le catch-all [slug] — on les exclut ici pour éviter un conflit de prerender.
   return hobbies
-    .filter((h) => h.frontmatter.slug !== "photographie")
+    .filter((h) => !ROUTES_DEDIEES.has(h.frontmatter.slug))
     .map((h) => ({ slug: h.frontmatter.slug }));
 }
 

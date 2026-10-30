@@ -7,7 +7,7 @@ import { getHobbies } from "@/lib/mdx";
 export const metadata: Metadata = {
   title: "Hobbies",
   description:
-    "Entrepreneuriat, photographie, branding, psychologie adlérienne — quatre univers.",
+    "Voyages et photographie : la carte de mes voyages et une galerie tout à l'iPhone.",
 };
 
 export default async function HobbiesPage() {
@@ -19,8 +19,9 @@ export default async function HobbiesPage() {
       title="Hobbies"
       intro={
         <p>
-          Quatre univers, quatre identités. Chaque hobby respire différemment —
-          la photo a même son propre monde visuel (cf. décision #002).
+          Ce que je fais quand je ne construis pas : les voyages, et les photos
+          que j&apos;en rapporte. La photo a même son propre monde visuel (cf.
+          décision #002).
         </p>
       }
     >

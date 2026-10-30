@@ -223,3 +223,19 @@ warp (turbulence 19s) ───────────────────�
 - `lib/phone.ts`, `lib/telegram.ts`, `lib/teams.ts` sont la part *repo* de la chaîne (normalisation des numéros à la saisie, envoi Telegram factorisé, noms FR + drapeaux partagés home/dashboard).
 - Détails opérationnels du serveur (chemins, services systemd, gotchas) : voir la mémoire projet `project_wc2026_dim_recaps`, hors dépôt.
 - **Extension (2026-06-22)** : le notifier ne fait plus que des récaps de fin de match — il envoie aussi des **alertes but de la France en direct** (sondage du score live pendant les matchs des Bleus, message à escalade à chaque but). Cadence du timer passée de 5 min à 1 min pour le live. Tout reste côté serveur, hors dépôt (cf. CHANGELOG 2026-06-22). Confirme la frontière posée ici : la donnée temps réel et l'envoi vivent sur le serveur, le repo ne contient que la vitrine.
+
+## #011 — `/voyages` devient un hobby : `/hobbies/voyages`
+
+**Date** : 2026-10-30
+**Statut** : Acté. Remplace en partie #008 (la page voyages reste, elle change de place) et #005 (la nav principale passe de 5 à 4 entrées).
+
+**Contexte.** `/hobbies` ne contenait qu'une entrée, Photographie, alors que `/voyages` était une page riche qui occupait seule une place dans la nav. Kostia a proposé de ranger les voyages dans les hobbies.
+
+**Décision.**
+1. La page est déplacée telle quelle dans `app/hobbies/voyages/` (route statique qui override le catch-all `[slug]`, comme Photographie). Une entrée `content/hobbies/voyages.mdx` porte sa carte sur `/hobbies`.
+2. Redirection permanente `/voyages` → `/hobbies/voyages` dans `next.config.ts` (liens existants et référencement).
+3. Nav principale : Projets · Hobbies · Écrits · À propos.
+4. Home : les portes Photo et Voyages fusionnent en une porte Hobbies (grille de 4).
+5. Les slugs à route dédiée sont listés une seule fois, `ROUTES_DEDIEES` dans `lib/mdx.ts` (catch-all et sitemap).
+
+**Conséquence.** Les textes fixes ne citent plus les chiffres nomads (pays, villes, km) : ils vieillissent, seule la page voyages les affiche, en direct.

@@ -62,6 +62,9 @@ export async function getProjetBySlug(slug: string) {
   return all.find((e) => e.frontmatter.slug === slug) ?? null;
 }
 
+/** Hobbies dont la page a sa propre route statique (hors du catch-all `[slug]`). */
+export const ROUTES_DEDIEES = new Set(["photographie", "voyages"]);
+
 export async function getHobbies() {
   return readAll<HobbyFrontmatter>("hobbies");
 }

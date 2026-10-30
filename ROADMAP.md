@@ -22,7 +22,7 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 
 ## Phase 1 — Squelette
 
-- [x] Header sticky (logo cliquable, 5 entrées : Projets/Hobbies/Voyages/Écrits/À propos — cf. #005, #008, `ThemeToggle`)
+- [x] Header sticky (logo cliquable, 4 entrées : Projets/Hobbies/Écrits/À propos — cf. #005, #008, #011, `ThemeToggle`)
 - [x] Footer minimal (Contact, Colophon, lien GitHub)
 - [x] Menu mobile plein écran (overlay, typo énorme, Esc + body scroll lock)
 - [x] Pipeline MDX : lecture `content/*` via gray-matter, types frontmatter, helpers `getProjets` / `getHobbies` / `getEcrits`
@@ -94,6 +94,7 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 - [x] `lib/nomads.ts` étendu : trips complets, countries agrégées, frequent_visits, longest_stays, firstTrip/lastTrip
 - [x] `lib/iso-countries.ts` : mapping alpha-2 → ISO numeric pour matcher le topojson
 - [x] `components/voyages/WorldMap.tsx` : SVG server-rendered, geoEqualEarth (d3-geo + topojson-client + world-atlas), pays visités remplis, villes en carrés accent dimensionnés au nombre de visites
+- [x] Voyages rangé dans les hobbies : `/hobbies/voyages`, redirection 301 depuis `/voyages`, porte home Hobbies (grille de 4) — cf. #011
 - [x] `/voyages` : hero, map, grid stats, "X tours de Terre" narratif, 3 top-lists (pays/villes/longues étapes) avec barres brutalistes, timeline par année inversée jusqu'en 1989, capsule "point de départ", CTA nomads.com
 - [-] Laboratoire mini-apps (mur-des-visiteurs, quel-kostia, générateur, radio, galerie) — annulés, déplacés dans parking lot
 

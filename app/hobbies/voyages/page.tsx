@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { ArrowUpRight } from "lucide-react";
+import NextLink from "next/link";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { getNomadsProfile, type NomadsTrip } from "@/lib/nomads";
 import { WorldMap } from "@/components/voyages/WorldMap";
 
 export const metadata: Metadata = {
   title: "Voyages",
   description:
-    "22 pays, 33 villes, 156 000 km — carte et timeline live depuis nomads.com.",
+    "Pays, villes, kilomètres : carte et timeline live depuis nomads.com.",
 };
 
 const EARTH_EQUATOR_KM = 40075;
@@ -90,9 +91,13 @@ export default async function VoyagesPage() {
   return (
     <article className="flex flex-col">
       <header className="border-b-2 border-[color:var(--color-border)] px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          Voyages
-        </p>
+        <NextLink
+          href="/hobbies"
+          className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)] hover:text-[color:var(--color-fg)]"
+        >
+          <ArrowLeft size={12} strokeWidth={1.5} aria-hidden />
+          Hobbies
+        </NextLink>
         <h1 className="mt-4 font-[family-name:var(--font-space-grotesk)] text-6xl font-black uppercase leading-[0.9] tracking-tight sm:text-7xl lg:text-[9vw]">
           En mouvement.
         </h1>

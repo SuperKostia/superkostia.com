@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getEcrits, getHobbies, getProjets } from "@/lib/mdx";
+import { getEcrits, getHobbies, getProjets, ROUTES_DEDIEES } from "@/lib/mdx";
 
 const BASE_URL = "https://superkostia.com";
 
@@ -17,7 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/projets",
     "/hobbies",
     "/hobbies/photographie",
-    "/voyages",
+    "/hobbies/voyages",
     "/ecrits",
     "/a-propos",
     "/contact",
@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const hobbyRoutes: MetadataRoute.Sitemap = hobbies
-    .filter((h) => h.frontmatter.slug !== "photographie")
+    .filter((h) => !ROUTES_DEDIEES.has(h.frontmatter.slug))
     .map((h) => ({
       url: `${BASE_URL}/hobbies/${h.frontmatter.slug}`,
       lastModified: now,
