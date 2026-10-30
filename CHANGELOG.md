@@ -8,6 +8,11 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Content — Life is Patmos refait, manifeste, outils (2026-10-30)
+- Fiche `lifeispatmos` réécrite pour le nouveau site (guide local + boutique de l'île, relancé le 29/10/2026), nouvelle capture, mise en avant.
+- Manifeste de la home : « je prends des photos » au lieu de « je tire des portraits ».
+- À propos, capsule « Outils qui m'ont transformé » : les trois Claude Code portent chacun leur modèle, du premier au dernier (Claude 3.7 Sonnet, Claude Opus 4, Claude Opus 5.5).
+
 ### Refactor — Voyages devient un hobby (2026-10-30)
 - `/voyages` déménage à `/hobbies/voyages` (redirection permanente depuis l'ancienne adresse), avec un lien retour vers Hobbies. `/hobbies` liste désormais Photographie et Voyages.
 - Nav principale à 4 entrées (Projets · Hobbies · Écrits · À propos) ; sur la home, les portes Photo et Voyages fusionnent en une porte Hobbies. Sitemap à jour. Cf. décision #011.

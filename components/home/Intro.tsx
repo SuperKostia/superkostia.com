@@ -10,7 +10,7 @@ export function Intro() {
           01 · manifeste
         </p>
         <p>
-          Je m&apos;appelle Kostia. Je monte des boîtes, je tire des portraits, je
+          Je m&apos;appelle Kostia. Je monte des boîtes, je prends des photos, je
           dessine des logos, je lis Adler.
         </p>
         <p>

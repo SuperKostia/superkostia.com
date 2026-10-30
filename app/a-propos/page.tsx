@@ -311,9 +311,9 @@ export default async function AProposPage() {
             title="Outils qui m'ont transformé"
             accent
             items={[
-              { label: "Claude Code" },
-              { label: "Claude Code" },
-              { label: "Claude Code" },
+              { label: "Claude Code", note: "Claude 3.7 Sonnet · 2025" },
+              { label: "Claude Code", note: "Claude Opus 4 · 2025" },
+              { label: "Claude Code", note: "Claude Opus 5.5 · 2026" },
             ]}
             footer="Pas une faute de frappe."
           />
