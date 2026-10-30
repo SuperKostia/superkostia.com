@@ -146,6 +146,17 @@ body {
   }
 }
 
+@keyframes notif-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) rotate(-1.5deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
 @keyframes keynav-arrows {
   0%, 100% {
     transform: translateX(0);

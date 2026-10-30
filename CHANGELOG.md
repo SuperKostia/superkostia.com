@@ -8,6 +8,11 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Home : séance avec Adler (2026-10-30)
+- Nouvelle section `AdlerSeance` entre le marquee et les portes : une citation d'Alfred Adler en très grand, avec sa source, et trois boutons. « Encore » tire une citation pas encore vue (effet machine à écrire, coupé si mouvement réduit), « Demander à Freud » répond par des faits historiques (rupture de 1911…), « Le divan ? » rappelle qu'Adler recevait face à face. Compteur « x / 9 citations découvertes » en localStorage.
+- `AdlerNotification` : une fois par visite (sessionStorage), une notification « Alfred Adler · à l'instant » glisse en bas à gauche avec une citation ; clic = descente vers la séance, qui reprend la même citation. Fermeture par la croix ou Échap, disparition seule après 15 s.
+- Données dans `lib/adler.ts` : 9 citations retrouvées dans ses livres (What Life Should Mean to You, The Science of Living, Der Sinn des Lebens, recueil Ansbacher), traductions maison. Écartée : « nous ne souffrons pas du choc de nos expériences », qui vient du *Courage d'être détesté*. Zéro API.
+
 ### Content — Life is Patmos refait, manifeste, outils (2026-10-30)
 - Fiche `lifeispatmos` réécrite pour le nouveau site (guide local + boutique de l'île, relancé le 29/10/2026), nouvelle capture, mise en avant.
 - Manifeste de la home : « je prends des photos » au lieu de « je tire des portraits ».

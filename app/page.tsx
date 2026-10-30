@@ -1,4 +1,6 @@
 import { DisplayTitle } from "@/components/home/DisplayTitle";
+import { AdlerNotification } from "@/components/home/AdlerNotification";
+import { AdlerSeance } from "@/components/home/AdlerSeance";
 import { Intro } from "@/components/home/Intro";
 import { Portes } from "@/components/home/Portes";
 import { Marquee } from "@/components/home/Marquee";
@@ -20,9 +22,13 @@ export default function Home() {
 
       <Marquee />
 
+      <AdlerSeance />
+
       <Portes />
 
       <Ticker />
+
+      <AdlerNotification />
     </div>
   );
 }
