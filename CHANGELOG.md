@@ -8,6 +8,9 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Projets : fiche MumExpat (2026-10-30)
+- Nouvelle fiche `content/projets/mumexpat.mdx` (type perso, mise en avant) pour mumexpat.com, le guide des mamans francophones expatriées, avec capture d'écran `public/images/projets/mumexpat.jpg`.
+
 ### Feat — Projets : fiche Parcoursoup (2026-10-27)
 - Nouvelle fiche `content/projets/parcoursoup.mdx` (type perso, mise en avant) pour parcoursoup.fr, l'observatoire de l'avenir des formations Parcoursup face à l'IA, avec capture d'écran `public/images/projets/parcoursoup.jpg`.
 
