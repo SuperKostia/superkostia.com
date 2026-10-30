@@ -1,10 +1,6 @@
-import { WorldCupPromo } from "@/components/home/WorldCupPromo";
-
 export function Intro() {
   return (
     <div className="flex h-full flex-col gap-6 border-l-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-6 font-mono text-sm leading-relaxed sm:p-8">
-      <WorldCupPromo />
-
       <div className="mt-auto flex flex-col gap-4">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
           01 · manifeste

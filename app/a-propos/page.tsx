@@ -70,55 +70,9 @@ export default async function AProposPage() {
         </div>
 
         <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <a
-            href="https://mercatofirst.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-cursor="ouvrir"
-            className="group block border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] p-6 text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 sm:p-8"
-          >
-            <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-              <span className="inline-flex items-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-2 py-0.5 font-mono text-xs uppercase tracking-wider text-[color:var(--color-fg)]">
-                mon phare
-              </span>
-              <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-70">
-                mercatofirst.com ↗
-              </span>
-            </div>
-            <h3 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-[0.95] tracking-tight sm:text-5xl">
-              MercatoFirst
-            </h3>
-            <p className="mt-4 max-w-xl text-base leading-relaxed">
-              Un CRM pour les agents de joueurs de football. Carnet
-              d&apos;adresses augmenté, pipeline avec alertes sur les fins de
-              contrat, prise de contact WhatsApp.
-            </p>
-          </a>
-
-          <a
-            href="https://superkostia.github.io/bookeeper/"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-cursor="ouvrir"
-            className="group block border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] p-6 text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 sm:p-8"
-          >
-            <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-              <span className="inline-flex items-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-2 py-0.5 font-mono text-xs uppercase tracking-wider text-[color:var(--color-fg)]">
-                mon coup de tête
-              </span>
-              <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-70">
-                avec Karim ↗
-              </span>
-            </div>
-            <h3 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-[0.95] tracking-tight sm:text-5xl">
-              BooKeeper
-            </h3>
-            <p className="mt-4 max-w-xl text-base leading-relaxed">
-              Plateforme pour réserver un gardien de but à l&apos;heure — pour
-              les clubs et équipes amateurs qui cherchent un keeper, un match
-              précis, une date, un niveau.
-            </p>
-          </a>
+          {PROJETS_PHARES.map((projet) => (
+            <CarteProjetPhare key={projet.titre} {...projet} />
+          ))}
         </div>
 
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -403,6 +357,82 @@ type CapsuleProps = {
   footer?: string;
   accent?: boolean;
 };
+
+type ProjetPhare = {
+  titre: string;
+  badge: string;
+  lien: string;
+  libelleLien: string;
+  description: string;
+  nouveau?: boolean;
+};
+
+/** Ordre = ordre d'affichage : les nouveautés d'abord. */
+const PROJETS_PHARES: ProjetPhare[] = [
+  {
+    titre: "Parcoursoup",
+    badge: "tout nouveau",
+    lien: "https://parcoursoup.fr",
+    libelleLien: "parcoursoup.fr ↗",
+    description:
+      "Pour chaque formation de Parcoursup, ce que l'IA fait déjà dans les métiers visés, si les employeurs recrutent encore et ce que deviennent les diplômés.",
+    nouveau: true,
+  },
+  {
+    titre: "MumExpat",
+    badge: "tout nouveau",
+    lien: "https://mumexpat.com",
+    libelleLien: "mumexpat.com ↗",
+    description:
+      "Le guide des mamans francophones qui s'installent à l'étranger avec leurs enfants : 37 villes, écoles, santé, démarches, et plus de 1 000 groupes Facebook.",
+    nouveau: true,
+  },
+  {
+    titre: "MercatoFirst",
+    badge: "mon phare",
+    lien: "https://mercatofirst.com",
+    libelleLien: "mercatofirst.com ↗",
+    description:
+      "Un CRM pour les agents de joueurs de football. Carnet d'adresses augmenté, pipeline avec alertes sur les fins de contrat, prise de contact WhatsApp.",
+  },
+  {
+    titre: "BooKeeper",
+    badge: "mon coup de tête",
+    lien: "https://superkostia.github.io/bookeeper/",
+    libelleLien: "avec Karim ↗",
+    description:
+      "Plateforme pour réserver un gardien de but à l'heure, pour les clubs et équipes amateurs qui cherchent un keeper, un match précis, une date, un niveau.",
+  },
+];
+
+function CarteProjetPhare({ titre, badge, lien, libelleLien, description, nouveau }: ProjetPhare) {
+  return (
+    <a
+      href={lien}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-cursor="ouvrir"
+      className={`group block border-2 border-[color:var(--color-border)] p-6 shadow-[var(--shadow-hard)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 sm:p-8 ${
+        nouveau
+          ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
+          : "bg-[color:var(--color-bg)] hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)]"
+      }`}
+    >
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <span className="inline-flex items-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-2 py-0.5 font-mono text-xs uppercase tracking-wider text-[color:var(--color-fg)]">
+          {badge}
+        </span>
+        <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-70">
+          {libelleLien}
+        </span>
+      </div>
+      <h3 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-[0.95] tracking-tight sm:text-5xl">
+        {titre}
+      </h3>
+      <p className="mt-4 max-w-xl text-base leading-relaxed">{description}</p>
+    </a>
+  );
+}
 
 function Capsule({
   index,

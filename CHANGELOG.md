@@ -8,6 +8,10 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Content — Fin de la Coupe du Monde, nouveautés en tête de l'À propos (2026-10-30)
+- Home : encart « Coupe du Monde 2026 · en direct » retiré (événement fini), composants `WorldCupPromo` et `WorldCupNextMatch` supprimés. La fiche projet des récaps reste.
+- À propos, « Ce que je fais » : Parcoursoup et MumExpat en tête, en jaune avec le badge « tout nouveau » ; MercatoFirst et BooKeeper passent en dessous, en clair. Les quatre cartes sont générées depuis `PROJETS_PHARES` (composant `CarteProjetPhare`).
+
 ### Feat — Home : séance avec Adler (2026-10-30)
 - Nouvelle section `AdlerSeance` entre le marquee et les portes : une citation d'Alfred Adler en très grand, avec sa source, et trois boutons. « Encore » tire une citation pas encore vue (effet machine à écrire, coupé si mouvement réduit), « Demander à Freud » répond par des faits historiques (rupture de 1911…), « Le divan ? » rappelle qu'Adler recevait face à face. Compteur « x / 9 citations découvertes » en localStorage.
 - `AdlerNotification` : une fois par visite (sessionStorage), une notification « Alfred Adler · à l'instant » glisse en bas à gauche avec une citation ; clic = descente vers la séance, qui reprend la même citation. Fermeture par la croix ou Échap, disparition seule après 15 s.
