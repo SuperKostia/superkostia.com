@@ -8,10 +8,13 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Fix — Citations d'Adler vérifiées (2026-10-31)
+- Les neuf citations anglaises comparées au texte intégral des livres : huit conformes. « Life means… » était fausse sur un mot : l'original est à la première personne (« my fellow men… my share »), corrigé en anglais et en français. « Être humain, c'est se sentir inférieur » est désormais une traduction littérale de l'allemand, signalée comme telle dans le code.
+
 ### Feat — Le site en anglais (2026-10-31)
 - Version anglaise intégrale sous `/en`, adresses traduites : `/en/projects`, `/en/hobbies` (`/photography`, `/travel`), `/en/writing`, `/en/about`, `/en/contact`, `/en/colophon`. Le français ne change pas d'adresse.
 - Bouton FR / EN dans l'en-tête et le menu mobile, qui mène à la même page dans l'autre langue.
-- Toute l'interface traduite (titres tournants de l'accueil, manifeste, séance Adler avec les citations originales, contact, voyages, galerie, colophon, À propos) et les 18 fiches (`*.en.mdx`).
+- Toute l'interface traduite (titres tournants de l'accueil, manifeste, séance Adler avec les citations anglaises vérifiées dans le texte intégral des livres, une seule traduite de l'allemand, contact, voyages, galerie, colophon, À propos) et les 18 fiches (`*.en.mdx`).
 - `<html lang>`, canonical et hreflang par page, sitemap à 50 adresses (25 par langue), images de partage FR et EN. Cf. décision #012.
 - MumExpat : 39 villes (au lieu de 37) dans la fiche et l'À propos.
 

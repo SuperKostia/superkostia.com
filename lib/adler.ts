@@ -2,14 +2,19 @@
  * Citations d'Alfred Adler (1870-1937) pour la home : notification à chaque
  * visite + section « Séance ». Uniquement des phrases retrouvées dans ses
  * livres (beaucoup de fausses citations d'Adler circulent, dont celles du
- * « Courage d'être détesté »). Traductions maison.
+ * « Courage d'être détesté »). Le français est traduit maison.
+ *
+ * Anglais vérifié le 31/10/2026 dans le texte intégral (archive.org) :
+ * What Life Should Mean to You (1931) et The Science of Living (1929) mot
+ * pour mot ; « bagage » via le recueil Ansbacher (Adlerpedia) ; « inferieur »
+ * est traduit de l'allemand (« Mensch sein heißt: sich minderwertig fühlen »).
  */
 
 import type { Lang } from "./i18n";
 
 export type CitationAdler = {
   id: string;
-  /** En anglais : la phrase d'origine (livres écrits ou publiés en anglais), traduite de l'allemand pour Der Sinn des Lebens. */
+  /** En anglais : la phrase d'origine, sauf Der Sinn des Lebens, traduit de l'allemand. */
   texte: Record<Lang, string>;
   source: string;
   annee: number;
@@ -56,7 +61,7 @@ export const CITATIONS_ADLER: CitationAdler[] = [
     id: "inferieur",
     texte: {
       fr: "Être humain, c'est se sentir inférieur.",
-      en: "To be a human being means to have a feeling of inferiority.",
+      en: "To be human means to feel inferior.",
     },
     source: "Der Sinn des Lebens",
     annee: 1933,
@@ -64,8 +69,8 @@ export const CITATIONS_ADLER: CitationAdler[] = [
   {
     id: "vivre",
     texte: {
-      fr: "Vivre, c'est s'intéresser aux autres, faire partie d'un tout, apporter sa part au bien-être de l'humanité.",
-      en: "Life means: to be interested in our fellow men, to be part of the whole, to contribute our share to the welfare of mankind.",
+      fr: "Vivre, c'est m'intéresser aux autres, faire partie d'un tout, apporter ma part au bien-être de l'humanité.",
+      en: "Life means: to be interested in my fellow men, to be part of the whole, to contribute my share to the welfare of mankind.",
     },
     source: "What Life Should Mean to You",
     annee: 1931,

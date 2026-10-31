@@ -253,6 +253,6 @@ warp (turbulence 19s) ───────────────────�
 3. `lib/i18n.ts` porte la table des segments traduits et les fonctions `chemin`, `traduireChemin`, `alternates` (canonical + hreflang + x-default vers le français). Le sitemap liste les deux langues avec leurs équivalents.
 4. Contenu MDX : `x.en.mdx` à côté de `x.mdx`, fusionné par-dessus (corps + champs texte). Liens internes des fiches traduits au rendu, sauf les fichiers de `public/` (dashboards).
 5. Bouton FR / EN dans l'en-tête et le menu mobile : la même page dans l'autre langue.
-6. Traductions faites à la main (par Claude, dans la session), pas d'API de traduction : règle n° 1. Les citations d'Adler reprennent en anglais la phrase originale des livres.
+6. Traductions faites à la main (par Claude, dans la session), pas d'API de traduction : règle n° 1. Les citations d'Adler reprennent en anglais la phrase originale des livres, vérifiée le 31/10/2026 dans leur texte intégral (archive.org), sauf celle de *Der Sinn des Lebens*, traduite de l'allemand.
 
 **Conséquence.** Une nouvelle page, fiche ou chaîne d'interface doit naître dans les deux langues (règle 3 de CLAUDE.md). Les dashboards embarqués (Choose France, Coupe du Monde) restent en français, signalé sur les fiches anglaises.
