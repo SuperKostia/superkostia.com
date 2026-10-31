@@ -239,3 +239,20 @@ warp (turbulence 19s) ───────────────────�
 5. Les slugs à route dédiée sont listés une seule fois, `ROUTES_DEDIEES` dans `lib/mdx.ts` (catch-all et sitemap).
 
 **Conséquence.** Les textes fixes ne citent plus les chiffres nomads (pays, villes, km) : ils vieillissent, seule la page voyages les affiche, en direct.
+
+## #012 — Site bilingue : le français à la racine, l'anglais sous `/en`
+
+**Date** : 2026-10-31
+**Statut** : Acté.
+
+**Contexte.** Kostia a demandé une version anglaise intégrale du site.
+
+**Décision.**
+1. Le français ne bouge pas : mêmes adresses, aucun lien cassé, référencement intact. L'anglais vit sous `/en` avec des adresses traduites (`/en/projects`, `/en/hobbies/travel`, `/en/writing`, `/en/about`…). Les slugs de contenu restent identiques dans les deux langues.
+2. Deux layouts racine par groupes de routes, `app/(fr)` et `app/(en)/en`, pour un `<html lang>` juste et des pages 100 % statiques. Chaque page est codée une fois dans `components/pages/` et appelée par deux routes minces.
+3. `lib/i18n.ts` porte la table des segments traduits et les fonctions `chemin`, `traduireChemin`, `alternates` (canonical + hreflang + x-default vers le français). Le sitemap liste les deux langues avec leurs équivalents.
+4. Contenu MDX : `x.en.mdx` à côté de `x.mdx`, fusionné par-dessus (corps + champs texte). Liens internes des fiches traduits au rendu, sauf les fichiers de `public/` (dashboards).
+5. Bouton FR / EN dans l'en-tête et le menu mobile : la même page dans l'autre langue.
+6. Traductions faites à la main (par Claude, dans la session), pas d'API de traduction : règle n° 1. Les citations d'Adler reprennent en anglais la phrase originale des livres.
+
+**Conséquence.** Une nouvelle page, fiche ou chaîne d'interface doit naître dans les deux langues (règle 3 de CLAUDE.md). Les dashboards embarqués (Choose France, Coupe du Monde) restent en français, signalé sur les fiches anglaises.

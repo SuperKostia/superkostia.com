@@ -2,6 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useLang } from "@/lib/useLang";
+
+/** Les `data-cursor` du code sont en français ; traduits à l'affichage. */
+const LIBELLES_EN: Record<string, string> = {
+  ouvrir: "open",
+  lire: "read",
+  cliquer: "click",
+};
 
 type CursorLabel = string | null;
 
@@ -30,6 +38,7 @@ export function CustomCursor() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [label, setLabel] = useState<CursorLabel>(null);
   const [visible, setVisible] = useState(false);
+  const en = useLang() === "en";
 
   useEffect(() => {
     const track = trackRef.current;
@@ -102,7 +111,7 @@ export function CustomCursor() {
       data-visible={visible ? "true" : "false"}
     >
       <div className={cn("custom-cursor", label && "custom-cursor--label")}>
-        {label}
+        {label && en ? (LIBELLES_EN[label] ?? label) : label}
       </div>
     </div>
   );

@@ -30,8 +30,14 @@ Le site assume une esthétique brutaliste/expérimentale. Quand un pattern gagne
 
 Référence : section 2 du cahier des charges.
 
-### 3. Français par défaut
+### 3. Français par défaut, anglais en miroir
 Interface, labels, placeholders, messages d'erreur, commentaires de code de haut niveau, noms de composants côté contenu : tout en français. Les termes techniques React/Next restent en anglais (ex : `useState`, `ServerComponent`).
+
+Le site est bilingue depuis la décision #012 : le français à la racine, l'anglais sous `/en` avec des adresses traduites. Toute nouveauté visible existe dans les deux langues :
+- un texte d'interface s'écrit dans une table `{ fr, en }` (ou via `lib/i18n.ts`), jamais en dur ;
+- une fiche `content/<rubrique>/x.mdx` a sa traduction `x.en.mdx` à côté (corps + champs texte du frontmatter ; type, statut, date restent dans le fichier français) ;
+- un lien interne s'écrit avec le chemin français et passe par `chemin(lang, …)` ;
+- une page se code une fois dans `components/pages/`, avec une route mince dans `app/(fr)/` et une dans `app/(en)/en/`.
 
 ### 4. Pas de dépendances superflues
 Chaque `npm install` doit être justifié dans le commit. Préférer les solutions natives (fetch, Intl, CSS pur) aux libs.

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { EVENEMENT_CITATION, marquerVue, tirerCitation, type CitationAdler } from "@/lib/adler";
+import { useLang } from "@/lib/useLang";
 
 const CLE_SESSION = "adler-notif-vue";
 const DELAI_APPARITION_MS = 2500;
@@ -11,6 +12,7 @@ const DUREE_AFFICHAGE_MS = 15000;
 /** « Adler t'a envoyé un message » : une citation en notification, une fois par visite. */
 export function AdlerNotification() {
   const [citation, setCitation] = useState<CitationAdler | null>(null);
+  const en = useLang() === "en";
 
   useEffect(() => {
     try {
@@ -57,11 +59,11 @@ export function AdlerNotification() {
     >
       <div className="relative border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] shadow-[var(--shadow-hard)]">
         <div className="flex items-center justify-between gap-2 border-b-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--color-accent-fg)]">
-          <span>Alfred Adler · à l&apos;instant</span>
+          <span>Alfred Adler · {en ? "just now" : "à l'instant"}</span>
           <button
             type="button"
             onClick={() => setCitation(null)}
-            aria-label="Fermer la notification"
+            aria-label={en ? "Close notification" : "Fermer la notification"}
             className="-m-1 p-1 hover:opacity-70"
           >
             <X size={14} strokeWidth={2.5} aria-hidden />
@@ -74,13 +76,13 @@ export function AdlerNotification() {
           className="block w-full p-4 text-left"
         >
           <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-[color:var(--color-muted)]">
-            T&apos;a envoyé un message
+            {en ? "Sent you a message" : "T'a envoyé un message"}
           </span>
           <span className="mt-2 block font-[family-name:var(--font-space-grotesk)] text-lg font-bold leading-snug">
-            «&nbsp;{citation.texte}&nbsp;»
+            {en ? `“${citation.texte.en}”` : `«\u00a0${citation.texte.fr}\u00a0»`}
           </span>
           <span className="mt-3 block font-mono text-[11px] font-bold uppercase tracking-[0.15em] underline decoration-2 underline-offset-4">
-            Ouvrir la séance →
+            {en ? "Open the session →" : "Ouvrir la séance →"}
           </span>
         </button>
       </div>

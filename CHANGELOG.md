@@ -8,6 +8,13 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Le site en anglais (2026-10-31)
+- Version anglaise intégrale sous `/en`, adresses traduites : `/en/projects`, `/en/hobbies` (`/photography`, `/travel`), `/en/writing`, `/en/about`, `/en/contact`, `/en/colophon`. Le français ne change pas d'adresse.
+- Bouton FR / EN dans l'en-tête et le menu mobile, qui mène à la même page dans l'autre langue.
+- Toute l'interface traduite (titres tournants de l'accueil, manifeste, séance Adler avec les citations originales, contact, voyages, galerie, colophon, À propos) et les 18 fiches (`*.en.mdx`).
+- `<html lang>`, canonical et hreflang par page, sitemap à 50 adresses (25 par langue), images de partage FR et EN. Cf. décision #012.
+- MumExpat : 39 villes (au lieu de 37) dans la fiche et l'À propos.
+
 ### Content — Fin de la Coupe du Monde, nouveautés en tête de l'À propos (2026-10-30)
 - Home : encart « Coupe du Monde 2026 · en direct » retiré (événement fini), composants `WorldCupPromo` et `WorldCupNextMatch` supprimés. La fiche projet des récaps reste.
 - À propos, « Ce que je fais » : Parcoursoup et MumExpat en tête, en jaune avec le badge « tout nouveau » ; MercatoFirst et BooKeeper passent en dessous, en clair. Les quatre cartes sont générées depuis `PROJETS_PHARES` (composant `CarteProjetPhare`).

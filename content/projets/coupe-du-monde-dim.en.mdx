@@ -1,0 +1,92 @@
+---
+title: "Kostia's WhatsApp recaps"
+tags: ["automation", "whatsapp", "football", "server", "espn-api"]
+summary: "A bot that sends a group of friends the score of every 2026 World Cup match on WhatsApp, automatically, as soon as the final whistle blows. It started with one friend, Dim, and the list grew match after match. A Go WhatsApp bridge on a server, a Python notifier synced to the fixtures, zero intervention."
+tagline: "🏆 World Cup 2026: the score of every match on WhatsApp, right after the final whistle."
+flux: "7 mates already in the feed ⚽"
+links:
+  - label: "Full-screen live dashboard"
+    url: "https://superkostia.com/projets/coupe-du-monde-dim/dashboard.html"
+---
+
+## The pitch
+
+A friend, Dim, wanted to follow the 2026 World Cup without the hassle. The
+idea: he gets a WhatsApp recap of **every match, with the score, right after
+the final whistle**, without doing anything, and without me lifting a finger
+either.
+
+The result is a small autonomous system running 24/7 on a server: it knows
+the fixtures, watches for the end of each match, and sends Dim the score.
+For the whole tournament. On its own.
+
+Except it didn't stay between Dim and me. Other friends wanted in, and the
+feed opened up: today anyone can join the list in two clicks, and it grows
+match after match.
+
+<div className="relative w-[calc(100vw-3rem)] sm:w-[calc(100vw-5rem)] lg:w-[calc(100vw-6rem)] -rotate-[0.3deg] border-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] shadow-[var(--shadow-hard)]">
+  <a href="/projets/coupe-du-monde-dim/dashboard.html" target="_blank" rel="noopener noreferrer" data-cursor="ouvrir" className="absolute right-3 top-3 z-20 inline-flex items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-wider text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard)] transition-transform hover:-translate-y-0.5 sm:text-sm">⤢ Full screen</a>
+  <iframe
+    src="/projets/coupe-du-monde-dim/dashboard.html"
+    title="Live dashboard of the 2026 World Cup recaps sent on WhatsApp"
+    className="block h-[760px] w-full"
+    loading="lazy"
+  />
+</div>
+
+<p className="mt-3 font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)]">↑ Live, scores pulled from the ESPN API. The dashboard itself is in French. <a href="/projets/coupe-du-monde-dim/dashboard.html" target="_blank" rel="noopener noreferrer" className="font-black text-[color:var(--color-fg)] underline decoration-2 underline-offset-2" data-cursor="ouvrir">Open full screen ↗</a></p>
+
+## How it's made
+
+The system has three building blocks, all on a Hetzner server (a CX23 at a
+few euros a month, in Helsinki), so it runs whether my Mac is on or not.
+
+### 1. The WhatsApp bridge
+
+WhatsApp has no official sending API for individuals. The workaround: a
+**bridge** that poses as a linked device (like WhatsApp Web). I use
+[whatsmeow](https://github.com/tulir/whatsmeow), a Go library that speaks
+WhatsApp's multi-device protocol. I recompiled it directly on the server (it
+relies on SQLite through CGO, so native compilation), then linked it to the
+account with a QR code scanned once. It exposes a tiny local HTTP API: a
+`POST /api/send` with the number and the message, and off it goes.
+
+Fun detail: the linking QR code normally shows up in a terminal as block
+characters. I re-rendered it as a real PNG so I could scan it cleanly off the
+screen.
+
+### 2. The notifier
+
+A **Python script with zero dependencies** (just the standard library). Each
+time it wakes up, it queries **ESPN's public API** (free, no key) to fetch
+the matches and their scores, spots the ones that just ended, writes a clean
+message (flags, team names in French, result) and sends it to Dim through
+the bridge. A state file keeps track of matches already sent: **no
+duplicates**, even if the script runs a hundred times.
+
+### 3. Scheduling, synced to the fixtures
+
+The rookie trap would be to check scores every 5 minutes, around the clock.
+Pointless: the kick-off times are known in advance. The script fetches the
+fixtures once a day, then **only checks scores inside each match's real
+end window** (from kick-off + 1h45 to + 3h30, to cover stoppage time, extra
+time and penalties). Outside those windows, it exits in a few milliseconds
+without a single network call.
+
+Everything is driven by **systemd**: a service for the bridge (restarted
+automatically, starts at boot) and a timer for the notifier. If the server
+reboots, everything comes back on its own.
+
+<Stack items={["Go / whatsmeow", "Multi-device WhatsApp bridge", "Python (standard library, zero dependencies)", "ESPN API (free, no key)", "systemd (service + timer)", "Hetzner Cloud CX23", "Single-file HTML dashboard"]} />
+
+## What's clever (and what isn't)
+
+- **Clever**: the end-of-match window. It follows the real fixtures, so no
+  polling loop and no waste. Robust to extra time.
+- **Clever**: zero dependencies, zero paid API, zero secret key. ESPN is free
+  and open, whatsmeow is open source, Python and systemd are already there.
+- **Owned**: it's an unofficial WhatsApp bridge. It works very well, but if
+  the phone stays offline for more than two weeks, the linked device logs out
+  and you have to scan again. Over a month of World Cup, no problem.
+
+<Links items={[{ label: "Live dashboard", url: "/projets/coupe-du-monde-dim/dashboard.html" }, { label: "whatsmeow", url: "https://github.com/tulir/whatsmeow" }, { label: "ESPN API used", url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard" }]} />

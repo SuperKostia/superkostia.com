@@ -1,0 +1,53 @@
+---
+tags: ["education", "careers", "ai", "open data", "monitoring"]
+summary: "For every course on Parcoursup, France's university admissions platform: what AI already does in the jobs it leads to, whether employers are still hiring, what the State planned for 2030 and what becomes of graduates. A pun in the name, serious about the numbers: 982 degrees, 1,923 jobs, 10 public sources, a weekly watch."
+stack: ["Astro", "Cloudflare Pages", "Python", "Claude Opus", "Grok", "open data"]
+links:
+  - label: "parcoursoup.fr"
+    url: "https://parcoursoup.fr"
+  - label: "The method"
+    url: "https://parcoursoup.fr/methode/"
+---
+
+## The pitch
+
+Parcoursup helps French high-school students choose a course based on what
+exists today. Parcoursoup wants to help them choose based on what might
+exist tomorrow.
+
+"You're choosing studies today that will end in 2031. But do you know what
+the job market will look like in 2031?"
+
+The site itself is in French, like the students it's written for.
+
+## What's inside
+
+- **982 degrees** from Parcoursup 2026, i.e. 25,793 course offerings, linked
+  to the **1,923 jobs** of France's official job classification (ROME)
+  through the national register of qualifications.
+- For each job, its **exposure to AI** measured on the real-world use of an
+  AI assistant, **employers' hiring intentions** since 2019, what the State
+  **planned for 2030** before ChatGPT, and **graduate employment** outcomes.
+- A **future index out of 100** per course, four sub-scores, and verdicts
+  with rules written out in black and white. No made-up probability, no
+  odds: across 1,923 jobs, "AI can do it" and "employers are hiring less"
+  aren't correlated, and the site shows both.
+- A **weekly watch**, web and X, that logs announcements of agents, startups
+  and job cuts affecting each job, with the source and a reliability score
+  from 1 to 5.
+- A comparison tool, a Method page that details every weighting and every
+  limitation, a site written in plain language for a final-year student.
+
+## How it's made
+
+Ten public sources, all cited and dated: Parcoursup, RNCP, ROME, ESCO and
+O*NET, the Anthropic Economic Index, France Travail's labour needs survey,
+*Les Métiers en 2030*, InserSup, InserJeunes. The one link the official
+tables don't cover, matching French jobs to American ones, is done by a
+language model, with its confidence shown on every page.
+
+Built in a single day, 27 October 2026, with Claude Code: data in Python, a
+2,900-page static Astro site, deployed to Cloudflare Pages on every commit,
+an automatic watch every Monday morning with a Telegram notification.
+
+An independent, non-commercial site: no cookies, no account, no ads.

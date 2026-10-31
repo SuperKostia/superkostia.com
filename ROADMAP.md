@@ -122,6 +122,13 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 
 ---
 
+## Version anglaise (cf. #012)
+
+- [x] Socle i18n : `lib/i18n.ts`, groupes de routes `(fr)` / `(en)/en`, pages partagées dans `components/pages/`
+- [x] Interface traduite : en-tête, menu mobile, pied, curseur, titres d'accueil, séance Adler, contact, galerie, voyages, colophon, À propos
+- [x] 18 fiches traduites (`*.en.mdx`) : 15 projets, 2 hobbies, 1 écrit
+- [x] Bouton FR / EN, hreflang, canonical, sitemap bilingue, images de partage par langue
+
 ## Parking lot (idées non-planifiées)
 
 - Version EN (à trancher — cf. CDC §13).

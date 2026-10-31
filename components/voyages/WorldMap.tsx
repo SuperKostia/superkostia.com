@@ -17,6 +17,7 @@ import { WaterField } from "@/components/ui/WaterField";
 type WorldMapProps = {
   trips: NomadsTrip[];
   visitedAlpha2: string[];
+  ariaLabel?: string;
 };
 
 const WIDTH = 960;
@@ -33,7 +34,11 @@ const projection = geoEqualEarth()
   .translate([WIDTH / 2, HEIGHT / 2 + 10]);
 const pathGen = geoPath(projection);
 
-export function WorldMap({ trips, visitedAlpha2 }: WorldMapProps) {
+export function WorldMap({
+  trips,
+  visitedAlpha2,
+  ariaLabel = "Carte du monde des voyages de Kostia",
+}: WorldMapProps) {
   const visitedNumeric = new Set(
     visitedAlpha2
       .map((code) => ALPHA2_TO_NUMERIC[code.toUpperCase()])
@@ -68,7 +73,7 @@ export function WorldMap({ trips, visitedAlpha2 }: WorldMapProps) {
         preserveAspectRatio="xMidYMid meet"
         className="block h-auto w-full"
         role="img"
-        aria-label="Carte du monde des voyages de Kostia"
+        aria-label={ariaLabel}
       >
         <rect
           x={0}

@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
+import { useLang } from "@/lib/useLang";
 
 type Theme = "light" | "dark";
 
@@ -24,6 +25,7 @@ function getServerSnapshot(): Theme {
 
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const en = useLang() === "en";
 
   function toggle() {
     const next: Theme = theme === "dark" ? "light" : "dark";
@@ -33,7 +35,10 @@ export function ThemeToggle() {
     } catch {}
   }
 
-  const label = theme === "dark" ? "Passer en clair" : "Passer en sombre";
+  const label =
+    theme === "dark"
+      ? en ? "Switch to light" : "Passer en clair"
+      : en ? "Switch to dark" : "Passer en sombre";
 
   return (
     <button

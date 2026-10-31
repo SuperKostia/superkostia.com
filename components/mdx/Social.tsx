@@ -16,7 +16,7 @@ const MARKS: Record<Platform, ComponentType<SVGProps<SVGSVGElement>>> = {
   substack: SubstackMark,
 };
 
-const LABELS: Record<Platform, string> = {
+export const LABELS: Record<Platform, string> = {
   facebook: "Facebook",
   instagram: "Instagram",
   linkedin: "LinkedIn",

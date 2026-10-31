@@ -1,7 +1,20 @@
 import type { MetadataRoute } from "next";
 import { getEcrits, getHobbies, getProjets, ROUTES_DEDIEES } from "@/lib/mdx";
+import { chemin, LANGUES } from "@/lib/i18n";
 
 const BASE_URL = "https://superkostia.com";
+
+/** Une entrée par langue, chacune annonçant ses équivalents (hreflang). */
+function entrees(cheminFr: string, lastModified: Date): MetadataRoute.Sitemap {
+  const languages = Object.fromEntries(
+    LANGUES.map((l) => [l, `${BASE_URL}${chemin(l, cheminFr)}`]),
+  );
+  return LANGUES.map((l) => ({
+    url: `${BASE_URL}${chemin(l, cheminFr)}`,
+    lastModified,
+    alternates: { languages },
+  }));
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [projets, hobbies, ecrits] = await Promise.all([
@@ -12,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const now = new Date();
 
-  const staticRoutes: MetadataRoute.Sitemap = [
+  const statiques = [
     "/",
     "/projets",
     "/hobbies",
@@ -22,24 +35,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/a-propos",
     "/contact",
     "/colophon",
-  ].map((p) => ({ url: `${BASE_URL}${p}`, lastModified: now }));
+  ].flatMap((p) => entrees(p, now));
 
-  const projetRoutes: MetadataRoute.Sitemap = projets.map((p) => ({
-    url: `${BASE_URL}/projets/${p.frontmatter.slug}`,
-    lastModified: now,
-  }));
+  const projetRoutes = projets.flatMap((p) => entrees(`/projets/${p.frontmatter.slug}`, now));
 
-  const hobbyRoutes: MetadataRoute.Sitemap = hobbies
+  const hobbyRoutes = hobbies
     .filter((h) => !ROUTES_DEDIEES.has(h.frontmatter.slug))
-    .map((h) => ({
-      url: `${BASE_URL}/hobbies/${h.frontmatter.slug}`,
-      lastModified: now,
-    }));
+    .flatMap((h) => entrees(`/hobbies/${h.frontmatter.slug}`, now));
 
-  const ecritRoutes: MetadataRoute.Sitemap = ecrits.map((e) => ({
-    url: `${BASE_URL}/ecrits/${e.frontmatter.slug}`,
-    lastModified: e.frontmatter.date ? new Date(e.frontmatter.date) : now,
-  }));
+  const ecritRoutes = ecrits.flatMap((e) =>
+    entrees(`/ecrits/${e.frontmatter.slug}`, e.frontmatter.date ? new Date(e.frontmatter.date) : now),
+  );
 
-  return [...staticRoutes, ...projetRoutes, ...hobbyRoutes, ...ecritRoutes];
+  return [...statiques, ...projetRoutes, ...hobbyRoutes, ...ecritRoutes];
 }

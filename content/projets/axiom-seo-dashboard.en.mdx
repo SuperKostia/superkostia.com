@@ -1,0 +1,32 @@
+---
+title: "Axiom SEO Dashboard"
+tags: ["axiom", "seo", "tilda", "ops", "side"]
+summary: "An internal dashboard that monitors the SEO of every page published through Tilda on axiom-academic.com. Title, description, H1, indexability, load time, all in one place."
+---
+
+## Context
+
+Axiom Academic's website runs on **Tilda**: great for publishing fast, but
+its SEO editor is just okay. Once you stack up dozens of pages, knowing which
+ones have a clean title and description, a single H1 and a fast render
+becomes a full-time job.
+
+## The dashboard
+
+A local app that:
+
+- **Scrapes every published page** on `axiom-academic.com` continuously
+- Extracts the title, meta description, H1, canonicals and OG tags
+- Measures load time and a simplified Lighthouse score
+- Flags **duplicates** (two pages with the same title, two identical H1s…)
+- List view, filters, sorting by score
+
+<Screenshot src="/images/projets/axiom-seo-dashboard.jpg" alt="Internal SEO dashboard for axiom-academic.com" caption="List view, score per page, duplicate alerts" />
+
+<Stack items={["Python", "HTMX", "Playwright", "Tilda scraping", "SQLite"]} />
+
+## Why a side project
+
+Strictly tied to Axiom Academic (maintenance), but self-contained enough to
+have its own logic, its own UI, its own pace. A tool I could one day take to
+other Tilda sites if needed.

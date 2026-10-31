@@ -11,13 +11,38 @@ import {
   tirerCitation,
   type CitationAdler,
 } from "@/lib/adler";
+import type { Lang } from "@/lib/i18n";
+import { useLang } from "@/lib/useLang";
+
+const TEXTES = {
+  fr: {
+    titre: "Séance · Alfred Adler (1870-1937)",
+    encore: "Encore →",
+    freud: "Demander à Freud",
+    divan: "Le divan ?",
+    attente: "Une question pour le docteur ?",
+    decouvertes: "citations découvertes",
+    terminee: "séance terminée",
+  },
+  en: {
+    titre: "Session · Alfred Adler (1870-1937)",
+    encore: "Another one →",
+    freud: "Ask Freud",
+    divan: "The couch?",
+    attente: "A question for the doctor?",
+    decouvertes: "quotes discovered",
+    terminee: "session over",
+  },
+} satisfies Record<Lang, Record<string, string>>;
 
 const VITESSE_MS = 22;
 
 /** Section « Séance avec Adler » : une citation en grand, machine à écrire, Freud injoignable. */
 export function AdlerSeance() {
+  const lang = useLang();
+  const t = TEXTES[lang];
   const [citation, setCitation] = useState<CitationAdler>(CITATIONS_ADLER[0]);
-  const [lettres, setLettres] = useState(CITATIONS_ADLER[0].texte.length);
+  const [lettres, setLettres] = useState(CITATIONS_ADLER[0].texte[lang].length);
   const [vues, setVues] = useState<number | null>(null);
   const [reponse, setReponse] = useState<string | null>(null);
   const [indexFreud, setIndexFreud] = useState(0);
@@ -26,8 +51,8 @@ export function AdlerSeance() {
     setCitation(suivante);
     setVues(marquerVue(suivante.id).size);
     const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setLettres(animer && !reduit ? 0 : suivante.texte.length);
-  }, []);
+    setLettres(animer && !reduit ? 0 : suivante.texte[lang].length);
+  }, [lang]);
 
   // Compteur lu après le montage (localStorage n'existe pas côté serveur).
   useEffect(() => {
@@ -46,10 +71,10 @@ export function AdlerSeance() {
 
   // Machine à écrire.
   useEffect(() => {
-    if (lettres >= citation.texte.length) return;
+    if (lettres >= citation.texte[lang].length) return;
     const t = window.setTimeout(() => setLettres((n) => n + 1), VITESSE_MS);
     return () => window.clearTimeout(t);
-  }, [lettres, citation]);
+  }, [lettres, citation, lang]);
 
   const encore = () => {
     setReponse(null);
@@ -57,11 +82,12 @@ export function AdlerSeance() {
   };
 
   const demanderAFreud = () => {
-    setReponse(REPONSES_FREUD[indexFreud % REPONSES_FREUD.length]);
+    setReponse(REPONSES_FREUD[lang][indexFreud % REPONSES_FREUD[lang].length]);
     setIndexFreud((i) => i + 1);
   };
 
-  const enCours = lettres < citation.texte.length;
+  const texte = citation.texte[lang];
+  const enCours = lettres < texte.length;
 
   return (
     <section
@@ -74,23 +100,23 @@ export function AdlerSeance() {
           id="adler-titre"
           className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]"
         >
-          Séance · Alfred Adler (1870-1937)
+          {t.titre}
         </p>
 
         <blockquote className="flex flex-col gap-6">
           <p className="sr-only" aria-live="polite">
-            {enCours ? "" : citation.texte}
+            {enCours ? "" : texte}
           </p>
           <p
             aria-hidden
             className="min-h-[6em] font-[family-name:var(--font-space-grotesk)] text-3xl font-black leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl"
           >
-            <span className="text-[color:var(--color-muted)]">«&nbsp;</span>
-            {citation.texte.slice(0, lettres)}
+            <span className="text-[color:var(--color-muted)]">{lang === "en" ? "“" : "«\u00a0"}</span>
+            {texte.slice(0, lettres)}
             {enCours ? (
               <span className="ml-0.5 inline-block h-[0.8em] w-[0.08em] translate-y-[0.08em] bg-[color:var(--color-fg)] motion-safe:animate-pulse" />
             ) : (
-              <span className="text-[color:var(--color-muted)]">&nbsp;»</span>
+              <span className="text-[color:var(--color-muted)]">{lang === "en" ? "”" : "\u00a0»"}</span>
             )}
           </p>
           <footer className="font-mono text-xs uppercase tracking-[0.15em] text-[color:var(--color-muted)]">
@@ -102,10 +128,10 @@ export function AdlerSeance() {
       <div className="flex flex-col justify-between gap-6 border-t-2 border-[color:var(--color-border)] px-6 py-10 sm:px-10 lg:col-span-4 lg:border-l-2 lg:border-t-0 lg:py-16">
         <div className="flex flex-col gap-3">
           <BoutonSeance onClick={encore} accent>
-            Encore →
+            {t.encore}
           </BoutonSeance>
-          <BoutonSeance onClick={demanderAFreud}>Demander à Freud</BoutonSeance>
-          <BoutonSeance onClick={() => setReponse(REPONSE_DIVAN)}>Le divan ?</BoutonSeance>
+          <BoutonSeance onClick={demanderAFreud}>{t.freud}</BoutonSeance>
+          <BoutonSeance onClick={() => setReponse(REPONSE_DIVAN[lang])}>{t.divan}</BoutonSeance>
         </div>
 
         <p
@@ -113,13 +139,13 @@ export function AdlerSeance() {
           className="min-h-[4.5em] border-l-4 border-[color:var(--color-accent)] pl-4 font-mono text-sm leading-relaxed"
         >
           {reponse ?? (
-            <span className="text-[color:var(--color-muted)]">Une question pour le docteur ?</span>
+            <span className="text-[color:var(--color-muted)]">{t.attente}</span>
           )}
         </p>
 
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          {vues === null ? " " : `${vues} / ${CITATIONS_ADLER.length} citations découvertes`}
-          {vues === CITATIONS_ADLER.length && " · séance terminée"}
+          {vues === null ? " " : `${vues} / ${CITATIONS_ADLER.length} ${t.decouvertes}`}
+          {vues === CITATIONS_ADLER.length && ` · ${t.terminee}`}
         </p>
       </div>
     </section>

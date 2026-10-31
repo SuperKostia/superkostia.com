@@ -1,50 +1,60 @@
 import NextLink from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { chemin, type Lang } from "@/lib/i18n";
 
 type Porte = {
-  label: string;
-  href: string;
   numero: string;
-  teaser: string;
+  cheminFr: string;
+  label: Record<Lang, string>;
+  teaser: Record<Lang, string>;
 };
 
 const PORTES: Porte[] = [
   {
     numero: "02",
-    label: "Projets",
-    href: "/projets",
-    teaser: "Pro, perso, expérimental. Ce qui a été livré et ce qui l'a pas été.",
+    cheminFr: "/projets",
+    label: { fr: "Projets", en: "Projects" },
+    teaser: {
+      fr: "Pro, perso, expérimental. Ce qui a été livré et ce qui l'a pas été.",
+      en: "Work, personal, experimental. What shipped and what didn't.",
+    },
   },
   {
     numero: "03",
-    label: "Hobbies",
-    href: "/hobbies",
-    teaser: "Voyages et photo. La carte de tout ce que j'ai traversé, et les images à l'iPhone.",
+    cheminFr: "/hobbies",
+    label: { fr: "Hobbies", en: "Hobbies" },
+    teaser: {
+      fr: "Voyages et photo. La carte de tout ce que j'ai traversé, et les images à l'iPhone.",
+      en: "Travel and photos. A map of everywhere I've been, and the shots, all on iPhone.",
+    },
   },
   {
     numero: "04",
-    label: "Écrits",
-    href: "/ecrits",
-    teaser: "Notes, essais, trucs à moitié pensés que je mets quand même en ligne.",
+    cheminFr: "/ecrits",
+    label: { fr: "Écrits", en: "Writing" },
+    teaser: {
+      fr: "Notes, essais, trucs à moitié pensés que je mets quand même en ligne.",
+      en: "Notes, essays, half-baked thoughts I publish anyway.",
+    },
   },
   {
     numero: "05",
-    label: "À propos",
-    href: "/a-propos",
-    teaser: "Pas un CV. Une bio qui respire.",
+    cheminFr: "/a-propos",
+    label: { fr: "À propos", en: "About" },
+    teaser: { fr: "Pas un CV. Une bio qui respire.", en: "Not a résumé. A bio that breathes." },
   },
 ];
 
-export function Portes() {
+export function Portes({ lang }: { lang: Lang }) {
   return (
     <ul className="-mb-[2px] -mr-[2px] grid grid-cols-1 border-t-2 border-[color:var(--color-border)] sm:grid-cols-2 lg:grid-cols-4">
       {PORTES.map((porte) => (
         <li
-          key={porte.href}
+          key={porte.cheminFr}
           className="group relative border-b-2 border-r-2 border-[color:var(--color-border)]"
         >
           <NextLink
-            href={porte.href}
+            href={chemin(lang, porte.cheminFr)}
             className="flex h-full min-h-[200px] flex-col justify-between gap-4 p-6 transition-colors hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)] sm:min-h-[240px] sm:p-8"
           >
             <div className="flex items-start justify-between gap-3">
@@ -61,10 +71,10 @@ export function Portes() {
 
             <div className="flex flex-col gap-3">
               <span className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-none tracking-tight sm:text-5xl lg:text-4xl xl:text-5xl">
-                {porte.label}
+                {porte.label[lang]}
               </span>
               <span className="block min-h-[4em] max-w-[28ch] text-sm leading-snug text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
-                {porte.teaser}
+                {porte.teaser[lang]}
               </span>
             </div>
           </NextLink>

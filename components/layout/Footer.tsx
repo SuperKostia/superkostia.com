@@ -1,7 +1,7 @@
 import NextLink from "next/link";
-import { FOOTER_NAV } from "./nav";
+import { NAV_PIED, chemin, type Lang } from "@/lib/i18n";
 
-export function Footer() {
+export function Footer({ lang }: { lang: Lang }) {
   const year = new Date().getFullYear();
 
   return (
@@ -12,19 +12,19 @@ export function Footer() {
             superkostia
           </p>
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-            Terrain de jeu public · {year}
+            {lang === "en" ? "Public playground" : "Terrain de jeu public"} · {year}
           </p>
         </div>
 
-        <nav aria-label="Navigation secondaire">
+        <nav aria-label={lang === "en" ? "Secondary navigation" : "Navigation secondaire"}>
           <ul className="flex flex-wrap items-center gap-4 text-sm uppercase tracking-wider">
-            {FOOTER_NAV.map((item) => (
-              <li key={item.href}>
+            {NAV_PIED.map((item) => (
+              <li key={item.cheminFr}>
                 <NextLink
-                  href={item.href}
+                  href={chemin(lang, item.cheminFr)}
                   className="underline decoration-2 underline-offset-4 hover:decoration-[color:var(--color-accent)]"
                 >
-                  {item.label}
+                  {item.label[lang]}
                 </NextLink>
               </li>
             ))}

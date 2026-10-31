@@ -1,11 +1,21 @@
 "use client";
 
+import { useLang } from "@/lib/useLang";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
 import type { Photo, Series } from "@/lib/photos";
 import { ExifLine } from "./ExifLine";
 import { cn } from "@/lib/utils";
+
+const ARIA = {
+  fr: { ouvrir: "Ouvrir", fermer: "Fermer", precedente: "Photo précédente", suivante: "Photo suivante", aller: "Aller à", pile: "Mosaïque aléatoire" },
+  en: { ouvrir: "Open", fermer: "Close", precedente: "Previous photo", suivante: "Next photo", aller: "Go to", pile: "Random mosaic" },
+};
+
+function useAria() {
+  return ARIA[useLang()];
+}
 
 const PILE_SIZE = 14;
 const PILE_REARRANGE_MS = 3500;
@@ -42,6 +52,7 @@ type PhotoGalleryProps = {
 };
 
 export function PhotoGallery({ series }: PhotoGalleryProps) {
+  const a = useAria();
   const allPhotos = useMemo(
     () => series.flatMap((s) => s.photos),
     [series],
@@ -123,7 +134,7 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
                   <button
                     type="button"
                     onClick={() => setLightboxIndex(globalIndex)}
-                    aria-label={`Ouvrir ${photo.alt}`}
+                    aria-label={`${a.ouvrir} ${photo.alt}`}
                     data-cursor="ouvrir"
                     className="group relative block aspect-[4/3] w-full overflow-hidden"
                   >
@@ -169,6 +180,7 @@ function Lightbox({
   onIndexChange,
   onClose,
 }: LightboxProps) {
+  const a = useAria();
   const photo = photos[currentIndex];
   const stripRef = useRef<HTMLUListElement>(null);
   const touchRef = useRef<{ x: number; y: number } | null>(null);
@@ -215,7 +227,7 @@ function Lightbox({
       <button
         type="button"
         onClick={onClose}
-        aria-label="Fermer"
+        aria-label={a.fermer}
         className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center text-[color:var(--photo-fg)] hover:text-[color:var(--photo-fg-muted)]"
       >
         <X size={22} strokeWidth={1.5} aria-hidden />
@@ -224,13 +236,13 @@ function Lightbox({
       <button
         type="button"
         onClick={prev}
-        aria-label="Photo précédente"
+        aria-label={a.precedente}
         className="absolute inset-y-0 left-0 z-0 w-1/3"
       />
       <button
         type="button"
         onClick={next}
-        aria-label="Photo suivante"
+        aria-label={a.suivante}
         className="absolute inset-y-0 right-0 z-0 w-1/3"
       />
 
@@ -262,7 +274,7 @@ function Lightbox({
               <button
                 type="button"
                 onClick={() => onIndexChange(i)}
-                aria-label={`Aller à ${p.alt}`}
+                aria-label={`${a.aller} ${p.alt}`}
                 aria-current={isActive}
                 className={cn(
                   "group relative block h-14 overflow-hidden transition-all duration-300 sm:h-16",
@@ -301,6 +313,7 @@ type PhotoPileProps = {
 };
 
 function PhotoPile({ photos, onOpen, paused = false }: PhotoPileProps) {
+  const a = useAria();
   const [sample, setSample] = useState<Photo[]>([]);
   const [layouts, setLayouts] = useState<PileLayout[]>([]);
 
@@ -335,7 +348,7 @@ function PhotoPile({ photos, onOpen, paused = false }: PhotoPileProps) {
 
   return (
     <section
-      aria-label="Mosaïque aléatoire"
+      aria-label={a.pile}
       aria-hidden={paused}
       className={cn(
         "relative h-[85vh] w-full overflow-hidden bg-[color:var(--photo-bg)] transition-opacity duration-200 sm:h-[90vh]",
@@ -351,7 +364,7 @@ function PhotoPile({ photos, onOpen, paused = false }: PhotoPileProps) {
             key={photo.src}
             type="button"
             onClick={() => onOpen(globalIndex)}
-            aria-label={`Ouvrir ${photo.alt}`}
+            aria-label={`${a.ouvrir} ${photo.alt}`}
             data-cursor="ouvrir"
             className="group absolute block origin-center"
             style={{

@@ -2,19 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLang } from "@/lib/useLang";
 
 const HINT_VISIBLE_MS = 6000;
 
 type ProjetKeyboardNavProps = {
-  prevSlug?: string;
-  nextSlug?: string;
+  prevHref?: string;
+  nextHref?: string;
 };
 
 export function ProjetKeyboardNav({
-  prevSlug,
-  nextSlug,
+  prevHref,
+  nextHref,
 }: ProjetKeyboardNavProps) {
   const router = useRouter();
+  const en = useLang() === "en";
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -37,20 +39,20 @@ export function ProjetKeyboardNav({
       const isNext = event.key === "ArrowRight" || event.key === "ArrowDown";
       if (!isPrev && !isNext) return;
 
-      if (isPrev && prevSlug) {
+      if (isPrev && prevHref) {
         event.preventDefault();
-        router.push(`/projets/${prevSlug}`);
+        router.push(prevHref);
         setVisible(false);
-      } else if (isNext && nextSlug) {
+      } else if (isNext && nextHref) {
         event.preventDefault();
-        router.push(`/projets/${nextSlug}`);
+        router.push(nextHref);
         setVisible(false);
       }
     };
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [prevSlug, nextSlug, router]);
+  }, [prevHref, nextHref, router]);
 
   if (!visible) return null;
 
@@ -62,7 +64,7 @@ export function ProjetKeyboardNav({
       <span className="inline-block w-8 text-center animate-[keynav-arrows_1.4s_ease-in-out_infinite]">
         ← →
       </span>
-      <span className="ml-2">naviguer</span>
+      <span className="ml-2">{en ? "browse" : "naviguer"}</span>
     </div>
   );
 }

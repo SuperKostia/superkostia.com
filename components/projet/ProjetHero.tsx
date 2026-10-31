@@ -1,10 +1,12 @@
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
+import type { Lang } from "@/lib/i18n";
 
 type ProjetHeroProps = {
   title: string;
   url: string;
   screenshotSrc: string;
+  lang: Lang;
 };
 
 function hostname(url: string): string {
@@ -15,7 +17,7 @@ function hostname(url: string): string {
   }
 }
 
-export function ProjetHero({ title, url, screenshotSrc }: ProjetHeroProps) {
+export function ProjetHero({ title, url, screenshotSrc, lang }: ProjetHeroProps) {
   return (
     <a
       href={url}
@@ -27,7 +29,7 @@ export function ProjetHero({ title, url, screenshotSrc }: ProjetHeroProps) {
       <div className="relative aspect-[16/10] w-full overflow-hidden border-b-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)]">
         <Image
           src={screenshotSrc}
-          alt={`Capture de ${title}`}
+          alt={lang === "en" ? `Screenshot of ${title}` : `Capture de ${title}`}
           fill
           sizes="(max-width: 1024px) 100vw, 900px"
           className="object-cover object-top"
@@ -38,7 +40,7 @@ export function ProjetHero({ title, url, screenshotSrc }: ProjetHeroProps) {
           {hostname(url)}
         </span>
         <span className="inline-flex items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-3 py-1.5 font-medium uppercase tracking-wider text-sm text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard-sm)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5">
-          Voir le site
+          {lang === "en" ? "Visit the site" : "Voir le site"}
           <ArrowUpRight size={16} strokeWidth={2.5} aria-hidden />
         </span>
       </div>

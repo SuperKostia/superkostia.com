@@ -1,31 +1,34 @@
 import { getProjets } from "@/lib/mdx";
 import { getNomadsProfile } from "@/lib/nomads";
 import { AthensClock } from "./AthensClock";
+import { formatNombre, type Lang } from "@/lib/i18n";
 
-function formatKm(n: number): string {
-  return new Intl.NumberFormat("fr-FR").format(n) + " km";
-}
+const LIBELLES = {
+  fr: { athenes: "Athènes", projet: "Dernier projet", pays: "Pays visités", km: "Km parcourus", ville: "Dernière ville", aria: "Ticker temps réel" },
+  en: { athenes: "Athens", projet: "Latest project", pays: "Countries visited", km: "Km travelled", ville: "Last city", aria: "Live ticker" },
+} satisfies Record<Lang, Record<string, string>>;
 
-export async function Ticker() {
+export async function Ticker({ lang }: { lang: Lang }) {
+  const l = LIBELLES[lang];
   const [projets, nomads] = await Promise.all([
-    getProjets(),
+    getProjets(lang),
     getNomadsProfile(),
   ]);
   const dernier = projets[0]?.frontmatter.title ?? "—";
 
   const pills: Array<{ label: string; value: React.ReactNode }> = [
-    { label: "Athènes", value: <AthensClock /> },
-    { label: "Dernier projet", value: dernier },
+    { label: l.athenes, value: <AthensClock /> },
+    { label: l.projet, value: dernier },
     {
-      label: "Pays visités",
+      label: l.pays,
       value: nomads ? `${nomads.stats.countries}` : "—",
     },
     {
-      label: "Km parcourus",
-      value: nomads ? formatKm(nomads.stats.distance_traveled_km) : "—",
+      label: l.km,
+      value: nomads ? `${formatNombre(lang, nomads.stats.distance_traveled_km)} km` : "—",
     },
     {
-      label: "Dernière ville",
+      label: l.ville,
       value: nomads?.lastTrip ? nomads.lastTrip.place : "—",
     },
   ];
@@ -34,7 +37,7 @@ export async function Ticker() {
 
   return (
     <section
-      aria-label="Ticker temps réel"
+      aria-label={l.aria}
       className="marquee border-b-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)]"
     >
       <div className="marquee__track marquee__track--slow flex min-w-[200%]">

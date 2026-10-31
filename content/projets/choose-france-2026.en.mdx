@@ -1,0 +1,71 @@
+---
+tags: ["data-viz", "mapping", "ai", "economy"]
+summary: "A map dashboard of the 71 foreign investments announced at the Choose France 2026 summit: €93bn geolocated site by site, circles sized by CAPEX, built by a fleet of AI agents."
+stack: ["MapLibre GL", "OpenFreeMap", "Claude agents", "single-file HTML"]
+links:
+  - label: "Full-screen dashboard"
+    url: "https://superkostia.com/projets/choose-france-2026/dashboard.html"
+---
+
+## The pitch
+
+On 1 June 2026, the Choose France summit at Versailles announced **71
+foreign investments, €93 billion, more than 15,600 jobs**. It was all in a
+45-page press kit PDF: impossible to read if you want to decide where to
+look.
+
+This project turns the PDF into an interactive map dashboard: every
+investment project is geolocated down to the site (the factory, not just
+the town), with a circle sized by the amount invested.
+
+<div className="w-[calc(100vw-3rem)] sm:w-[calc(100vw-5rem)] lg:w-[calc(100vw-6rem)] -rotate-[0.3deg] border-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] shadow-[var(--shadow-hard)]">
+  <iframe
+    src="/projets/choose-france-2026/dashboard.html"
+    title="Choose France 2026 dashboard: map of foreign investments in France"
+    className="block h-[700px] w-full"
+    loading="lazy"
+  />
+</div>
+
+<p className="mt-3 font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)]">↑ The dashboard is interactive. <a href="/projets/choose-france-2026/dashboard.html" className="underline" data-cursor="ouvrir">Full-screen version</a> recommended. The dashboard itself is in French.</p>
+
+## What you can do with it
+
+- **Projects view**: one circle per site, sized on a log scale of CAPEX (from
+  €2M to €75bn, you need it), coloured by sector family.
+- **Regions view**: amounts aggregated by administrative region.
+- **Progress view**: projects recoloured by phase (announced, studies, permit
+  granted, works started, operational), to see at a glance what's actually
+  moving.
+- **Filters** by sector family, free search, a detailed card per project with
+  the investor's track record in France.
+- A detour to **Kourou** for PLD Space's launch pad, the only project outside
+  mainland France.
+
+## How it's made
+
+The whole data pipeline is the work of a fleet of AI agents orchestrated in
+three waves:
+
+1. **Extraction**: the press kit read in parallel, coverage checked against
+   the official list of 71 announcements, deduplication.
+2. **Enrichment**: one agent per project checks every field against the
+   source and searches the web for the investor's existing presence in
+   France.
+3. **Geocoding**: one agent per project pins the exact site (the former
+   Bridgestone plant in Béthune, the converted air base of E-Valley in
+   Cambrai...), with geometric safeguards and corrective retries.
+
+The output is a single HTML file with no framework: MapLibre GL JS for the
+map, [OpenFreeMap](https://openfreemap.org/) vector tiles (free, no API key,
+in the spirit of this site), data embedded as JSON.
+
+<Stack items={["MapLibre GL JS", "OpenFreeMap (Positron)", "fleet of Claude agents", "PDF extraction", "verified geocoding", "single-file HTML"]} />
+
+## The numbers
+
+Source: the official Choose France 2026 press kit. The amounts on the map are
+the maximums announced by the investors; existing sites come from additional
+research and remain to be confirmed. Public data, shareable dashboard.
+
+<Links items={[{ label: "Full-screen dashboard", url: "/projets/choose-france-2026/dashboard.html" }, { label: "openfreemap.org", url: "https://openfreemap.org/" }]} />
