@@ -3,11 +3,11 @@ import NextLink from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
 import { Card } from "@/components/ui/Card";
 import { Tag } from "@/components/ui/Tag";
-import fs from "node:fs";
-import path from "node:path";
 import { ProjetsVue } from "@/components/projet/ProjetsVue";
 import type { StoryProjet } from "@/components/projet/ProjetsStories";
+import { LogoProjet } from "@/components/projet/LogoProjet";
 import { getProjets } from "@/lib/mdx";
+import { captureProjet, logoProjet } from "@/lib/visuels";
 import { LOCALE, alternates, chemin, libelleType, type Lang } from "@/lib/i18n";
 
 const TEXTES = {
@@ -48,12 +48,6 @@ function formatPeriode(
   return String(fm.year);
 }
 
-function aUneCapture(slug: string): boolean {
-  return fs.existsSync(
-    path.join(process.cwd(), "public", "images", "projets", `${slug}.jpg`),
-  );
-}
-
 export async function ProjetsIndex({ lang }: { lang: Lang }) {
   const projets = await getProjets(lang);
   const t = TEXTES[lang];
@@ -67,7 +61,8 @@ export async function ProjetsIndex({ lang }: { lang: Lang }) {
       resume: p.summary,
       href: chemin(lang, `/projets/${p.slug}`),
       site: site && /^https?:\/\//.test(site) ? site : undefined,
-      image: aUneCapture(p.slug) ? `/images/projets/${p.slug}.jpg` : undefined,
+      image: captureProjet(p.slug),
+      logo: logoProjet(p.slug),
     };
   });
 
@@ -92,15 +87,22 @@ export async function ProjetsIndex({ lang }: { lang: Lang }) {
                     className="flex h-full flex-col gap-3 transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-[color:var(--color-accent)] group-hover:text-[color:var(--color-accent-fg)]"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <Tag
-                        tone={
-                          entry.frontmatter.type === "pro"
-                            ? "accent"
-                            : "default"
-                        }
-                      >
-                        {libelleType(lang, entry.frontmatter.type)}
-                      </Tag>
+                      <span className="flex items-center gap-2">
+                        <LogoProjet
+                          titre={entry.frontmatter.title}
+                          logo={logoProjet(entry.frontmatter.slug)}
+                          className="h-8 w-8 text-xs"
+                        />
+                        <Tag
+                          tone={
+                            entry.frontmatter.type === "pro"
+                              ? "accent"
+                              : "default"
+                          }
+                        >
+                          {libelleType(lang, entry.frontmatter.type)}
+                        </Tag>
+                      </span>
                       <span className="font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
                         {formatPeriode(lang, entry.frontmatter)}
                       </span>

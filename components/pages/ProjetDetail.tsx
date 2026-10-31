@@ -10,27 +10,31 @@ import { ProjetHero } from "@/components/projet/ProjetHero";
 import { ProjetKeyboardNav } from "@/components/projet/ProjetKeyboardNav";
 import { ProjetPrevNext } from "@/components/projet/ProjetPrevNext";
 import { getProjets, getProjetBySlug } from "@/lib/mdx";
-import { alternates, chemin, imagesPartage, libelleStatut, libelleType, LOCALE_OG, type Lang } from "@/lib/i18n";
+import { captureProjet, logoProjet } from "@/lib/visuels";
+import { LogoProjet } from "@/components/projet/LogoProjet";
+import {
+  alternates,
+  chemin,
+  imagesPartage,
+  libelleStatut,
+  libelleType,
+  LOCALE_OG,
+  type Lang,
+} from "@/lib/i18n";
 
-async function hasScreenshot(slug: string): Promise<boolean> {
+/** Badge "Déjà N potes" calculé depuis la liste publique des membres du flux, si elle existe. Sinon le `flux` du frontmatter. */
+async function fluxBadge(
+  lang: Lang,
+  slug: string,
+  fallback?: string,
+): Promise<string | null> {
   const file = path.join(
     process.cwd(),
     "public",
-    "images",
     "projets",
-    `${slug}.jpg`,
+    slug,
+    "members.json",
   );
-  try {
-    await fs.access(file);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/** Badge "Déjà N potes" calculé depuis la liste publique des membres du flux, si elle existe. Sinon le `flux` du frontmatter. */
-async function fluxBadge(lang: Lang, slug: string, fallback?: string): Promise<string | null> {
-  const file = path.join(process.cwd(), "public", "projets", slug, "members.json");
   try {
     const members = JSON.parse(await fs.readFile(file, "utf8")) as unknown[];
     if (Array.isArray(members) && members.length > 0) {
@@ -49,17 +53,23 @@ export async function parametresProjets() {
   return projets.map((p) => ({ slug: p.frontmatter.slug }));
 }
 
-export async function metadataProjet(lang: Lang, slug: string): Promise<Metadata> {
+export async function metadataProjet(
+  lang: Lang,
+  slug: string,
+): Promise<Metadata> {
   const projet = await getProjetBySlug(slug, lang);
   if (!projet) return {};
   const { frontmatter } = projet;
   const cheminFr = `/projets/${slug}`;
   const images = imagesPartage(
     lang,
-    (await hasScreenshot(slug))
+    captureProjet(slug)
       ? {
           url: `/images/projets/${slug}.jpg`,
-          alt: lang === "en" ? `Screenshot of ${frontmatter.title}` : `Capture de ${frontmatter.title}`,
+          alt:
+            lang === "en"
+              ? `Screenshot of ${frontmatter.title}`
+              : `Capture de ${frontmatter.title}`,
         }
       : undefined,
   );
@@ -85,7 +95,13 @@ export async function metadataProjet(lang: Lang, slug: string): Promise<Metadata
   };
 }
 
-export async function ProjetDetail({ lang, slug }: { lang: Lang; slug: string }) {
+export async function ProjetDetail({
+  lang,
+  slug,
+}: {
+  lang: Lang;
+  slug: string;
+}) {
   const [projet, allProjets] = await Promise.all([
     getProjetBySlug(slug, lang),
     getProjets(lang),
@@ -94,12 +110,10 @@ export async function ProjetDetail({ lang, slug }: { lang: Lang; slug: string })
 
   const { frontmatter, body } = projet;
   const primaryLink = frontmatter.links?.[0];
-  const showHero = Boolean(primaryLink?.url) && (await hasScreenshot(slug));
+  const showHero = Boolean(primaryLink?.url) && captureProjet(slug);
   const flux = await fluxBadge(lang, slug, frontmatter.flux);
 
-  const currentIndex = allProjets.findIndex(
-    (p) => p.frontmatter.slug === slug,
-  );
+  const currentIndex = allProjets.findIndex((p) => p.frontmatter.slug === slug);
   const prevProjet =
     allProjets[(currentIndex - 1 + allProjets.length) % allProjets.length];
   const nextProjet = allProjets[(currentIndex + 1) % allProjets.length];
@@ -126,9 +140,16 @@ export async function ProjetDetail({ lang, slug }: { lang: Lang; slug: string })
           ))}
         </div>
 
-        <h1 className="font-[family-name:var(--font-space-grotesk)] text-5xl font-black uppercase leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
-          {frontmatter.title}
-        </h1>
+        <div className="flex items-center gap-4 sm:gap-5">
+          <LogoProjet
+            titre={frontmatter.title}
+            logo={logoProjet(slug)}
+            className="h-14 w-14 text-xl shadow-[var(--shadow-hard-sm)] sm:h-20 sm:w-20 sm:text-3xl"
+          />
+          <h1 className="font-[family-name:var(--font-space-grotesk)] text-5xl font-black uppercase leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+            {frontmatter.title}
+          </h1>
+        </div>
 
         {frontmatter.tagline ? (
           <p className="max-w-2xl text-xl font-bold leading-tight text-[color:var(--color-fg)] sm:text-2xl">

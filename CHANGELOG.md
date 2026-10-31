@@ -8,6 +8,11 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — Logos des projets (2026-10-31)
+- Le favicon ou logo du site de chaque projet (`public/images/logos/`, récupérés par `node scripts/fetch-logos.mjs`) sert d'avatar : miniatures des stories (à la place de la capture), en-tête de chaque story façon Instagram (logo, nom, date), vignettes voisines, cartes de la grille et en-tête des fiches. Sans site ou sans icône : initiales sur fond jaune. Composant `LogoProjet`, chemins des visuels centralisés dans `lib/visuels.ts`.
+- Nouvelle capture d'axiom-academic.com (nouveau site).
+- Stories : la rangée de miniatures défile seule, sans décaler la page de côté ; la scène est découpée à la largeur de la page.
+
 ### Feat — Les projets en stories (2026-10-31)
 - `/projets` et `/en/projects` s'ouvrent en stories façon Instagram, dans la DA (angles droits, ombre dure, jaune acide) : une story verticale par projet (capture entière, type, période, résumé, « Voir la fiche », « Voir le site »), les voisines estompées de part et d'autre sur desktop, une rangée de vignettes carrées (anneau jaune = pas encore vu, mémorisé d'une visite à l'autre).
 - Défilement automatique toutes les 7 s avec barre segmentée ; pause au survol, à l'appui long, hors écran, onglet caché, bouton pause, et désactivé si mouvement réduit. Navigation : tap à gauche/droite, glissement avec la carte qui suit le doigt, flèches à l'écran et au clavier, espace pour la pause. Images voisines préchargées.

@@ -6,6 +6,7 @@ import NextLink from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Pause, Play } from "lucide-react";
 import type { Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { LogoProjet } from "./LogoProjet";
 
 /** Durée d'affichage d'une story avant de passer à la suivante. */
 const DUREE_MS = 7000;
@@ -41,6 +42,8 @@ export type StoryProjet = {
   href: string;
   site?: string;
   image?: string;
+  /** Favicon / logo du site du projet (public/images/logos), l'« avatar » de la story. */
+  logo?: string;
 };
 
 const TEXTES = {
@@ -106,8 +109,12 @@ export function ProjetsStories({
   /** Amène la story entière à l'écran (utile quand on clique une vignette depuis le haut de la page). */
   const montrerScene = useCallback(() => {
     const r = sceneRef.current?.getBoundingClientRect();
+    // Défilement vertical seulement (scrollIntoView peut aussi décaler la page de côté).
     if (r && (r.top < 56 || r.bottom > window.innerHeight)) {
-      sceneRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      window.scrollBy({
+        top: r.bottom - window.innerHeight + 24,
+        behavior: "smooth",
+      });
     }
   }, []);
 
@@ -137,14 +144,15 @@ export function ProjetsStories({
 
   // La vignette active se recentre dans sa rangée.
   useEffect(() => {
-    const active = rangeeRef.current?.querySelector<HTMLElement>(
-      '[aria-current="true"]',
-    );
-    active?.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
-    });
+    // On fait défiler la rangée seule, sans entraîner la page.
+    const rangee = rangeeRef.current;
+    const active = rangee?.querySelector<HTMLElement>('[aria-current="true"]');
+    if (rangee && active) {
+      rangee.scrollTo({
+        left: active.offsetLeft - (rangee.clientWidth - active.offsetWidth) / 2,
+        behavior: "smooth",
+      });
+    }
   }, [index]);
 
   // Vus mémorisés d'une visite à l'autre (lus après montage : pas de localStorage au rendu serveur).
@@ -273,7 +281,7 @@ export function ProjetsStories({
       {/* Rangée de vignettes, l'équivalent des ronds Instagram : carrées, DA oblige. */}
       <ol
         ref={rangeeRef}
-        className="-mx-6 flex gap-3 overflow-x-auto px-6 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0"
+        className="relative -mx-6 flex gap-3 overflow-x-auto px-6 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0"
       >
         {projets.map((p, i) => {
           const nouveau = vus !== null && !vus.has(p.slug);
@@ -299,21 +307,11 @@ export function ProjetsStories({
                         : "border-[color:var(--color-border)]/30",
                   )}
                 >
-                  <span className="relative block h-full w-full overflow-hidden border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)]">
-                    {p.image ? (
-                      <Image
-                        src={p.image}
-                        alt=""
-                        fill
-                        sizes="56px"
-                        className="object-cover object-top"
-                      />
-                    ) : (
-                      <span className="flex h-full items-center justify-center font-[family-name:var(--font-space-grotesk)] text-lg font-black uppercase text-[color:var(--color-accent-fg)]">
-                        {p.titre.slice(0, 2)}
-                      </span>
-                    )}
-                  </span>
+                  <LogoProjet
+                    titre={p.titre}
+                    logo={p.logo}
+                    className="h-full w-full text-lg"
+                  />
                 </span>
                 <span
                   className={cn(
@@ -334,7 +332,7 @@ export function ProjetsStories({
       {/* Scène : la story au centre, les voisines estompées de part et d'autre (desktop). */}
       <div
         ref={sceneRef}
-        className="relative flex scroll-mb-6 items-center justify-center lg:h-[var(--h)]"
+        className="relative flex items-center justify-center overflow-x-clip lg:h-[var(--h)]"
         style={SCENE}
       >
         {/* Préchargement des voisines : le changement de story ne passe jamais par un fond vide. */}
@@ -428,14 +426,24 @@ export function ProjetsStories({
             </div>
 
             <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-[color:var(--color-accent-fg)]">
-                  {courant.type}
-                </span>
-                <span className="border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-2 py-0.5 font-mono text-[11px] uppercase tracking-wider">
-                  {courant.periode}
+              <div className="flex min-w-0 items-center gap-2.5">
+                <LogoProjet
+                  titre={courant.titre}
+                  logo={courant.logo}
+                  className="h-9 w-9 text-sm"
+                />
+                <span className="flex min-w-0 flex-col leading-tight">
+                  <span className="truncate font-mono text-xs font-bold uppercase tracking-wider">
+                    {courant.titre}
+                  </span>
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
+                    {courant.periode}
+                  </span>
                 </span>
               </div>
+              <span className="ml-auto shrink-0 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-[color:var(--color-accent-fg)]">
+                {courant.type}
+              </span>
               <button
                 type="button"
                 onClick={() => setEnPause((p) => !p)}
@@ -545,8 +553,15 @@ function VignetteContenu({ projet }: { projet: StoryProjet }) {
             className="object-cover object-top"
           />
         ) : null}
+        <span className="absolute -bottom-5 left-2.5">
+          <LogoProjet
+            titre={projet.titre}
+            logo={projet.logo}
+            className="h-10 w-10 text-sm"
+          />
+        </span>
       </span>
-      <span className="block p-2.5 text-left font-[family-name:var(--font-space-grotesk)] text-base font-black uppercase leading-tight">
+      <span className="block p-2.5 pt-7 text-left font-[family-name:var(--font-space-grotesk)] text-base font-black uppercase leading-tight">
         {projet.titre}
       </span>
       <span className="line-clamp-5 px-2.5 text-left text-[11px] leading-snug text-[color:var(--color-muted)]">
