@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { MDXContent } from "@/components/mdx/MDXContent";
 import { getHobbies, getHobbyBySlug, ROUTES_DEDIEES } from "@/lib/mdx";
-import { alternates, chemin, LOCALE_OG, type Lang } from "@/lib/i18n";
+import { alternates, chemin, imagesPartage, LOCALE_OG, type Lang } from "@/lib/i18n";
 
 export async function parametresHobbies() {
   const hobbies = await getHobbies();
@@ -31,11 +31,13 @@ export async function metadataHobby(lang: Lang, slug: string): Promise<Metadata>
       title: frontmatter.title,
       description: frontmatter.summary,
       tags: frontmatter.tags,
+      images: imagesPartage(lang).openGraph,
     },
     twitter: {
       card: "summary_large_image",
       title: frontmatter.title,
       description: frontmatter.summary,
+      images: imagesPartage(lang).twitter,
     },
   };
 }

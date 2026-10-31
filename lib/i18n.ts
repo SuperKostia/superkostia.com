@@ -87,6 +87,16 @@ export function t<T>(lang: Lang, textes: Record<Lang, T>): T {
   return textes[lang];
 }
 
+/** Image de partage d'une page : la sienne si elle en a une, sinon celle du site (/og/fr, /og/en). */
+export function imagesPartage(lang: Lang, image?: { url: string; alt: string }) {
+  const img = image ?? { url: `/og/${lang}`, alt: "superkostia" };
+  const dims = image ? {} : { width: 1200, height: 630 };
+  return {
+    openGraph: [{ ...img, ...dims }],
+    twitter: [img.url],
+  };
+}
+
 /* ---------- Libellés partagés ---------- */
 
 export const TYPES_PROJET: Record<string, Record<Lang, string>> = {

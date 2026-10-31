@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { MDXContent } from "@/components/mdx/MDXContent";
 import { getEcrits, getEcritBySlug } from "@/lib/mdx";
-import { alternates, chemin, LOCALE_OG, type Lang } from "@/lib/i18n";
+import { alternates, chemin, imagesPartage, LOCALE_OG, type Lang } from "@/lib/i18n";
 
 export async function parametresEcrits() {
   const ecrits = await getEcrits();
@@ -28,11 +28,13 @@ export async function metadataEcrit(lang: Lang, slug: string): Promise<Metadata>
       description: frontmatter.summary,
       publishedTime: frontmatter.date,
       tags: frontmatter.tags,
+      images: imagesPartage(lang).openGraph,
     },
     twitter: {
       card: "summary_large_image",
       title: frontmatter.title,
       description: frontmatter.summary,
+      images: imagesPartage(lang).twitter,
     },
   };
 }

@@ -10,7 +10,7 @@ import { ProjetHero } from "@/components/projet/ProjetHero";
 import { ProjetKeyboardNav } from "@/components/projet/ProjetKeyboardNav";
 import { ProjetPrevNext } from "@/components/projet/ProjetPrevNext";
 import { getProjets, getProjetBySlug } from "@/lib/mdx";
-import { alternates, chemin, libelleStatut, libelleType, LOCALE_OG, type Lang } from "@/lib/i18n";
+import { alternates, chemin, imagesPartage, libelleStatut, libelleType, LOCALE_OG, type Lang } from "@/lib/i18n";
 
 async function hasScreenshot(slug: string): Promise<boolean> {
   const file = path.join(
@@ -54,6 +54,15 @@ export async function metadataProjet(lang: Lang, slug: string): Promise<Metadata
   if (!projet) return {};
   const { frontmatter } = projet;
   const cheminFr = `/projets/${slug}`;
+  const images = imagesPartage(
+    lang,
+    (await hasScreenshot(slug))
+      ? {
+          url: `/images/projets/${slug}.jpg`,
+          alt: lang === "en" ? `Screenshot of ${frontmatter.title}` : `Capture de ${frontmatter.title}`,
+        }
+      : undefined,
+  );
   return {
     title: frontmatter.title,
     description: frontmatter.summary,
@@ -65,11 +74,13 @@ export async function metadataProjet(lang: Lang, slug: string): Promise<Metadata
       title: frontmatter.title,
       description: frontmatter.summary,
       tags: frontmatter.tags,
+      images: images.openGraph,
     },
     twitter: {
       card: "summary_large_image",
       title: frontmatter.title,
       description: frontmatter.summary,
+      images: images.twitter,
     },
   };
 }

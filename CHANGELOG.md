@@ -8,6 +8,10 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Feat — llms.txt et images de partage partout (2026-10-31)
+- `/llms.txt` (format llmstxt.org) : le site résumé pour les IA, en anglais avec les liens des deux langues, régénéré à chaque build depuis les fiches (25 entrées : pages, 15 projets, hobbies, écrits).
+- Images de partage sur les fiches projets (leur capture d'écran), les hobbies et les écrits : avant, ces pages n'en avaient aucune, leurs métadonnées écrasant celle du site. Repli sur `/og/fr` et `/og/en`, l'image du site à une adresse stable.
+
 ### Fix — Citations d'Adler vérifiées (2026-10-31)
 - Les neuf citations anglaises comparées au texte intégral des livres : huit conformes. « Life means… » était fausse sur un mot : l'original est à la première personne (« my fellow men… my share »), corrigé en anglais et en français. « Être humain, c'est se sentir inférieur » est désormais une traduction littérale de l'allemand, signalée comme telle dans le code.
 
