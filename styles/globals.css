@@ -146,6 +146,28 @@ body {
   }
 }
 
+@keyframes story-droite {
+  from {
+    opacity: 0.4;
+    transform: translateX(14%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes story-gauche {
+  from {
+    opacity: 0.4;
+    transform: translateX(-14%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @keyframes notif-in {
   from {
     opacity: 0;

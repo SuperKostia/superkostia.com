@@ -3,6 +3,10 @@ import NextLink from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
 import { Card } from "@/components/ui/Card";
 import { Tag } from "@/components/ui/Tag";
+import fs from "node:fs";
+import path from "node:path";
+import { ProjetsVue } from "@/components/projet/ProjetsVue";
+import type { StoryProjet } from "@/components/projet/ProjetsStories";
 import { getProjets } from "@/lib/mdx";
 import { LOCALE, alternates, chemin, libelleType, type Lang } from "@/lib/i18n";
 
@@ -10,12 +14,14 @@ const TEXTES = {
   fr: {
     titre: "Projets",
     description: "Tout ce que Kostia a monté : pro, perso, expérimental.",
-    intro: "Pro, perso, expérimental. Les filtres et la recherche arrivent dans un prochain chunk.",
+    intro:
+      "Pro, perso, expérimental. En stories, comme sur Instagram : touche, glisse, ou passe en grille.",
   },
   en: {
     titre: "Projects",
     description: "Everything Kostia has built: work, personal, experimental.",
-    intro: "Work, personal, experimental. Filters and search are coming in a future chunk.",
+    intro:
+      "Work, personal, experimental. As stories, like on Instagram: tap, swipe, or switch to the grid.",
   },
 } satisfies Record<Lang, Record<string, string>>;
 
@@ -28,7 +34,10 @@ export function metadataProjets(lang: Lang): Metadata {
 }
 
 /** Affiche "mois année" si une date précise est connue, sinon juste l'année. */
-function formatPeriode(lang: Lang, fm: { date?: string; year: number }): string {
+function formatPeriode(
+  lang: Lang,
+  fm: { date?: string; year: number },
+): string {
   if (fm.date) {
     const [y, m = "1"] = fm.date.split("-");
     return new Intl.DateTimeFormat(LOCALE[lang], {
@@ -39,52 +48,75 @@ function formatPeriode(lang: Lang, fm: { date?: string; year: number }): string 
   return String(fm.year);
 }
 
+function aUneCapture(slug: string): boolean {
+  return fs.existsSync(
+    path.join(process.cwd(), "public", "images", "projets", `${slug}.jpg`),
+  );
+}
+
 export async function ProjetsIndex({ lang }: { lang: Lang }) {
   const projets = await getProjets(lang);
   const t = TEXTES[lang];
+  const stories: StoryProjet[] = projets.map(({ frontmatter: p }) => {
+    const site = p.links?.[0]?.url;
+    return {
+      slug: p.slug,
+      titre: p.title,
+      type: libelleType(lang, p.type),
+      periode: formatPeriode(lang, p),
+      resume: p.summary,
+      href: chemin(lang, `/projets/${p.slug}`),
+      site: site && /^https?:\/\//.test(site) ? site : undefined,
+      image: aUneCapture(p.slug) ? `/images/projets/${p.slug}.jpg` : undefined,
+    };
+  });
 
   return (
-    <PageShell
-      eyebrow="Index"
-      title={t.titre}
-      intro={<p>{t.intro}</p>}
-    >
+    <PageShell eyebrow="Index" title={t.titre} intro={<p>{t.intro}</p>}>
       {projets.length === 0 ? (
         <p className="font-mono text-sm uppercase tracking-wider text-[color:var(--color-muted)]">
           <code>content/projets/</code> : 0.
         </p>
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {projets.map((entry) => (
-            <li key={entry.frontmatter.slug} className="group">
-              <NextLink
-                href={chemin(lang, `/projets/${entry.frontmatter.slug}`)}
-                data-cursor="ouvrir"
-                className="block h-full"
-              >
-                <Card
-                  as="article"
-                  className="flex h-full flex-col gap-3 transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-[color:var(--color-accent)] group-hover:text-[color:var(--color-accent-fg)]"
+        <ProjetsVue projets={stories} lang={lang}>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {projets.map((entry) => (
+              <li key={entry.frontmatter.slug} className="group">
+                <NextLink
+                  href={chemin(lang, `/projets/${entry.frontmatter.slug}`)}
+                  data-cursor="ouvrir"
+                  className="block h-full"
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <Tag tone={entry.frontmatter.type === "pro" ? "accent" : "default"}>
-                      {libelleType(lang, entry.frontmatter.type)}
-                    </Tag>
-                    <span className="font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
-                      {formatPeriode(lang, entry.frontmatter)}
-                    </span>
-                  </div>
-                  <h2 className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
-                    {entry.frontmatter.title}
-                  </h2>
-                  <p className="text-sm leading-relaxed text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
-                    {entry.frontmatter.summary}
-                  </p>
-                </Card>
-              </NextLink>
-            </li>
-          ))}
-        </ul>
+                  <Card
+                    as="article"
+                    className="flex h-full flex-col gap-3 transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-[color:var(--color-accent)] group-hover:text-[color:var(--color-accent-fg)]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <Tag
+                        tone={
+                          entry.frontmatter.type === "pro"
+                            ? "accent"
+                            : "default"
+                        }
+                      >
+                        {libelleType(lang, entry.frontmatter.type)}
+                      </Tag>
+                      <span className="font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
+                        {formatPeriode(lang, entry.frontmatter)}
+                      </span>
+                    </div>
+                    <h2 className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
+                      {entry.frontmatter.title}
+                    </h2>
+                    <p className="text-sm leading-relaxed text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
+                      {entry.frontmatter.summary}
+                    </p>
+                  </Card>
+                </NextLink>
+              </li>
+            ))}
+          </ul>
+        </ProjetsVue>
       )}
     </PageShell>
   );
