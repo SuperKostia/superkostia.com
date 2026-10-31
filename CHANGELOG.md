@@ -8,6 +8,9 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Content — Life is Patmos Weddings (2026-10-31)
+- La fiche « Wedding Patmos » devient « Life is Patmos Weddings » : wedding.lifeispatmos.com est désormais la page de vente de sites de mariage sur mesure, et le site du mariage d'Emma et Kostia, qui sert de démo, a déménagé sur emma-constantin.lifeispatmos.com. Texte FR/EN réécrit, deux liens, nouvelle capture, lien croisé depuis la fiche Life is Patmos.
+
 ### Feat — Logos des projets (2026-10-31)
 - Le favicon ou logo du site de chaque projet (`public/images/logos/`, récupérés par `node scripts/fetch-logos.mjs`) sert d'avatar : miniatures des stories (à la place de la capture), en-tête de chaque story façon Instagram (logo, nom, date), vignettes voisines, cartes de la grille et en-tête des fiches. Sans site ou sans icône : initiales sur fond jaune. Composant `LogoProjet`, chemins des visuels centralisés dans `lib/visuels.ts`.
 - Nouvelle capture d'axiom-academic.com (nouveau site).
