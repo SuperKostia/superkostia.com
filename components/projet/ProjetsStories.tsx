@@ -394,7 +394,7 @@ export function ProjetsStories({
             if (e.pointerType === "mouse") setSurvol(false);
           }}
           className={cn(
-            "relative z-10 flex aspect-[9/16] w-full max-w-[420px] touch-pan-y select-none flex-col overflow-hidden border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] shadow-[var(--shadow-hard)] [-webkit-touch-callout:none] lg:h-full lg:w-auto lg:max-w-none",
+            "relative z-10 flex aspect-[9/16] max-h-[calc(100dvh-5.5rem)] w-full max-w-[420px] touch-pan-y select-none flex-col overflow-hidden border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] shadow-[var(--shadow-hard)] [-webkit-touch-callout:none] lg:h-full lg:max-h-none lg:w-auto lg:max-w-none",
             glisse === 0 &&
               (sens === 1
                 ? "animate-[story-droite_320ms_cubic-bezier(0.2,0.8,0.2,1)]"
