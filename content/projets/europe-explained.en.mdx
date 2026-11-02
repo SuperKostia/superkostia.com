@@ -1,0 +1,50 @@
+---
+tags: ["europe", "politics", "open data", "ai", "education"]
+summary: "Understanding Europe without taking sides: 50 countries, the European Union, its history and institutions, elections and parties, AI, and a version to explain it all to your kids. Every figure is dated and sourced. Neither for nor against: just clear."
+stack: ["Astro", "Cloudflare Workers", "D1", "Python", "Claude Code", "Grok", "open data"]
+links:
+  - label: "europeexplained.eu"
+    url: "https://europeexplained.eu/en/"
+  - label: "Find a party's equivalent"
+    url: "https://europeexplained.eu/en/parties/"
+  - label: "The kids version"
+    url: "https://europeexplained.eu/en/kids/"
+---
+
+## The pitch
+
+I roughly know French political parties. But what is the equivalent of the RN,
+LR or the PS in Germany, Belgium or Poland? What is the difference between the
+European Council and the Council of Europe? The site I was looking for did not
+exist, so I built it: an independent reference to understand Europe, in English
+and French, neither pro- nor anti-EU.
+
+## What's inside
+
+- **50 European countries**, with their EU status, euro, Schengen, Eurostat
+  figures and key dates, each with its source.
+- **History** from 1958 to today: an animated map going from 6 to 27 members, and
+  a timeline you can filter.
+- **Parties**: 204 parties with their logo, their current group in the European
+  Parliament and their left-right position from the Chapel Hill Expert Survey.
+  Pick a party you know, see its equivalents country by country.
+- **Elections**: the 2027 French presidential election, using only polls filed
+  with the Commission des sondages, with no averages or projections; the calendar
+  for all 27 countries; and who has governed Europe since 1995.
+- **AI and Europe**: the AI Act by risk level, its timeline after the 2026 Omnibus,
+  investment, and AI use by country.
+- **A kids version** for ages 8 to 12, to read with a parent: simple words,
+  quizzes and a game to find countries on the map.
+- News from official feeds, hand-picked documentaries, a glossary, light and dark
+  modes.
+
+## How it's made
+
+The starting rule: no invented numbers. Every figure has a source, a date and a
+unit, and partisan positions are attributed to their authors. Data comes from
+Eurostat, the European Parliament, ParlGov and Chapel Hill.
+
+Built with Claude Code: a static Astro site, a Cloudflare Worker and a D1 database
+for news, synced hourly. No CMS, everything is maintained from the repository.
+
+An independent, non-commercial site, with no ads.

@@ -482,6 +482,17 @@ type ProjetPhare = {
 /** Ordre = ordre d'affichage : les nouveautés d'abord. */
 const PROJETS_PHARES: ProjetPhare[] = [
   {
+    titre: "Europe Explained",
+    badge: { fr: "tout nouveau", en: "brand new" },
+    lien: "https://europeexplained.eu",
+    libelleLien: { fr: "europeexplained.eu ↗", en: "europeexplained.eu ↗" },
+    description: {
+      fr: "Comprendre l'Europe sans parti pris : 50 pays, l'UE, les élections, l'équivalent d'un parti dans chaque pays, et une version pour les enfants. Chaque chiffre est daté et sourcé.",
+      en: "Understanding Europe without taking sides: 50 countries, the EU, elections, a party's equivalent in each country, and a kids version. Every figure is dated and sourced.",
+    },
+    nouveau: true,
+  },
+  {
     titre: "Parcoursoup",
     badge: { fr: "tout nouveau", en: "brand new" },
     lien: "https://parcoursoup.fr",

@@ -1,0 +1,58 @@
+---
+title: "Europe Explained"
+slug: "europe-explained"
+type: "perso"
+status: "publie"
+year: 2026
+date: "2026-11-01"
+tags: ["europe", "politique", "données ouvertes", "ia", "éducation"]
+summary: "Comprendre l'Europe sans parti pris : 50 pays, l'Union européenne, son histoire, ses institutions, les élections et les partis, l'IA, et une version pour expliquer tout ça à ses enfants. Chaque chiffre est daté et sourcé. Ni pour, ni contre : juste clair."
+stack: ["Astro", "Cloudflare Workers", "D1", "Python", "Claude Code", "Grok", "données ouvertes"]
+links:
+  - label: "europeexplained.eu"
+    url: "https://europeexplained.eu"
+  - label: "Trouver l'équivalent d'un parti"
+    url: "https://europeexplained.eu/fr/partis/"
+  - label: "La version enfants"
+    url: "https://europeexplained.eu/fr/enfants/"
+featured: true
+---
+
+## Le pitch
+
+Je connais à peu près les partis français. Mais quel est l'équivalent du RN, de
+LR ou du PS en Allemagne, en Belgique ou en Pologne ? Quelle différence entre le
+Conseil européen et le Conseil de l'Europe ? Le site que je cherchais n'existait
+pas, alors je l'ai fait : une référence indépendante pour comprendre l'Europe,
+en français et en anglais, ni pro ni anti-UE.
+
+## Ce qu'il y a dedans
+
+- **50 pays européens**, avec leur statut vis-à-vis de l'UE, l'euro, Schengen,
+  les chiffres d'Eurostat et leurs dates clés, chacune avec sa source.
+- **L'histoire** de 1958 à aujourd'hui : une carte animée qui passe de 6 à 27
+  membres, et une frise filtrable.
+- **Les partis** : 204 partis avec leur logo, leur groupe actuel au Parlement
+  européen et leur position gauche-droite selon l'enquête d'experts Chapel Hill.
+  On choisit un parti qu'on connaît, on voit ses équivalents pays par pays.
+- **Les élections** : la présidentielle française de 2027 avec les seuls sondages
+  déposés à la Commission des sondages, sans moyenne ni projection, le calendrier
+  des 27 pays, et qui gouverne l'Europe depuis 1995.
+- **L'IA et l'Europe** : l'AI Act par niveau de risque, son calendrier après
+  l'Omnibus de 2026, les investissements et l'usage de l'IA pays par pays.
+- **Une version enfants** pour les 8-12 ans, à lire avec un parent : des mots
+  simples, des quiz et un jeu pour retrouver les pays sur la carte.
+- Des actualités issues des flux officiels, des documentaires triés sur le volet,
+  un glossaire, un mode clair et un mode sombre.
+
+## Comment c'est fait
+
+La règle de départ : aucun chiffre inventé. Chaque donnée a sa source, sa date et
+son unité, et les positions partisanes sont attribuées à leurs auteurs. Les
+données viennent d'Eurostat, du Parlement européen, de ParlGov et de Chapel Hill.
+
+Construit avec Claude Code : site statique Astro, Worker Cloudflare et base D1
+pour les actualités, synchronisées chaque heure. Pas de CMS, tout se maintient
+depuis le dépôt.
+
+Site indépendant et non commercial, sans publicité.

@@ -8,6 +8,9 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Content — Europe Explained (2026-11-02)
+- Nouvelle fiche `content/projets/europe-explained.mdx` (+ `.en.mdx`, type perso, mise en avant), capture et logo ; ajout en tête des projets phares de la page À propos.
+
 ### Content — Life is Patmos Weddings (2026-10-31)
 - La fiche « Wedding Patmos » devient « Life is Patmos Weddings » : wedding.lifeispatmos.com est désormais la page de vente de sites de mariage sur mesure, et le site du mariage d'Emma et Kostia, qui sert de démo, a déménagé sur emma-constantin.lifeispatmos.com. Texte FR/EN réécrit, deux liens, nouvelle capture, lien croisé depuis la fiche Life is Patmos.
 
