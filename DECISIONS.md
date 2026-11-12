@@ -256,3 +256,18 @@ warp (turbulence 19s) ───────────────────�
 6. Traductions faites à la main (par Claude, dans la session), pas d'API de traduction : règle n° 1. Les citations d'Adler reprennent en anglais la phrase originale des livres, vérifiée le 31/10/2026 dans leur texte intégral (archive.org), sauf celle de *Der Sinn des Lebens*, traduite de l'allemand.
 
 **Conséquence.** Une nouvelle page, fiche ou chaîne d'interface doit naître dans les deux langues (règle 3 de CLAUDE.md). Les dashboards embarqués (Choose France, Coupe du Monde) restent en français, signalé sur les fiches anglaises.
+
+## #013 : MapLibre du dashboard Choose France servi par le site, plus par un CDN
+
+**Date** : 2026-11-12
+**Statut** : Acté.
+
+**Contexte.** Le dashboard chargeait MapLibre GL JS 4.7.1 depuis unpkg. Cette version affiche le crédit du fond de carte sans le filtrer : c'est la faille CVE-2026-85061, un fond de carte compromis peut exécuter du code dans la page. Depuis la version 6, MapLibre est un module ES accompagné d'un fichier worker séparé.
+
+**Décision.**
+1. Passage à MapLibre 6.18.0, dernière version au 12/11/2026.
+2. Le script, le worker et la feuille de style sont copiés tels quels du paquet npm dans `public/projets/choose-france-2026/vendor/maplibre-gl-6.18.0/`, avec la licence. Le dashboard les charge depuis son propre domaine.
+
+**Pourquoi pas le CDN.** En version 4, une empreinte (`integrity`) protégeait le fichier unique chargé depuis unpkg. En version 6, le worker est chargé par la bibliothèque elle-même, sans empreinte possible : rester sur le CDN aurait retiré cette protection. Servir les fichiers depuis le site la conserve et supprime une dépendance à un tiers au chargement.
+
+**Conséquence.** Une mise à jour de MapLibre se fait à la main : nouveau dossier `maplibre-gl-<version>/` et trois chemins à changer dans `dashboard.html`. Aucune dépendance npm ajoutée (règle 4). Le dashboard reste un seul fichier HTML, seule la bibliothèque a changé d'adresse.

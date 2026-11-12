@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Bibliothèques tierces copiées telles quelles (MapLibre du dashboard Choose France).
+    "public/**/vendor/**",
   ]),
 ]);
 

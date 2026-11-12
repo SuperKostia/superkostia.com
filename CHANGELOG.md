@@ -8,6 +8,11 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Fix : MapLibre 6.18 sur le dashboard Choose France (2026-11-12)
+- Faille CVE-2026-85061 corrigée : MapLibre 4.7.1 affichait le crédit du fond de carte sans le filtrer, ce qui laissait un fond de carte compromis exécuter du code dans la page. Passage à la 6.18.0, dernière version, qui filtre ce texte. Vérifié par un essai d'injection : exécuté en 4.7.1, bloqué en 6.18, sur ordinateur et en Safari mobile simulé.
+- MapLibre n'est plus chargé depuis unpkg : script, worker et feuille de style sont servis par le site (`public/projets/choose-france-2026/vendor/maplibre-gl-6.18.0/`, copie non modifiée du paquet npm). Cf. décision #013.
+- La carte attend les feuilles de style avant de se créer, pour garder le même cadrage de la France sur téléphone. Rendu et gestes inchangés.
+
 ### Content — Europe Explained (2026-11-02)
 - Nouvelle fiche `content/projets/europe-explained.mdx` (+ `.en.mdx`, type perso, mise en avant), capture et logo ; ajout en tête des projets phares de la page À propos.
 
