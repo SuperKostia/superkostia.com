@@ -96,7 +96,7 @@ Le suivi fin de l'avancement vit dans **[`ROADMAP.md`](./ROADMAP.md)**. Ne pas d
 ### Hygiène de traçabilité (à tenir à chaque commit significatif)
 
 1. Cocher la case correspondante dans `ROADMAP.md`.
-2. Ajouter une entrée dans `CHANGELOG.md` sous `[Unreleased]` si le changement est visible ou structurant.
+2. Ajouter une entrée dans `CHANGELOG.md` sous `[Unreleased]` si le changement est visible ou structurant. À chaque mise en ligne, sortir ces entrées dans une version datée et monter `version` dans `package.json` (le colophon l'affiche) : majeure = refonte de DA ou de structure, mineure = fonctionnalité visible, correctif = fix ou contenu.
 3. Si une décision non-évidente a été prise (stack, DA, dépendance majeure, rupture d'un principe du CDC), l'archiver dans `DECISIONS.md` avec un nouvel ID `#NNN`.
 4. Commit atomique + push.
 

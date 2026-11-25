@@ -2,11 +2,28 @@
 
 Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/). Ce fichier est édité à la main à chaque commit qui change le périmètre fonctionnel ou visuel visible du projet. Les détails techniques fins restent dans `git log`.
 
-Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pas en ligne — pas de semver tant qu'il n'y a pas de consommateur tiers.
+Jusqu'à la 0.6.0 (mise en ligne), les versions suivaient un schéma interne `0.PHASE.ITER`. Depuis la 1.0.0 : **majeure** = refonte de la DA ou de la structure, **mineure** = nouvelle fonctionnalité ou rubrique visible, **correctif** = correction ou contenu. Le numéro vit dans `package.json` et s'affiche dans le colophon : on le monte à chaque fois qu'une entrée sort de `[Unreleased]`.
 
 ## [Unreleased]
 
-Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
+## [1.1.0] — 2026-11-25 — Carte des voyages interactive
+
+### Feat : la carte des voyages devient interactive et reliée aux photos
+- Zoom (boutons, double clic, pincement, ⌘ + molette) et déplacement au glisser, sur ordinateur comme sur téléphone.
+- Clic sur un pays : la carte zoome dessus et une fiche s'ouvre (nombre de voyages, villes, photos prises sur place). Clic sur une ville : ses séjours datés, le total de jours, ses photos.
+- Filtre par année, et bouton pour afficher ou masquer les photos.
+- Les photos sont placées grâce à leur position de prise de vue : rattachées à la ville la plus proche (moins de 60 km), sinon regroupées en « lieux photo » (Amorgos, Astypalée, la côte australienne…). Elles s'ouvrent dans une visionneuse depuis la fiche (composant `Visionneuse`).
+- Info-bulles au survol, navigation au clavier, noms des villes une fois zoomé. La vignette de la page Hobbies reste une carte fixe (`CarteMiniature`).
+
+### Fix : plus de position GPS exacte dans les photos publiées
+- Les JPEG servis gardaient la position GPS exacte de la prise de vue. Elle est effacée des fichiers sans réencoder l'image (pixels identiques, appareil et réglages conservés) ; la carte n'utilise qu'une position arrondie à 0,1° (≈ 10 km), rangée dans `lib/data/photos-lieux.json`. `compress:photos` le fait désormais à chaque passage (`scripts/lib/exif-sans-gps.mjs`, `scripts/lieux-photos.mjs`).
+
+### Style : favicon
+- Le favicon et l'icône d'écran d'accueil reprennent la nouvelle marque (nœud blanc qui se divise en deux branches roses, sur carré sombre), en PNG.
+
+## [1.0.0] — 2026-11-25 — Refonte dans une DA inspirée de n8n
+
+Tout ce qui a été livré depuis la mise en ligne (0.6.0), et la refonte de la DA.
 
 ### Content : Kostia.ai (2026-11-25)
 - Nouvelle fiche `content/projets/kostia-ai.mdx` (+ `.en.mdx`, perso, mise en avant), capture et logo ; ajout en tête des projets phares de la page À propos.
