@@ -6,6 +6,11 @@ Jusqu'à la 0.6.0 (mise en ligne), les versions suivaient un schéma interne `0.
 
 ## [Unreleased]
 
+## [1.2.1] — 2026-11-25 — BooKeeper retiré
+
+### Content : retrait du projet BooKeeper
+- Fiche `bookeeper` (FR/EN) et sa capture supprimées, carte retirée des projets phares de la page À propos. Les anciennes adresses redirigent vers l'index des projets (`/projets/bookeeper` et `/en/projects/bookeeper`).
+
 ## [1.2.0] — 2026-11-25 — La carte des voyages sur MapLibre
 
 ### Feat : carte MapLibre 6.19.0 (décision #015)

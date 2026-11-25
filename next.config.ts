@@ -7,8 +7,13 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   async redirects() {
-    // /voyages est devenu un hobby (décision #011).
-    return [{ source: "/voyages", destination: "/hobbies/voyages", permanent: true }];
+    return [
+      // /voyages est devenu un hobby (décision #011).
+      { source: "/voyages", destination: "/hobbies/voyages", permanent: true },
+      // Projet BooKeeper retiré du site le 25/11/2026.
+      { source: "/projets/bookeeper", destination: "/projets", permanent: true },
+      { source: "/en/projects/bookeeper", destination: "/en/projects", permanent: true },
+    ];
   },
   images: {
     dangerouslyAllowSVG: true,

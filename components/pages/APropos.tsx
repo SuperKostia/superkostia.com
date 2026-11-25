@@ -501,16 +501,6 @@ const PROJETS_PHARES: ProjetPhare[] = [
       en: "A CRM for football agents. A supercharged address book, a pipeline with contract-expiry alerts, outreach over WhatsApp.",
     },
   },
-  {
-    titre: "BooKeeper",
-    badge: { fr: "mon coup de tête", en: "my wild idea" },
-    lien: "https://superkostia.github.io/bookeeper/",
-    libelleLien: { fr: "avec Karim ↗", en: "with Karim ↗" },
-    description: {
-      fr: "Plateforme pour réserver un gardien de but à l'heure, pour les clubs et équipes amateurs qui cherchent un keeper, un match précis, une date, un niveau.",
-      en: "A platform to book a goalkeeper by the hour, for amateur clubs and teams who need a keeper for one match, one date, one level.",
-    },
-  },
 ];
 
 function CarteProjetPhare({
