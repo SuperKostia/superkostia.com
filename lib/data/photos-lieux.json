@@ -1,0 +1,269 @@
+{
+  "_note": "Généré par scripts/compress-photos.mjs (ou node scripts/lieux-photos.mjs). Position de prise de vue arrondie à 0,1° (≈ 10 km). Les photos publiées n'ont plus de GPS.",
+  "lieux": {
+    "australie/cape-le-grand-baie-turquoise.jpeg": {
+      "lat": -34,
+      "lng": 122.2
+    },
+    "australie/escalier-bush-hauteur.jpeg": {
+      "lat": -35.1,
+      "lng": 117.8
+    },
+    "australie/escalier-plage-ocean-turquoise.jpeg": {
+      "lat": -35.1,
+      "lng": 117.8
+    },
+    "australie/lucky-bay-4x4-plage.jpeg": {
+      "lat": -33.9,
+      "lng": 121.7
+    },
+    "australie/opera-sydney-ferry-jaune.jpeg": {
+      "lat": -33.9,
+      "lng": 151.2
+    },
+    "australie/pont-arc-metallique-nb.jpeg": {
+      "lat": 37.6,
+      "lng": 126.8
+    },
+    "australie/route-bush-couchant-rouge.jpeg": {
+      "lat": -32.9,
+      "lng": 117.5
+    },
+    "australie/route-bush-horizon-gris.jpeg": {
+      "lat": -33.9,
+      "lng": 121.7
+    },
+    "dubai/burj-khalifa-brume-palmiers.jpeg": {
+      "lat": 25.2,
+      "lng": 55.3
+    },
+    "dubai/burj-khalifa-fontaines-nuit.jpeg": {
+      "lat": 25.2,
+      "lng": 55.3
+    },
+    "dubai/panorama-dubai-burj-al-arab.jpeg": {
+      "lat": 25.2,
+      "lng": 55.3
+    },
+    "dubai/skyline-dubai-dhow-couchant.jpeg": {
+      "lat": 25.2,
+      "lng": 55.3
+    },
+    "grece/amorgos-boutique-souvenirs.jpeg": {
+      "lat": 36.9,
+      "lng": 26
+    },
+    "grece/amorgos-chapelle-soiree-amis.jpeg": {
+      "lat": 36.9,
+      "lng": 26
+    },
+    "grece/amorgos-egiali-plage-ferry.jpeg": {
+      "lat": 36.9,
+      "lng": 26
+    },
+    "grece/amorgos-epave-olympia.jpeg": {
+      "lat": 36.8,
+      "lng": 25.8
+    },
+    "grece/astypalee-chora-route-montante.jpeg": {
+      "lat": 36.5,
+      "lng": 26.3
+    },
+    "grece/astypalee-drapeau-grec-chora.jpeg": {
+      "lat": 36.5,
+      "lng": 26.4
+    },
+    "grece/astypalee-kastro-panorama.jpeg": {
+      "lat": 36.6,
+      "lng": 26.3
+    },
+    "grece/astypalee-maisons-cubiques-mer.jpeg": {
+      "lat": 36.6,
+      "lng": 26.4
+    },
+    "grece/astypalee-selfie-retroviseur.jpeg": {
+      "lat": 36.6,
+      "lng": 26.3
+    },
+    "grece/astypalee-terrasse-porte-verte.jpeg": {
+      "lat": 36.8,
+      "lng": 25.9
+    },
+    "grece/astypalee-village-blanc-mer.jpeg": {
+      "lat": 36.6,
+      "lng": 26.4
+    },
+    "patmos/agios-georgios-livadi-geranou.jpeg": {
+      "lat": 37.4,
+      "lng": 26.6
+    },
+    "patmos/ane-mur-pierre-patmos.jpeg": {
+      "lat": 36.8,
+      "lng": 25.8
+    },
+    "patmos/chapelle-sommet-chemin-patmos.jpeg": {
+      "lat": 37.3,
+      "lng": 26.6
+    },
+    "patmos/drapeau-grec-lune-nuit.jpeg": {
+      "lat": 37.3,
+      "lng": 26.5
+    },
+    "patmos/heliport-patmos-remorque.jpeg": {
+      "lat": 37.3,
+      "lng": 26.5
+    },
+    "patmos/patmos-psili-ammos-winter.jpeg": {
+      "lat": 37.3,
+      "lng": 26.5
+    },
+    "paysages/amorgos-port-ferry-hauteur.jpeg": {
+      "lat": 36.8,
+      "lng": 25.9
+    },
+    "paysages/astypalee-baie-chora.jpeg": {
+      "lat": 36.5,
+      "lng": 26.3
+    },
+    "paysages/astypalee-chora-kastro.jpeg": {
+      "lat": 36.6,
+      "lng": 26.4
+    },
+    "paysages/astypalee-chora-moulins.jpeg": {
+      "lat": 36.6,
+      "lng": 26.4
+    },
+    "paysages/astypalee-moulin-vent-mer.jpeg": {
+      "lat": 36.6,
+      "lng": 26.3
+    },
+    "people/amies-voiture-retro-egee.jpeg": {
+      "lat": 37.3,
+      "lng": 26.6
+    },
+    "people/amorgos-couple-plage-ferry.jpeg": {
+      "lat": 36.9,
+      "lng": 26
+    },
+    "people/arrivee-piree-ferry-hublot.jpeg": {
+      "lat": 37.9,
+      "lng": 23.6
+    },
+    "people/astypalee-clocher-femme-nuit.jpeg": {
+      "lat": 36.5,
+      "lng": 26.4
+    },
+    "people/batumi-photobooth-trois-amis.jpeg": {
+      "lat": 41.6,
+      "lng": 41.6
+    },
+    "people/grand-popo-famille-palmiers.jpeg": {
+      "lat": 6.3,
+      "lng": 1.9
+    },
+    "people/jeune-homme-ferry-couchant.jpeg": {
+      "lat": 36.9,
+      "lng": 26.1
+    },
+    "people/liturgie-orthodoxe-pretre.jpeg": {
+      "lat": 37.3,
+      "lng": 26.6
+    },
+    "people/panigyri-grec-eglise-nuit.jpeg": {
+      "lat": 36.5,
+      "lng": 26.4
+    },
+    "people/perth-hot-bread-couple.jpeg": {
+      "lat": -32,
+      "lng": 115.8
+    },
+    "people/petit-dejeuner-terrasse-amis.jpeg": {
+      "lat": 36.8,
+      "lng": 25.9
+    },
+    "people/pleine-lune-toit-amis-mer.jpeg": {
+      "lat": 36.5,
+      "lng": 26.4
+    },
+    "portraits/buckingham-palace-fillette.jpeg": {
+      "lat": 51.5,
+      "lng": -0.1
+    },
+    "portraits/femme-abaya-rouge-dubai.jpeg": {
+      "lat": 25.2,
+      "lng": 55.3
+    },
+    "portraits/ferry-voiture-jaune-teckel.jpeg": {
+      "lat": 37.9,
+      "lng": 23.6
+    },
+    "portraits/lome-fillette-bonnet-noel.jpeg": {
+      "lat": 6.2,
+      "lng": 1.3
+    },
+    "portraits/lome-mere-enfant-mur-terre.jpeg": {
+      "lat": 6.9,
+      "lng": 0.7
+    },
+    "portraits/lome-trois-enfants-fete.jpeg": {
+      "lat": 6.2,
+      "lng": 1.3
+    },
+    "portraits/sieste-ferry-livre-soleil.jpeg": {
+      "lat": 36.8,
+      "lng": 26.1
+    },
+    "portraits/vinyles-ntm-cap-rouge.jpeg": {
+      "lat": 48.8,
+      "lng": 2.3
+    },
+    "summer/baignade-ponton-voilier.jpeg": {
+      "lat": 47,
+      "lng": 6.9
+    },
+    "summer/hotel-saron-balcons.jpeg": {
+      "lat": 37.5,
+      "lng": 23.5
+    },
+    "summer/silhouettes-couchant-ferry.jpeg": {
+      "lat": 36.9,
+      "lng": 26
+    },
+    "voyages/batumi-marriott-reflet-lac.jpeg": {
+      "lat": 41.6,
+      "lng": 41.6
+    },
+    "voyages/casablanca-train-voyageuse.jpeg": {
+      "lat": 34.3,
+      "lng": -6.6
+    },
+    "voyages/doha-fanar-minaret-spirale.jpeg": {
+      "lat": 25.3,
+      "lng": 51.5
+    },
+    "voyages/drapeau-seychelles-marina.jpeg": {
+      "lat": -4.3,
+      "lng": 55.8
+    },
+    "voyages/lisbonne-eglise-avion-tap.jpeg": {
+      "lat": 38.7,
+      "lng": -9.2
+    },
+    "voyages/lisbonne-port-cristo-rei.jpeg": {
+      "lat": 38.7,
+      "lng": -9.2
+    },
+    "voyages/pyramide-kheops-gizeh.jpeg": {
+      "lat": 30,
+      "lng": 31.1
+    },
+    "voyages/rajasthan-femmes-route-desert.jpeg": {
+      "lat": 26.9,
+      "lng": 70.5
+    },
+    "voyages/tanger-medina-ados-escalier.jpeg": {
+      "lat": 35.8,
+      "lng": -5.8
+    }
+  }
+}

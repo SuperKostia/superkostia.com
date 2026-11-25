@@ -11,7 +11,8 @@
  *  - Redimensionne à 2400 px (côté le plus long) en gardant le ratio
  *  - Réencode en JPEG qualité 82 avec mozjpeg progressive
  *  - Watermark SUPERKOSTIA proportionnel (~11% de la largeur) en bas-droite
- *  - Préserve EXIF (focale, vitesse, ouverture, ISO, date)
+ *  - Préserve EXIF (focale, vitesse, ouverture, ISO, date), SAUF le GPS : retiré
+ *    du fichier publié ; la position arrondie (≈ 10 km) va dans lib/data/photos-lieux.json
  *  - Skip si la source n'a pas changé depuis le dernier run (mtime tracké dans le manifest)
  *
  * Idempotent : re-runs → rien ne bouge. Remplace un source par une nouvelle version → détecte mtime → reprocess.
@@ -22,6 +23,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { retirerGps } from "./lib/exif-sans-gps.mjs";
+import { mettreAJourLieux } from "./lib/lieux-photos.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.join(__dirname, "..");
@@ -228,7 +231,7 @@ async function processOne(sourcePath, manifest) {
     progressive: true,
   });
 
-  const buffer = await pipeline.toBuffer();
+  const { buffer } = retirerGps(await pipeline.toBuffer());
   await fs.mkdir(path.dirname(destPath), { recursive: true });
   await fs.writeFile(destPath, buffer);
 
@@ -328,6 +331,13 @@ async function main() {
   }
 
   await saveManifest(manifest);
+
+  const lieux = await mettreAJourLieux({
+    racine: DEST_ROOT,
+    sources: SOURCE_ROOT,
+    sortie: path.join(PROJECT_ROOT, "lib", "data", "photos-lieux.json"),
+  });
+  console.log(`Lieux : ${lieux.places}/${lieux.total} photos situées (≈ 10 km), GPS retiré des fichiers publiés.`);
 
   console.log(
     `\nTotal : ${fmt(totalBefore)} → ${fmt(totalAfter)} (${fmt(

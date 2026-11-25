@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import exifr from "exifr";
 import sharp from "sharp";
+import donneesLieux from "@/lib/data/photos-lieux.json";
 
 const PHOTO_ROOT = path.join(
   process.cwd(),
@@ -32,7 +33,11 @@ export type Photo = {
   height: number;
   blurDataURL: string;
   exif?: PhotoExif;
+  /** Lieu de prise de vue arrondi à 0,1° (≈ 10 km), cf. scripts/lieux-photos.mjs. */
+  lieu?: { lat: number; lng: number };
 };
+
+const LIEUX = (donneesLieux as { lieux: Record<string, { lat: number; lng: number }> }).lieux;
 
 export type Series = {
   slug: string;
@@ -164,6 +169,7 @@ async function readSeries(slug: string): Promise<Series> {
         height: dims.height,
         blurDataURL: dims.blurDataURL,
         exif,
+        lieu: LIEUX[`${slug}/${filename}`],
       };
     }),
   );
