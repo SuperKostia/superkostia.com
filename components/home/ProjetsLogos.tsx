@@ -27,7 +27,7 @@ export async function ProjetsLogos({ lang }: { lang: Lang }) {
               href={chemin(lang, `/projets/${p.frontmatter.slug}`)}
               className="group flex w-[78px] flex-col items-center gap-2 text-center"
             >
-              <span className="grayscale transition duration-200 group-hover:-translate-y-0.5 group-hover:grayscale-0">
+              <span className="flex grayscale transition duration-200 group-hover:-translate-y-0.5 group-hover:grayscale-0">
                 <LogoProjet
                   titre={p.frontmatter.title}
                   logo={logoProjet(p.frontmatter.slug)}

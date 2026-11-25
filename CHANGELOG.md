@@ -6,6 +6,11 @@ Jusqu'à la 0.6.0 (mise en ligne), les versions suivaient un schéma interne `0.
 
 ## [Unreleased]
 
+## [1.3.1] — 2026-11-25 — Logos des projets alignés
+
+### Fix : titres du bandeau de logos de l'accueil
+- Un projet sans logo (initiales, comme la Dictée Géante de Dubaï) se calait 7 px plus haut que les logos-images, et son titre aussi. Le carré n'est plus posé sur une ligne de texte : tous les titres partent à la même hauteur, dans Chrome comme dans Safari.
+
 ## [1.3.0] — 2026-11-25 — Le workflow de l'accueil se manipule
 
 ### Feat : nœuds du workflow en glisser-déposer élastique
