@@ -24,16 +24,16 @@ Ce projet transforme le PDF en un dashboard cartographique interactif :
 chaque projet d'investissement est géolocalisé au site près (l'usine, pas
 juste la ville), avec un cercle proportionnel au montant investi.
 
-<div className="w-[calc(100vw-3rem)] sm:w-[calc(100vw-5rem)] lg:w-[calc(100vw-6rem)] -rotate-[0.3deg] border-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] shadow-[var(--shadow-hard)]">
+<div className="relative left-1/2 w-[min(1200px,calc(100vw-2.5rem))] -translate-x-1/2 overflow-hidden rounded-[24px] bg-[color:var(--color-ink)] p-2">
   <iframe
     src="/projets/choose-france-2026/dashboard.html"
     title="Dashboard Choose France 2026 : carte des investissements étrangers en France"
-    className="block h-[700px] w-full"
+    className="block h-[700px] w-full rounded-[18px]"
     loading="lazy"
   />
 </div>
 
-<p className="mt-3 font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)]">↑ Le dashboard est interactif. <a href="/projets/choose-france-2026/dashboard.html" className="underline" data-cursor="ouvrir">Version plein écran</a> recommandée.</p>
+<p className="mt-3 text-center font-mono text-xs uppercase tracking-[0.04em] text-[color:var(--color-muted)]">↑ Le dashboard est interactif. <a href="/projets/choose-france-2026/dashboard.html" className="underline" data-cursor="ouvrir">Version plein écran</a> recommandée.</p>
 
 ## Ce qu'on peut y faire
 

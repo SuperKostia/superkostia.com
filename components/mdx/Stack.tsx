@@ -1,4 +1,5 @@
 import { Tag } from "@/components/ui/Tag";
+import { NodeLabel } from "@/components/ui/NodeLabel";
 
 type StackProps = {
   items?: string[];
@@ -8,14 +9,12 @@ type StackProps = {
 export function Stack({ items = [], label = "Stack" }: StackProps) {
   if (items.length === 0) return null;
   return (
-    <div className="my-8 flex flex-col gap-3 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-4 shadow-[var(--shadow-hard-sm)]">
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-        {label}
-      </p>
+    <div className="my-8 flex flex-col gap-4 rounded-[20px] bg-[color:var(--color-surface)] p-5">
+      <NodeLabel>{label}</NodeLabel>
       <ul className="flex flex-wrap gap-2">
         {items.map((item) => (
           <li key={item}>
-            <Tag>{item}</Tag>
+            <Tag className="bg-[color:var(--color-bg)]">{item}</Tag>
           </li>
         ))}
       </ul>

@@ -23,13 +23,13 @@ export function Gallery({ images = [], columns = 3 }: GalleryProps) {
         : "sm:grid-cols-2 lg:grid-cols-3";
 
   return (
-    <div className={`my-10 grid grid-cols-1 gap-4 ${gridClass}`}>
+    <div className={`my-10 grid grid-cols-1 gap-3 ${gridClass}`}>
       {images.map((img) => (
         <figure
           key={img.src}
-          className="flex flex-col gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-2 shadow-[var(--shadow-hard-sm)]"
+          className="flex flex-col gap-2 rounded-[20px] bg-[color:var(--color-surface)] p-2"
         >
-          <div className="relative aspect-[4/3] w-full overflow-hidden">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[14px] bg-[color:var(--color-surface-2)]">
             <Image
               src={img.src}
               alt={img.alt}
@@ -39,7 +39,7 @@ export function Gallery({ images = [], columns = 3 }: GalleryProps) {
             />
           </div>
           {img.caption ? (
-            <figcaption className="px-1 font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)]">
+            <figcaption className="px-2 pb-1 font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
               {img.caption}
             </figcaption>
           ) : null}

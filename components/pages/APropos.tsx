@@ -9,6 +9,10 @@ import {
   Wrench,
 } from "lucide-react";
 import { Tag } from "@/components/ui/Tag";
+import { Card } from "@/components/ui/Card";
+import { Container } from "@/components/ui/Container";
+import { NodeLabel } from "@/components/ui/NodeLabel";
+import { Panel } from "@/components/ui/Panel";
 import { cn } from "@/lib/utils";
 import { getNomadsProfile } from "@/lib/nomads";
 import { alternates, formatNombre, type Lang } from "@/lib/i18n";
@@ -173,291 +177,253 @@ export async function APropos({ lang }: { lang: Lang }) {
   const c = CAPSULES[lang];
   return (
     <article className="flex flex-col">
-      <header className="border-b-2 border-[color:var(--color-border)] px-6 py-12 sm:px-10 lg:px-12 lg:py-20">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          {t.titre}
-        </p>
-        <h1 className="mt-4 font-[family-name:var(--font-space-grotesk)] text-6xl font-black uppercase leading-[0.9] tracking-tight sm:text-7xl lg:text-[9vw]">
-          Kostia.
-        </h1>
+      <header className="relative isolate overflow-hidden">
+        <div aria-hidden className="bg-dots-fade absolute inset-0 -z-10" />
+        <Container className="flex flex-col items-center gap-5 pb-16 pt-16 text-center sm:pb-24 sm:pt-24">
+          <NodeLabel>{t.titre}</NodeLabel>
+          <h1 className="text-[clamp(4.5rem,15vw,11rem)] font-medium leading-[0.85] tracking-[-0.025em]">
+            Kostia.
+          </h1>
+          <p className="max-w-[52ch] text-balance text-base leading-snug text-[color:var(--color-muted)] sm:text-lg">
+            {t.description}
+          </p>
+        </Container>
       </header>
 
-      <section className="grid grid-cols-1 border-b-2 border-[color:var(--color-border)] lg:grid-cols-12">
-        <div className="flex flex-col gap-4 px-6 py-12 sm:px-10 lg:col-span-8 lg:px-12 lg:py-16">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-            {t.situationEyebrow}
-          </p>
-          <p className="max-w-2xl font-[family-name:var(--font-space-grotesk)] text-3xl leading-tight sm:text-4xl">
-            {t.baseA}{" "}
-            <span className="inline-block bg-[color:var(--color-accent)] px-1.5 text-[color:var(--color-accent-fg)] -rotate-1">
-              {t.ville}
-            </span>
-            {t.situation}
-          </p>
-        </div>
-
-        <aside className="border-t-2 border-[color:var(--color-border)] p-6 sm:p-8 lg:col-span-4 lg:border-l-2 lg:border-t-0">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-            {t.heritage}
-          </p>
-          <p className="mt-4 font-[family-name:var(--font-space-grotesk)] text-xl leading-snug">
-            {t.heritageTexte}{" "}
-            <em className="not-italic underline decoration-[color:var(--color-accent)] decoration-2 underline-offset-4">
-              {t.heritagePassions}
-            </em>
-            .
-          </p>
-        </aside>
-      </section>
-
-      <section className="px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
-        <div className="mb-10 flex flex-col gap-3">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-            {t.momentEyebrow}
-          </p>
-          <h2 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-tight tracking-tight sm:text-5xl">
-            {t.momentTitre}
-          </h2>
-        </div>
-
-        <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {PROJETS_PHARES.map((projet) => (
-            <CarteProjetPhare key={projet.titre} {...projet} lang={lang} />
-          ))}
-        </div>
-
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <li>
-            <article className="flex h-full flex-col gap-3 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-6 shadow-[var(--shadow-hard-sm)]">
-              <Tag>{t.codeTag}</Tag>
-              <h3 className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
-                {t.codeTitre}
-              </h3>
-              <p className="text-sm leading-relaxed">{t.codeTexte}</p>
-              <p className="mt-2 border-l-4 border-[color:var(--color-accent)] pl-4 font-[family-name:var(--font-space-grotesk)] text-base italic leading-snug text-[color:var(--color-muted)]">
-                {t.codeCitation}
-              </p>
-            </article>
-          </li>
-          <li>
-            <article className="flex h-full flex-col gap-3 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-6 shadow-[var(--shadow-hard-sm)]">
-              <Tag>{t.photoTag}</Tag>
-              <h3 className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
-                {t.photoTitre}
-              </h3>
-              <p className="text-sm leading-relaxed">{t.photoTexte}</p>
-            </article>
-          </li>
-          <li>
-            <article className="flex h-full flex-col gap-3 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-6 shadow-[var(--shadow-hard-sm)]">
-              <Tag>{t.veloTag}</Tag>
-              <h3 className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
-                {t.veloTitre}
-              </h3>
-              <p className="text-sm leading-relaxed">{t.veloTexte}</p>
-            </article>
-          </li>
-          {nomads ? (
-            <li>
-              <a
-                href={nomads.profileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-cursor="ouvrir"
-                className="group flex h-full flex-col gap-4 border-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] p-6 text-[color:var(--color-bg)] shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="inline-flex items-center border-2 border-[color:var(--color-bg)] bg-transparent px-2 py-0.5 font-mono text-xs uppercase tracking-wider">
-                    {t.nomade}
-                  </span>
-                  <ArrowUpRight
-                    size={18}
-                    strokeWidth={2.5}
-                    aria-hidden
-                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  />
-                </div>
-                <h3 className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
-                  {t.mouvement}
-                </h3>
-                <dl className="mt-1 grid grid-cols-3 gap-2 border-y-2 border-[color:var(--color-bg)] py-3">
-                  <div className="flex flex-col gap-0.5">
-                    <dt className="font-mono text-[10px] uppercase tracking-[0.15em] opacity-60">
-                      {t.pays}
-                    </dt>
-                    <dd className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black tracking-tight">
-                      {nomads.stats.countries}
-                    </dd>
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <dt className="font-mono text-[10px] uppercase tracking-[0.15em] opacity-60">
-                      {t.villes}
-                    </dt>
-                    <dd className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black tracking-tight">
-                      {nomads.stats.cities}
-                    </dd>
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <dt className="font-mono text-[10px] uppercase tracking-[0.15em] opacity-60">
-                      km
-                    </dt>
-                    <dd className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black tracking-tight">
-                      {formatNombre(lang, nomads.stats.distance_traveled_km)}
-                    </dd>
-                  </div>
-                </dl>
-                {nomads.lastTrip ? (
-                  <p className="font-mono text-xs uppercase tracking-wider opacity-70">
-                    {t.dernierArret}
-                    {lang === "en" ? ": " : " : "}
-                    {nomads.lastTrip.place},{" "}
-                    {nomads.lastTrip.country}
-                  </p>
-                ) : null}
-                <p className="mt-auto font-mono text-[11px] uppercase tracking-[0.15em] opacity-60">
-                  {t.source}
-                </p>
-              </a>
-            </li>
-          ) : null}
-        </ul>
-      </section>
-
-      <section className="border-t-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] px-6 py-12 text-[color:var(--color-bg)] sm:px-10 lg:px-12 lg:py-20">
-        <div className="mb-12 flex flex-col gap-3">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] opacity-60">
-            {t.obsessionsEyebrow}
-          </p>
-          <h2 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-tight tracking-tight sm:text-5xl">
-            {t.obsessionsTitre}
-          </h2>
-        </div>
-
-        <ol className="flex max-w-4xl flex-col gap-6">
-          <li className="flex gap-4">
-            <span className="shrink-0 pt-2 font-mono text-xs uppercase tracking-[0.2em] opacity-60">
-              01
-            </span>
-            <p className="font-[family-name:var(--font-space-grotesk)] text-2xl leading-tight sm:text-3xl">
-              {t.obsession1}
+      <Container className="flex flex-col gap-24 pb-8 sm:gap-32">
+        {/* 01 · situation */}
+        <section className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+          <Card className="flex flex-col gap-6 p-7 sm:p-10 lg:col-span-8">
+            <NodeLabel>{t.situationEyebrow}</NodeLabel>
+            <p className="max-w-[28ch] text-[clamp(1.75rem,3.4vw,2.75rem)] font-medium leading-[1.05] tracking-[-0.015em]">
+              {t.baseA} <Surligne>{t.ville}</Surligne>
+              {t.situation}
             </p>
-          </li>
-          <li className="flex gap-4">
-            <span className="shrink-0 pt-2 font-mono text-xs uppercase tracking-[0.2em] opacity-60">
-              02
-            </span>
-            <p className="font-[family-name:var(--font-space-grotesk)] text-2xl leading-tight sm:text-3xl">
-              {t.obsession2}
+          </Card>
+
+          <Card as="section" tone="ink" className="bg-dots-ink flex flex-col justify-between gap-8 p-7 sm:p-10 lg:col-span-4">
+            <p className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)]">
+              <span aria-hidden className="node-dot" />
+              {t.heritage}
             </p>
-          </li>
-          <li className="flex gap-4">
-            <span className="shrink-0 pt-2 font-mono text-xs uppercase tracking-[0.2em] opacity-60">
-              03
-            </span>
-            <p className="font-[family-name:var(--font-space-grotesk)] text-2xl leading-tight sm:text-3xl">
-              {t.obsession3Avant}{" "}
-              <span className="inline-block bg-[color:var(--color-accent)] px-1.5 text-[color:var(--color-accent-fg)] -rotate-1">
-                {t.obsession3Accent}
-              </span>{" "}
-              {t.obsession3Apres}
+            <p className="text-xl leading-snug sm:text-2xl">
+              {t.heritageTexte}{" "}
+              <em className="not-italic text-[color:var(--color-accent-strong)]">
+                {t.heritagePassions}
+              </em>
+              .
             </p>
-          </li>
-        </ol>
+          </Card>
+        </section>
 
-        <blockquote className="mt-12 max-w-2xl border-l-4 border-[color:var(--color-accent)] pl-6 font-[family-name:var(--font-space-grotesk)] text-xl italic leading-snug">
-          {t.antiEcole}
-        </blockquote>
-      </section>
+        {/* 02 · en ce moment */}
+        <section className="flex flex-col gap-10">
+          <EnTete eyebrow={t.momentEyebrow} titre={t.momentTitre} />
 
-      <section className="border-t-2 border-[color:var(--color-border)] px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
-        <div className="mb-10 flex flex-col gap-3">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-            {t.capsulesEyebrow}
-          </p>
-          <h2 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-tight tracking-tight sm:text-5xl">
-            {t.capsulesTitre}
-          </h2>
-          <p className="max-w-2xl text-base leading-relaxed text-[color:var(--color-muted)]">
-            {t.capsulesTexte}
-          </p>
-        </div>
-
-        <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-          <Capsule
-            index="A"
-            icon={MapPin}
-            title={c.villes.titre}
-            items={c.villes.items}
-          />
-
-          <Capsule
-            index="B"
-            icon={Wrench}
-            title={c.outils.titre}
-            accent
-            items={[
-              { label: "Claude Code", note: "Claude 3.7 Sonnet · 2025" },
-              { label: "Claude Code", note: "Claude Opus 4 · 2025" },
-              { label: "Claude Code", note: "Claude Opus 5.5 · 2026" },
-            ]}
-            footer={c.outils.footer}
-          />
-
-          <Capsule
-            index="C"
-            icon={Flame}
-            title={c.ratages.titre}
-            items={c.ratages.items}
-          />
-
-          <Capsule
-            index="D"
-            icon={Users}
-            title={c.rencontres.titre}
-            items={c.rencontres.items}
-          />
-
-          <Capsule
-            index="E"
-            icon={House}
-            title={c.pays.titre}
-            items={c.pays.items}
-            footer={c.pays.footer}
-          />
-        </div>
-
-        <div className="mt-10 flex flex-col gap-4 border-t-2 border-[color:var(--color-border)] pt-10">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-            {t.cloture}
-          </p>
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <blockquote className="border-l-4 border-[color:var(--color-accent)] pl-6 font-[family-name:var(--font-space-grotesk)] text-2xl leading-snug sm:text-3xl">
-              {t.obsessionDureAvant}{" "}
-              <span className="inline-block bg-[color:var(--color-accent)] px-1.5 text-[color:var(--color-accent-fg)] -rotate-1">
-                {t.obsessionDureAccent}
-              </span>{" "}
-              {t.obsessionDureApres}
-            </blockquote>
-            <div className="flex flex-col gap-3 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-6 shadow-[var(--shadow-hard-sm)]">
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-                {t.regle}
-              </p>
-              <p className="font-[family-name:var(--font-space-grotesk)] text-xl leading-snug">
-                <span className="inline-block bg-[color:var(--color-accent)] px-1.5 text-[color:var(--color-accent-fg)] -rotate-1">
-                  No limit
-                </span>
-                {t.regleAvant}{" "}
-                <strong className="font-black">{t.travail}</strong>,{" "}
-                <strong className="font-black">{t.creativite}</strong>,{" "}
-                <strong className="font-black">{t.decouverte}</strong>,{" "}
-                <strong className="font-black">{t.rencontre}</strong>
-                {t.regleApres}
-              </p>
-            </div>
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:[&>*:last-child:nth-child(odd)]:col-span-2">
+            {PROJETS_PHARES.map((projet) => (
+              <CarteProjetPhare key={projet.titre} {...projet} lang={lang} />
+            ))}
           </div>
-        </div>
-      </section>
+
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <li>
+              <Card as="article" className="flex h-full flex-col gap-4 p-7">
+                <Tag className="self-start">{t.codeTag}</Tag>
+                <h3 className="text-3xl font-medium leading-tight tracking-[-0.015em]">{t.codeTitre}</h3>
+                <p className="leading-relaxed text-[color:var(--color-muted)]">{t.codeTexte}</p>
+                <p className="mt-2 flex gap-3 rounded-[16px] bg-[color:var(--color-bg)] p-4 text-base italic leading-snug">
+                  <span aria-hidden className="node-dot mt-2" />
+                  {t.codeCitation}
+                </p>
+              </Card>
+            </li>
+            <li>
+              <Card as="article" className="flex h-full flex-col gap-4 p-7">
+                <Tag className="self-start">{t.photoTag}</Tag>
+                <h3 className="text-3xl font-medium leading-tight tracking-[-0.015em]">{t.photoTitre}</h3>
+                <p className="leading-relaxed text-[color:var(--color-muted)]">{t.photoTexte}</p>
+              </Card>
+            </li>
+            <li>
+              <Card as="article" className="flex h-full flex-col gap-4 p-7">
+                <Tag className="self-start">{t.veloTag}</Tag>
+                <h3 className="text-3xl font-medium leading-tight tracking-[-0.015em]">{t.veloTitre}</h3>
+                <p className="leading-relaxed text-[color:var(--color-muted)]">{t.veloTexte}</p>
+              </Card>
+            </li>
+            {nomads ? (
+              <li>
+                <a
+                  href={nomads.profileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-cursor="ouvrir"
+                  className="bg-dots-ink group flex h-full flex-col gap-5 rounded-[24px] bg-[color:var(--color-ink)] p-7 text-[color:var(--color-ink-fg)]"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <Tag tone="ink">{t.nomade}</Tag>
+                    <span
+                      aria-hidden
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    >
+                      <ArrowUpRight size={18} strokeWidth={1.75} />
+                    </span>
+                  </div>
+                  <h3 className="text-3xl font-medium leading-tight tracking-[-0.015em]">{t.mouvement}</h3>
+                  <dl className="grid grid-cols-3 gap-2">
+                    {[
+                      { label: t.pays, valeur: String(nomads.stats.countries) },
+                      { label: t.villes, valeur: String(nomads.stats.cities) },
+                      { label: "km", valeur: formatNombre(lang, nomads.stats.distance_traveled_km) },
+                    ].map((stat) => (
+                      <div
+                        key={stat.label}
+                        className="flex flex-col gap-1 rounded-[16px] bg-[color:var(--color-ink-surface)] px-3 py-3"
+                      >
+                        <dt className="font-mono text-[10px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)]">
+                          {stat.label}
+                        </dt>
+                        <dd className="font-display text-xl font-medium tracking-[-0.015em] sm:text-2xl">
+                          {stat.valeur}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                  {nomads.lastTrip ? (
+                    <p className="font-mono text-xs uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)]">
+                      {t.dernierArret}
+                      {lang === "en" ? ": " : " : "}
+                      <span className="text-[color:var(--color-ink-fg)]">
+                        {nomads.lastTrip.place}, {nomads.lastTrip.country}
+                      </span>
+                    </p>
+                  ) : null}
+                  <p className="mt-auto font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)]">
+                    {t.source}
+                  </p>
+                </a>
+              </li>
+            ) : null}
+          </ul>
+        </section>
+
+        {/* 03 · obsessions */}
+        <Panel as="section" dots className="grid grid-cols-1 gap-10 p-7 sm:p-12 lg:grid-cols-12 lg:p-16">
+          <div className="flex flex-col gap-4 lg:col-span-5">
+            <p className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)]">
+              <span aria-hidden className="node-dot" />
+              {t.obsessionsEyebrow}
+              <span aria-hidden className="node-dot" />
+            </p>
+            <h2 className="text-[clamp(2.25rem,4.5vw,3.5rem)] font-medium leading-[0.95] tracking-[-0.015em]">
+              {t.obsessionsTitre}
+            </h2>
+          </div>
+
+          <ol className="flex flex-col lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1">
+            {[
+              t.obsession1,
+              t.obsession2,
+              <>
+                {t.obsession3Avant} <Surligne>{t.obsession3Accent}</Surligne> {t.obsession3Apres}
+              </>,
+            ].map((texte, i) => (
+              <li
+                key={i}
+                className="flex gap-5 border-t border-[color:var(--color-ink-line)] py-6 first:border-t-0 first:pt-0 last:pb-0"
+              >
+                <span className="shrink-0 pt-2 font-mono text-xs text-[color:var(--color-accent-strong)]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <p className="text-2xl leading-tight tracking-[-0.01em] sm:text-3xl">{texte}</p>
+              </li>
+            ))}
+          </ol>
+
+          <blockquote className="max-w-[32ch] text-lg italic leading-snug text-[color:var(--color-ink-muted)] lg:col-span-5 lg:self-end">
+            {t.antiEcole}
+          </blockquote>
+        </Panel>
+
+        {/* 04 · capsules */}
+        <section className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+          <div className="flex flex-col gap-4 lg:sticky lg:top-24 lg:col-span-4 lg:self-start">
+            <EnTete eyebrow={t.capsulesEyebrow} titre={t.capsulesTitre} />
+            <p className="max-w-[40ch] leading-relaxed text-[color:var(--color-muted)]">
+              {t.capsulesTexte}
+            </p>
+          </div>
+
+          <div className="columns-1 gap-3 sm:columns-2 lg:col-span-8">
+            <Capsule index="A" icon={MapPin} title={c.villes.titre} items={c.villes.items} />
+            <Capsule
+              index="B"
+              icon={Wrench}
+              title={c.outils.titre}
+              accent
+              items={[
+                { label: "Claude Code", note: "Claude 3.7 Sonnet · 2025" },
+                { label: "Claude Code", note: "Claude Opus 4 · 2025" },
+                { label: "Claude Code", note: "Claude Opus 5.5 · 2026" },
+              ]}
+              footer={c.outils.footer}
+            />
+            <Capsule index="C" icon={Flame} title={c.ratages.titre} items={c.ratages.items} />
+            <Capsule index="D" icon={Users} title={c.rencontres.titre} items={c.rencontres.items} />
+            <Capsule
+              index="E"
+              icon={House}
+              title={c.pays.titre}
+              items={c.pays.items}
+              footer={c.pays.footer}
+            />
+          </div>
+        </section>
+
+        {/* clôture */}
+        <section className="flex flex-col items-center gap-10 text-center">
+          <NodeLabel>{t.cloture.replace(/^·\s*/, "")}</NodeLabel>
+          <blockquote className="max-w-[22ch] text-balance text-[clamp(2rem,4.5vw,3.75rem)] font-medium leading-[1.02] tracking-[-0.015em]">
+            {t.obsessionDureAvant} <Surligne>{t.obsessionDureAccent}</Surligne> {t.obsessionDureApres}
+          </blockquote>
+          <Card className="flex max-w-[640px] flex-col items-center gap-4 p-7 sm:p-9">
+            <p className="font-mono text-xs uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
+              {t.regle}
+            </p>
+            <p className="text-xl leading-snug">
+              <Surligne>No limit</Surligne>
+              {t.regleAvant} <strong className="font-semibold">{t.travail}</strong>,{" "}
+              <strong className="font-semibold">{t.creativite}</strong>,{" "}
+              <strong className="font-semibold">{t.decouverte}</strong>,{" "}
+              <strong className="font-semibold">{t.rencontre}</strong>
+              {t.regleApres}
+            </p>
+          </Card>
+        </section>
+      </Container>
     </article>
+  );
+}
+
+/** Surlignage rose arrondi, pour le mot qui compte dans une phrase. */
+function Surligne({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-[0.25em] bg-[color:var(--color-accent)] box-decoration-clone px-[0.18em] text-[color:var(--color-accent-fg)]">
+      {children}
+    </span>
+  );
+}
+
+/** Étiquette + titre de section, aligné à gauche. */
+function EnTete({ eyebrow, titre }: { eyebrow: string; titre: string }) {
+  return (
+    <div className="flex flex-col items-start gap-4">
+      <NodeLabel>{eyebrow}</NodeLabel>
+      <h2 className="text-[clamp(2.25rem,4.5vw,3.5rem)] font-medium leading-[0.95] tracking-[-0.015em]">
+        {titre}
+      </h2>
+    </div>
   );
 }
 
@@ -551,24 +517,18 @@ function CarteProjetPhare({
       target="_blank"
       rel="noopener noreferrer"
       data-cursor="ouvrir"
-      className={`group block border-2 border-[color:var(--color-border)] p-6 shadow-[var(--shadow-hard)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 sm:p-8 ${
-        nouveau
-          ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
-          : "bg-[color:var(--color-bg)] hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)]"
-      }`}
+      className="group flex h-full flex-col gap-6 rounded-[24px] bg-[color:var(--color-surface)] p-7 transition-colors hover:bg-[color:var(--color-surface-2)] sm:p-9"
     >
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <span className="inline-flex items-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-2 py-0.5 font-mono text-xs uppercase tracking-wider text-[color:var(--color-fg)]">
-          {badge[lang]}
-        </span>
-        <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-70">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Tag tone={nouveau ? "accent" : "default"}>{badge[lang]}</Tag>
+        <span className="font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-muted)] group-hover:text-[color:var(--color-fg)]">
           {libelleLien[lang]}
         </span>
       </div>
-      <h3 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-[0.95] tracking-tight sm:text-5xl">
+      <h3 className="text-[clamp(2rem,3.6vw,3rem)] font-medium leading-[0.95] tracking-[-0.02em]">
         {titre}
       </h3>
-      <p className="mt-4 max-w-xl text-base leading-relaxed">{description[lang]}</p>
+      <p className="max-w-xl leading-relaxed text-[color:var(--color-muted)]">{description[lang]}</p>
     </a>
   );
 }
@@ -584,50 +544,62 @@ function Capsule({
   return (
     <article
       className={cn(
-        "mb-4 flex break-inside-avoid flex-col gap-4 border-2 border-[color:var(--color-border)] p-5 shadow-[var(--shadow-hard-sm)] sm:p-6",
+        "mb-3 flex break-inside-avoid flex-col gap-5 rounded-[24px] p-6 sm:p-7",
         accent
-          ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
-          : "bg-[color:var(--color-bg)]",
+          ? "bg-dots-ink bg-[color:var(--color-ink)] text-[color:var(--color-ink-fg)]"
+          : "bg-[color:var(--color-surface)]",
       )}
     >
       <div className="flex items-center justify-between">
         <span
           className={cn(
-            "inline-flex h-10 w-10 items-center justify-center border-2 border-current",
+            "inline-flex h-11 w-11 items-center justify-center rounded-full",
             accent
-              ? "bg-[color:var(--color-accent-fg)] text-[color:var(--color-accent)]"
-              : "bg-[color:var(--color-fg)] text-[color:var(--color-bg)]",
+              ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
+              : "bg-[color:var(--color-bg)] text-[color:var(--color-fg)]",
           )}
           aria-hidden
         >
-          <Icon size={20} strokeWidth={2.25} />
+          <Icon size={19} strokeWidth={1.75} />
         </span>
-        <span className="font-mono text-xs uppercase tracking-[0.2em] opacity-60">
+        <span
+          className={cn(
+            "font-mono text-xs uppercase",
+            accent ? "text-[color:var(--color-ink-muted)]" : "text-[color:var(--color-muted)]",
+          )}
+        >
           {index}
         </span>
       </div>
 
-      <header>
-        <h3 className="font-[family-name:var(--font-space-grotesk)] text-xl font-black uppercase leading-tight tracking-tight sm:text-2xl">
-          {title}
-        </h3>
-      </header>
+      <h3 className="text-2xl font-medium leading-tight tracking-[-0.015em]">{title}</h3>
 
       <ol className="flex flex-col">
         {items.map((item, i) => (
           <li
             key={`${item.label}-${i}`}
-            className="flex items-baseline gap-3 border-t border-[color:var(--color-border)]/30 py-3 first:border-t-0 first:pt-0 last:pb-0"
+            className={cn(
+              "flex items-baseline gap-3 border-t py-3 first:border-t-0 first:pt-0 last:pb-0",
+              accent ? "border-[color:var(--color-ink-line)]" : "border-[color:var(--color-line)]",
+            )}
           >
-            <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.2em] opacity-50">
+            <span
+              className={cn(
+                "shrink-0 font-mono text-[11px]",
+                accent ? "text-[color:var(--color-accent-strong)]" : "text-[color:var(--color-muted)]",
+              )}
+            >
               {String(i + 1).padStart(2, "0")}
             </span>
             <div className="flex flex-col gap-0.5">
-              <span className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold leading-tight">
-                {item.label}
-              </span>
+              <span className="text-lg font-medium leading-tight">{item.label}</span>
               {item.note ? (
-                <span className="font-mono text-[11px] uppercase tracking-[0.15em] opacity-60">
+                <span
+                  className={cn(
+                    "font-mono text-[11px] uppercase tracking-[0.04em]",
+                    accent ? "text-[color:var(--color-ink-muted)]" : "text-[color:var(--color-muted)]",
+                  )}
+                >
                   {item.note}
                 </span>
               ) : null}
@@ -637,7 +609,12 @@ function Capsule({
       </ol>
 
       {footer ? (
-        <p className="font-mono text-[11px] uppercase tracking-[0.15em] opacity-50">
+        <p
+          className={cn(
+            "font-mono text-[11px] uppercase tracking-[0.04em]",
+            accent ? "text-[color:var(--color-ink-muted)]" : "text-[color:var(--color-muted)]",
+          )}
+        >
           {footer}
         </p>
       ) : null}

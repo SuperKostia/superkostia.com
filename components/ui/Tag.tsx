@@ -1,19 +1,22 @@
 import { cn } from "@/lib/utils";
 
 type TagProps = React.HTMLAttributes<HTMLSpanElement> & {
-  tone?: "default" | "accent";
+  tone?: "default" | "accent" | "ink";
 };
 
+/** Pastille mono capitales (type, statut, année, techno). */
 export function Tag({ className, tone = "default", ...rest }: TagProps) {
   const toneClass =
     tone === "accent"
       ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
-      : "bg-[color:var(--color-bg)] text-[color:var(--color-fg)]";
+      : tone === "ink"
+        ? "bg-[color:var(--color-ink-surface)] text-[color:var(--color-ink-fg)]"
+        : "bg-[color:var(--color-surface-2)] text-[color:var(--color-fg)]";
 
   return (
     <span
       className={cn(
-        "inline-flex items-center border-2 border-[color:var(--color-border)] px-2 py-0.5 font-mono text-xs uppercase tracking-wider",
+        "inline-flex h-7 items-center rounded-full px-3 font-mono text-[11px] uppercase tracking-[0.04em]",
         toneClass,
         className,
       )}

@@ -93,40 +93,11 @@ export function AdlerSeance() {
     <section
       id="adler"
       aria-labelledby="adler-titre"
-      className="grid scroll-mt-20 grid-cols-1 border-b-2 border-[color:var(--color-border)] lg:grid-cols-12"
+      className="mx-auto w-full max-w-[1260px] scroll-mt-24 px-3 py-10 sm:px-6"
     >
-      <div className="flex flex-col gap-8 px-6 py-12 sm:px-10 lg:col-span-8 lg:py-16">
-        <p
-          id="adler-titre"
-          className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]"
-        >
-          {t.titre}
-        </p>
-
-        <blockquote className="flex flex-col gap-6">
-          <p className="sr-only" aria-live="polite">
-            {enCours ? "" : texte}
-          </p>
-          <p
-            aria-hidden
-            className="min-h-[6em] font-[family-name:var(--font-space-grotesk)] text-3xl font-black leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl"
-          >
-            <span className="text-[color:var(--color-muted)]">{lang === "en" ? "“" : "«\u00a0"}</span>
-            {texte.slice(0, lettres)}
-            {enCours ? (
-              <span className="ml-0.5 inline-block h-[0.8em] w-[0.08em] translate-y-[0.08em] bg-[color:var(--color-fg)] motion-safe:animate-pulse" />
-            ) : (
-              <span className="text-[color:var(--color-muted)]">{lang === "en" ? "”" : "\u00a0»"}</span>
-            )}
-          </p>
-          <footer className="font-mono text-xs uppercase tracking-[0.15em] text-[color:var(--color-muted)]">
-            <cite className="not-italic">{citation.source}</cite> · {citation.annee}
-          </footer>
-        </blockquote>
-      </div>
-
-      <div className="flex flex-col justify-between gap-6 border-t-2 border-[color:var(--color-border)] px-6 py-10 sm:px-10 lg:col-span-4 lg:border-l-2 lg:border-t-0 lg:py-16">
-        <div className="flex flex-col gap-3">
+      <div className="rounded-[28px] bg-[color:var(--color-ink)] p-3 text-[color:var(--color-ink-fg)] sm:rounded-[32px] sm:p-5">
+        {/* Barre d'onglets : les trois gestes de la séance */}
+        <div className="flex flex-wrap items-center gap-2">
           <BoutonSeance onClick={encore} accent>
             {t.encore}
           </BoutonSeance>
@@ -134,19 +105,60 @@ export function AdlerSeance() {
           <BoutonSeance onClick={() => setReponse(REPONSE_DIVAN[lang])}>{t.divan}</BoutonSeance>
         </div>
 
-        <p
-          aria-live="polite"
-          className="min-h-[4.5em] border-l-4 border-[color:var(--color-accent)] pl-4 font-mono text-sm leading-relaxed"
-        >
-          {reponse ?? (
-            <span className="text-[color:var(--color-muted)]">{t.attente}</span>
-          )}
-        </p>
+        <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-12">
+          <div className="bg-dots-ink flex flex-col gap-8 rounded-[20px] px-5 py-8 sm:px-10 sm:py-12 lg:col-span-8">
+            <p
+              id="adler-titre"
+              className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)]"
+            >
+              <span aria-hidden className="node-dot" />
+              {t.titre}
+              <span aria-hidden className="node-dot" />
+            </p>
 
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          {vues === null ? " " : `${vues} / ${CITATIONS_ADLER.length} ${t.decouvertes}`}
-          {vues === CITATIONS_ADLER.length && ` · ${t.terminee}`}
-        </p>
+            <blockquote className="flex flex-col gap-6">
+              <p className="sr-only" aria-live="polite">
+                {enCours ? "" : texte}
+              </p>
+              <p
+                aria-hidden
+                className="font-display min-h-[4.2em] text-[clamp(1.75rem,3.6vw,3.25rem)] font-medium leading-[1.02] tracking-[-0.015em]"
+              >
+                <span className="text-[color:var(--color-accent-strong)]">{lang === "en" ? "“" : "«\u00a0"}</span>
+                {texte.slice(0, lettres)}
+                {enCours ? (
+                  <span className="ml-0.5 inline-block h-[0.8em] w-[0.08em] translate-y-[0.08em] bg-[color:var(--color-accent-strong)] motion-safe:animate-pulse" />
+                ) : (
+                  <span className="text-[color:var(--color-accent-strong)]">{lang === "en" ? "”" : "\u00a0»"}</span>
+                )}
+              </p>
+              <footer className="font-mono text-[12px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)]">
+                <cite className="not-italic">{citation.source}</cite> · {citation.annee}
+              </footer>
+            </blockquote>
+          </div>
+
+          <div className="flex flex-col justify-between gap-6 rounded-[20px] bg-[color:var(--color-ink-surface)] p-5 sm:p-6 lg:col-span-4">
+            <div className="flex flex-col gap-3">
+              <p className="font-mono text-[12px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)]">
+                {lang === "en" ? "The doctor's desk" : "Le bureau du docteur"}
+              </p>
+              <p
+                aria-live="polite"
+                className="min-h-[6em] rounded-[16px] rounded-tl-[4px] bg-[color:var(--color-ink)] p-4 text-[15px] leading-relaxed"
+              >
+                {reponse ?? (
+                  <span className="text-[color:var(--color-ink-muted)]">{t.attente}</span>
+                )}
+              </p>
+            </div>
+
+            <p className="font-mono text-[11px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)]">
+              {vues === null ? "\u00a0" : `${vues} / ${CITATIONS_ADLER.length} ${t.decouvertes}`}
+              {vues === CITATIONS_ADLER.length && ` · ${t.terminee}`}
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -165,10 +177,10 @@ function BoutonSeance({
     <button
       type="button"
       onClick={onClick}
-      className={`border-2 border-[color:var(--color-border)] px-4 py-3 text-left font-mono text-xs font-bold uppercase tracking-[0.15em] shadow-[var(--shadow-hard)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${
+      className={`inline-flex h-[38px] items-center rounded-full px-4 font-mono text-[12px] uppercase tracking-[0.04em] transition-colors ${
         accent
-          ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
-          : "bg-[color:var(--color-bg)] hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)]"
+          ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] hover:bg-[color:var(--color-accent-strong)]"
+          : "bg-[color:var(--color-ink-surface)] text-[color:var(--color-ink-fg)] hover:bg-[color:var(--color-ink-line)]"
       }`}
     >
       {children}

@@ -28,16 +28,45 @@ async function loadFont(relativePath: string) {
   return readFile(absolute);
 }
 
+/**
+ * Police : Archivo (celle du site, décision #014) n'existe pas en local dans
+ * un format lisible par satori (woff/ttf), seulement en woff2 dans le cache
+ * de next/font. On garde donc Space Grotesk (@fontsource, déjà installée),
+ * en graisse 500 comme les titres du site.
+ */
+const ENCRE = "#161616";
+const GRIS = "#5c5c5c";
+const SURFACE = "#f0f0f0";
+const ROSE = "#ffbcca";
+const ROSE_FRANC = "#ff91ac";
+
+/** La marque à nœuds de components/layout/LogoMark.tsx, en SVG autonome. */
+function Marque({ largeur }: { largeur: number }) {
+  return (
+    <svg width={largeur} height={(largeur * 22) / 32} viewBox="0 0 32 22" fill="none">
+      <path
+        d="M7 11 C 14 11, 14 4.5, 22 4.5 M7 11 C 14 11, 14 17.5, 22 17.5"
+        stroke={ENCRE}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <circle cx="5" cy="11" r="4" fill={ENCRE} />
+      <circle cx="26" cy="4.5" r="4" fill={ROSE_FRANC} />
+      <circle cx="26" cy="17.5" r="4" fill={ROSE_FRANC} />
+    </svg>
+  );
+}
+
+function Point() {
+  return <div style={{ display: "flex", width: 10, height: 10, borderRadius: 999, background: ROSE_FRANC }} />;
+}
+
 /** Image de partage (Open Graph et Twitter) d'une langue. */
 export async function imagePartage(lang: Lang) {
   const t = TEXTES[lang];
-  const [spaceGroteskBold, interMedium] = await Promise.all([
-    loadFont(
-      "@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff",
-    ),
-    loadFont("@fontsource/inter/files/inter-latin-500-normal.woff").catch(
-      () => null,
-    ),
+  const [grotesk500, grotesk400] = await Promise.all([
+    loadFont("@fontsource/space-grotesk/files/space-grotesk-latin-500-normal.woff"),
+    loadFont("@fontsource/space-grotesk/files/space-grotesk-latin-400-normal.woff"),
   ]);
 
   return new ImageResponse(
@@ -48,116 +77,99 @@ export async function imagePartage(lang: Lang) {
           height: "100%",
           display: "flex",
           flexDirection: "column",
+          alignItems: "center",
           justifyContent: "space-between",
-          background: "#f4f1ea",
-          padding: 72,
-          fontFamily: "Inter",
-          position: "relative",
+          background: "#fafafa",
+          backgroundImage: "radial-gradient(circle, #d2d2d2 1.6px, transparent 2.2px)",
+          backgroundSize: "28px 28px",
+          padding: "40px 48px 48px",
+          fontFamily: "Grotesk",
+          color: ENCRE,
         }}
       >
+        {/* Barre en pilule, comme l'en-tête du site */}
         <div
           style={{
             display: "flex",
+            alignItems: "center",
             justifyContent: "space-between",
-            alignItems: "flex-start",
             width: "100%",
+            height: 76,
+            padding: "0 14px 0 26px",
+            borderRadius: 999,
+            background: SURFACE,
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              fontSize: 22,
-              textTransform: "uppercase",
-              letterSpacing: 6,
-              color: "#6b6b6b",
-              fontFamily: "ui-monospace, Menlo, monospace",
-            }}
-          >
-            {t.haut}
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <Marque largeur={46} />
+            <div style={{ display: "flex", fontSize: 32, fontWeight: 500, letterSpacing: -0.5 }}>
+              superkostia
+            </div>
           </div>
           <div
             style={{
               display: "flex",
-              width: 48,
-              height: 48,
-              background: "#0a0a0a",
               alignItems: "center",
-              justifyContent: "center",
-              color: "#E4FF3A",
-              fontSize: 26,
-              fontWeight: 900,
-              letterSpacing: -2,
+              height: 50,
+              padding: "0 24px",
+              borderRadius: 999,
+              background: ROSE,
+              fontSize: 20,
+              letterSpacing: 1,
+              textTransform: "uppercase",
             }}
           >
-            SK
+            superkostia.com
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 24,
-          }}
-        >
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 26 }}>
           <div
             style={{
               display: "flex",
-              alignItems: "flex-end",
-              fontSize: 180,
-              fontWeight: 700,
-              fontFamily: "Space Grotesk",
-              color: "#111",
-              letterSpacing: -8,
-              lineHeight: 0.9,
-              textTransform: "lowercase",
+              alignItems: "center",
+              gap: 14,
+              fontSize: 20,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              color: GRIS,
+              fontWeight: 400,
             }}
           >
-            <span>super</span>
-            <span
-              style={{
-                background: "#E4FF3A",
-                color: "#111",
-                padding: "0 18px 6px 18px",
-                transform: "rotate(-1.5deg)",
-                border: "4px solid #111",
-                marginLeft: 8,
-              }}
-            >
-              kostia
-            </span>
+            <Point />
+            {t.haut}
+            <Point />
           </div>
-
           <div
             style={{
               display: "flex",
-              fontSize: 30,
-              color: "#111",
-              lineHeight: 1.3,
-              maxWidth: 900,
+              textAlign: "center",
+              fontSize: 74,
+              fontWeight: 500,
+              letterSpacing: -2.5,
+              lineHeight: 1,
+              maxWidth: 1000,
             }}
           >
             {t.phrase}
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "baseline",
-            width: "100%",
-            paddingTop: 24,
-            borderTop: "3px solid #111",
-            fontSize: 22,
-            textTransform: "uppercase",
-            letterSpacing: 4,
-            color: "#111",
-            fontFamily: "ui-monospace, Menlo, monospace",
-          }}
-        >
-          <div style={{ display: "flex" }}>superkostia.com</div>
-          <div style={{ display: "flex", color: "#6b6b6b" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              height: 46,
+              padding: "0 22px",
+              borderRadius: 999,
+              background: "#e3e3e3",
+              fontSize: 19,
+              letterSpacing: 1.5,
+              textTransform: "uppercase",
+              fontWeight: 400,
+            }}
+          >
             {t.bas}
           </div>
         </div>
@@ -166,22 +178,8 @@ export async function imagePartage(lang: Lang) {
     {
       ...size,
       fonts: [
-        {
-          name: "Space Grotesk",
-          data: spaceGroteskBold,
-          weight: 700,
-          style: "normal",
-        },
-        ...(interMedium
-          ? ([
-              {
-                name: "Inter",
-                data: interMedium,
-                weight: 500,
-                style: "normal",
-              },
-            ] as const)
-          : []),
+        { name: "Grotesk", data: grotesk500, weight: 500, style: "normal" },
+        { name: "Grotesk", data: grotesk400, weight: 400, style: "normal" },
       ],
     },
   );

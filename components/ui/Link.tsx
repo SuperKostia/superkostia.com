@@ -6,6 +6,7 @@ type LinkProps = ComponentProps<typeof NextLink> & {
   external?: boolean;
 };
 
+/** Lien de texte : souligné fin, le soulignement vire au rose au survol. */
 export function Link({ className, external, ...rest }: LinkProps) {
   const externalProps = external
     ? { target: "_blank", rel: "noopener noreferrer" }
@@ -14,8 +15,8 @@ export function Link({ className, external, ...rest }: LinkProps) {
   return (
     <NextLink
       className={cn(
-        "relative inline-block font-medium text-[color:var(--color-fg)] underline decoration-2 underline-offset-4",
-        "decoration-[color:var(--color-border)] hover:decoration-[color:var(--color-accent)]",
+        "underline decoration-1 underline-offset-[5px] decoration-[color:var(--color-line)]",
+        "transition-colors hover:decoration-[color:var(--color-accent-strong)] hover:decoration-2",
         className,
       )}
       {...externalProps}

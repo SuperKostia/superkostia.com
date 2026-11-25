@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 /**
  * L'« avatar » d'un projet : le favicon / logo de son site
  * (public/images/logos, cf. scripts/fetch-logos.mjs), sinon ses initiales sur
- * fond jaune acide. Carré, bordure dure : la photo de profil, version DA.
+ * fond rose. Carré arrondi, fond blanc, anneau fin (décision #014).
  */
 export function LogoProjet({
   titre,
@@ -19,7 +19,9 @@ export function LogoProjet({
     <span
       aria-hidden
       className={cn(
-        "relative inline-flex shrink-0 items-center justify-center overflow-hidden border-2 border-[color:var(--color-border)]",
+        "relative inline-flex shrink-0 items-center justify-center overflow-hidden ring-1 ring-inset ring-[color:var(--color-line)]",
+        // Rayon par défaut, sauf si l'appelant en fixe un autre (pas de conflit de classes).
+        !/\brounded-/.test(className) && "rounded-[10px]",
         logo
           ? "bg-white"
           : "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]",
@@ -32,10 +34,10 @@ export function LogoProjet({
           alt=""
           fill
           sizes="96px"
-          className="object-contain p-[8%]"
+          className="object-contain p-[12%]"
         />
       ) : (
-        <span className="font-[family-name:var(--font-space-grotesk)] text-[0.85em] font-black uppercase leading-none">
+        <span className="font-display text-[0.85em] font-medium leading-none tracking-[-0.01em]">
           {initiales(titre)}
         </span>
       )}

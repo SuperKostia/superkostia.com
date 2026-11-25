@@ -38,8 +38,13 @@ export function ProjetsVue({ projets, lang, children }: { projets: StoryProjet[]
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <div role="group" aria-label={l.choix} className="flex w-fit border-2 border-[color:var(--color-border)] shadow-[var(--shadow-hard-sm)]">
+    <div className="flex flex-col gap-8">
+      {/* Sélecteur en pilules, comme les onglets d'un panneau n8n. */}
+      <div
+        role="group"
+        aria-label={l.choix}
+        className="flex w-fit gap-1 self-center rounded-full bg-[color:var(--color-surface)] p-1"
+      >
         {(["stories", "grille"] as const).map((v) => (
           <button
             key={v}
@@ -47,13 +52,13 @@ export function ProjetsVue({ projets, lang, children }: { projets: StoryProjet[]
             onClick={() => choisir(v)}
             aria-pressed={vue === v}
             className={cn(
-              "inline-flex items-center gap-2 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider [&:not(:first-child)]:border-l-2 [&:not(:first-child)]:border-[color:var(--color-border)]",
+              "inline-flex h-9 items-center gap-2 rounded-full px-4 font-mono text-[12px] uppercase tracking-[0.04em] transition-colors",
               vue === v
                 ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
-                : "bg-[color:var(--color-bg)] hover:bg-[color:var(--color-accent)]/40",
+                : "text-[color:var(--color-muted)] hover:bg-[color:var(--color-surface-2)] hover:text-[color:var(--color-fg)]",
             )}
           >
-            {v === "stories" ? <Square size={14} strokeWidth={2.5} aria-hidden /> : <LayoutGrid size={14} strokeWidth={2.5} aria-hidden />}
+            {v === "stories" ? <Square size={13} strokeWidth={1.75} aria-hidden /> : <LayoutGrid size={13} strokeWidth={1.75} aria-hidden />}
             {l[v]}
           </button>
         ))}

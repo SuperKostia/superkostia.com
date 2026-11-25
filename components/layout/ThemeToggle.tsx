@@ -47,12 +47,12 @@ export function ThemeToggle() {
       aria-label={label}
       title={label}
       suppressHydrationWarning
-      className="inline-flex h-10 w-10 items-center justify-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] text-[color:var(--color-fg)] shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0"
+      className="inline-flex h-[42px] w-[42px] items-center justify-center rounded-full text-[color:var(--color-fg)] transition-colors hover:bg-[color:var(--color-surface-2)]"
     >
       {theme === "dark" ? (
-        <Sun size={18} strokeWidth={2.5} aria-hidden />
+        <Sun size={17} strokeWidth={1.75} aria-hidden />
       ) : (
-        <Moon size={18} strokeWidth={2.5} aria-hidden />
+        <Moon size={17} strokeWidth={1.75} aria-hidden />
       )}
     </button>
   );

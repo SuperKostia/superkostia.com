@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import NextLink from "next/link";
 import type { ComponentType, SVGProps } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
+import { NodeLabel } from "@/components/ui/NodeLabel";
 import { LinkedInMark, SubstackMark } from "@/components/icons/BrandMarks";
 import { getEcrits } from "@/lib/mdx";
 import { alternates, chemin, type Lang } from "@/lib/i18n";
@@ -65,87 +66,89 @@ export async function EcritsIndex({ lang }: { lang: Lang }) {
       title={t.titre}
       intro={<p>{t.intro}</p>}
     >
-      <section className="mb-12 flex flex-col gap-3">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          Newsletters
-        </p>
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {NEWSLETTERS.map((n) => {
-            const { Mark } = n;
-            return (
-              <li key={n.url}>
-                <a
-                  href={n.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-cursor="lire"
-                  className="group flex h-full flex-col border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)]"
-                >
-                  <div className="flex items-stretch border-b-2 border-[color:var(--color-border)]">
-                    <div className="flex aspect-square h-16 shrink-0 items-center justify-center border-r-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] text-[color:var(--color-bg)] group-hover:bg-[color:var(--color-accent-fg)] group-hover:text-[color:var(--color-accent)]">
-                      <Mark width={28} height={28} />
-                    </div>
-                    <div className="flex flex-1 items-center justify-between gap-3 px-4">
-                      <span className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
+      <div className="mx-auto flex max-w-[960px] flex-col gap-16">
+        <section className="flex flex-col gap-5">
+          <NodeLabel>Newsletters</NodeLabel>
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {NEWSLETTERS.map((n) => {
+              const { Mark } = n;
+              return (
+                <li key={n.url}>
+                  <a
+                    href={n.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-cursor="lire"
+                    className="bg-dots-ink group flex h-full min-h-[220px] flex-col justify-between gap-8 rounded-[24px] bg-[color:var(--color-ink)] p-6 text-[color:var(--color-ink-fg)] sm:p-7"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="inline-flex h-12 w-12 items-center justify-center rounded-[14px] bg-[color:var(--color-ink-surface)]">
+                        <Mark width={24} height={24} />
+                      </span>
+                      <span className="inline-flex h-7 items-center rounded-full bg-[color:var(--color-ink-surface)] px-3 font-mono text-[11px] uppercase tracking-[0.04em]">
                         {n.platform} · {n.language}
                       </span>
-                      <ArrowUpRight
-                        size={18}
-                        strokeWidth={2.5}
-                        aria-hidden
-                        className="shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                      />
                     </div>
-                  </div>
-                  <div className="flex-1 p-5">
-                    <span className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
-                      {n.title}
-                    </span>
-                  </div>
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+                    <div className="flex items-end justify-between gap-4">
+                      <span className="font-display text-2xl font-medium leading-tight tracking-[-0.015em] sm:text-[28px]">
+                        {n.title}
+                      </span>
+                      <span
+                        aria-hidden
+                        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      >
+                        <ArrowUpRight size={18} strokeWidth={1.75} />
+                      </span>
+                    </div>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
 
-      <section className="flex flex-col gap-4">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          {t.notes}
-        </p>
-        {ecrits.length === 0 ? (
-        <p className="font-mono text-sm uppercase tracking-wider text-[color:var(--color-muted)]">
-          <code>content/ecrits/</code> : 0.
-        </p>
-      ) : (
-        <ul className="flex flex-col divide-y-2 divide-[color:var(--color-border)] border-y-2 border-[color:var(--color-border)]">
-          {ecrits.map((entry) => (
-            <li key={entry.frontmatter.slug}>
-              <NextLink
-                href={chemin(lang, `/ecrits/${entry.frontmatter.slug}`)}
-                data-cursor="lire"
-                className="flex flex-col gap-2 py-6 transition-colors hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)] sm:flex-row sm:items-baseline sm:gap-6"
-              >
-                <time
-                  className="font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)] sm:w-28 sm:shrink-0 sm:pl-3"
-                  dateTime={entry.frontmatter.date}
-                >
-                  {entry.frontmatter.date}
-                </time>
-                <div className="flex flex-col gap-1 pr-3">
-                  <h2 className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
-                    {entry.frontmatter.title}
-                  </h2>
-                  <p className="text-sm leading-relaxed text-[color:var(--color-muted)]">
-                    {entry.frontmatter.summary}
-                  </p>
-                </div>
-              </NextLink>
-            </li>
-          ))}
-        </ul>
-      )}
-      </section>
+        <section className="flex flex-col gap-5">
+          <NodeLabel>{t.notes}</NodeLabel>
+          {ecrits.length === 0 ? (
+            <p className="font-mono text-sm uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
+              <code>content/ecrits/</code> : 0.
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-3">
+              {ecrits.map((entry) => (
+                <li key={entry.frontmatter.slug}>
+                  <NextLink
+                    href={chemin(lang, `/ecrits/${entry.frontmatter.slug}`)}
+                    data-cursor="lire"
+                    className="group flex flex-col gap-3 rounded-[24px] bg-[color:var(--color-surface)] p-6 transition-colors hover:bg-[color:var(--color-surface-2)] sm:flex-row sm:items-center sm:gap-8 sm:p-7"
+                  >
+                    <time
+                      className="inline-flex h-7 shrink-0 items-center self-start rounded-full bg-[color:var(--color-surface-2)] px-3 font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-muted)] group-hover:bg-[color:var(--color-bg)] sm:self-center"
+                      dateTime={entry.frontmatter.date}
+                    >
+                      {entry.frontmatter.date}
+                    </time>
+                    <div className="flex flex-1 flex-col gap-1.5">
+                      <h2 className="text-2xl font-medium leading-tight tracking-[-0.015em] sm:text-[28px]">
+                        {entry.frontmatter.title}
+                      </h2>
+                      <p className="text-[15px] leading-relaxed text-[color:var(--color-muted)]">
+                        {entry.frontmatter.summary}
+                      </p>
+                    </div>
+                    <span
+                      aria-hidden
+                      className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-bg)] transition-colors group-hover:bg-[color:var(--color-accent)] group-hover:text-[color:var(--color-accent-fg)] sm:inline-flex"
+                    >
+                      <ArrowRight size={18} strokeWidth={1.75} />
+                    </span>
+                  </NextLink>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
     </PageShell>
   );
 }

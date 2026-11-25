@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { execSync } from "node:child_process";
 import { ArrowUpRight } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
+import { Card } from "@/components/ui/Card";
+import { Panel } from "@/components/ui/Panel";
+import { NodeLabel } from "@/components/ui/NodeLabel";
+import { Link } from "@/components/ui/Link";
+import { buttonClasses } from "@/components/ui/Button";
 import pkg from "@/package.json";
 import { alternates, type Lang } from "@/lib/i18n";
 
@@ -74,6 +79,13 @@ const DECISIONS: Decision[] = [
     id: "012",
     title: { fr: "Site bilingue : le français à la racine, l'anglais sous /en", en: "Bilingual site: French at the root, English under /en" },
   },
+  {
+    id: "014",
+    title: {
+      fr: "Nouvelle DA inspirée de n8n : trame de points, pilules, accent rose",
+      en: "New look inspired by n8n: dot grid, pills, pink accent",
+    },
+  },
 ];
 
 type LinkEntry = {
@@ -104,144 +116,128 @@ export function Colophon({ lang }: { lang: Lang }) {
       title="Colophon."
       intro={<p>{t.intro}</p>}
     >
-      <section className="mb-12 flex flex-col gap-3">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          Build
-        </p>
-        <dl className="grid grid-cols-1 gap-0 border-2 border-[color:var(--color-border)] sm:grid-cols-3">
-          <div className="flex flex-col gap-1 border-b-2 border-[color:var(--color-border)] p-4 sm:border-b-0 sm:border-r-2">
-            <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-              Version
-            </dt>
-            <dd className="font-[family-name:var(--font-space-grotesk)] text-xl font-black tracking-tight">
-              {pkg.version}
-            </dd>
+      <div className="flex flex-col gap-16">
+        <section className="flex flex-col gap-5">
+          <NodeLabel>Build</NodeLabel>
+          <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <Card className="flex flex-col gap-3">
+              <dt className="font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
+                Version
+              </dt>
+              <dd className="font-display text-3xl font-medium tracking-[-0.015em]">{pkg.version}</dd>
+            </Card>
+            <Card className="flex flex-col gap-3">
+              <dt className="font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
+                Commit
+              </dt>
+              <dd className="font-mono text-2xl">
+                <Link href={`${REPO_URL}/commit/${commit}`} external>
+                  {commit}
+                </Link>
+              </dd>
+            </Card>
+            <Card className="flex flex-col gap-3">
+              <dt className="font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
+                Build
+              </dt>
+              <dd className="font-mono text-2xl">{buildTime}</dd>
+            </Card>
+          </dl>
+        </section>
+
+        <section className="flex flex-col gap-5">
+          <NodeLabel>Stack ({sortedDeps.length} packages)</NodeLabel>
+          <Card className="p-3 sm:p-4">
+            <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
+              {sortedDeps.map(([name, version]) => (
+                <li
+                  key={name}
+                  className="flex items-baseline justify-between gap-3 border-b border-[color:var(--color-line)] px-3 py-2.5 font-mono text-xs"
+                >
+                  <span className="truncate text-[color:var(--color-fg)]">{name}</span>
+                  <span className="shrink-0 text-[color:var(--color-muted)]">{version}</span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </section>
+
+        <Panel as="section" dots className="flex flex-col gap-8 p-6 sm:p-10 lg:p-14">
+          <div className="flex flex-col gap-3">
+            <p className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)]">
+              <span aria-hidden className="node-dot" />
+              {t.decisions}
+              <span aria-hidden className="node-dot" />
+            </p>
+            <h2 className="text-3xl font-medium leading-[0.95] tracking-[-0.015em] sm:text-4xl">
+              DECISIONS.md
+            </h2>
           </div>
-          <div className="flex flex-col gap-1 border-b-2 border-[color:var(--color-border)] p-4 sm:border-b-0 sm:border-r-2">
-            <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-              Commit
-            </dt>
-            <dd className="font-mono text-xl font-bold">
-              <a
-                href={`${REPO_URL}/commit/${commit}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline decoration-2 underline-offset-4 hover:decoration-[color:var(--color-accent)]"
+          <ol className="grid grid-cols-1 gap-2 md:grid-cols-2">
+            {DECISIONS.map((d) => (
+              <li
+                key={d.id}
+                className="flex items-baseline gap-4 rounded-[16px] bg-[color:var(--color-ink-surface)] px-4 py-3.5"
               >
-                {commit}
-              </a>
-            </dd>
-          </div>
-          <div className="flex flex-col gap-1 p-4">
-            <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-              Build
-            </dt>
-            <dd className="font-mono text-xl font-bold">{buildTime}</dd>
-          </div>
-        </dl>
-      </section>
-
-      <section className="mb-12 flex flex-col gap-3">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          Stack ({sortedDeps.length} packages)
-        </p>
-        <ul className="grid grid-cols-1 gap-0 border-2 border-[color:var(--color-border)] sm:grid-cols-2 lg:grid-cols-3">
-          {sortedDeps.map(([name, version], i) => (
-            <li
-              key={name}
-              className="flex items-baseline justify-between gap-3 border-b-2 border-[color:var(--color-border)] px-4 py-2 font-mono text-xs last:border-b-0 sm:odd:border-r-2 sm:[&:nth-last-child(-n+2)]:border-b-0 lg:[&:nth-child(3n+1)]:border-r-2 lg:[&:nth-child(3n+2)]:border-r-2 lg:[&:nth-last-child(-n+3)]:border-b-0"
-              style={{ "--i": i } as React.CSSProperties}
-            >
-              <span className="truncate uppercase tracking-wider text-[color:var(--color-fg)]">
-                {name}
-              </span>
-              <span className="shrink-0 text-[color:var(--color-muted)]">
-                {version}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mb-12 flex flex-col gap-3">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          {t.decisions}
-        </p>
-        <ol className="flex flex-col gap-0 border-2 border-[color:var(--color-border)]">
-          {DECISIONS.map((d) => (
-            <li
-              key={d.id}
-              className="flex items-baseline gap-4 border-b-2 border-[color:var(--color-border)] px-4 py-3 last:border-b-0"
-            >
-              <span className="shrink-0 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-                #{d.id}
-              </span>
-              <span className="font-[family-name:var(--font-space-grotesk)] text-base leading-snug">
-                {d.title[lang]}
-              </span>
-            </li>
-          ))}
-        </ol>
-        <p className="text-xs text-[color:var(--color-muted)]">
-          {t.details}{" "}
-          <a
-            href={`${REPO_URL}/blob/main/DECISIONS.md`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-2 underline-offset-4 hover:decoration-[color:var(--color-accent)]"
-          >
-            DECISIONS.md
-          </a>
-          .
-        </p>
-      </section>
-
-      <section className="mb-12 flex flex-col gap-3">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          {t.remerciements}
-        </p>
-        <div className="max-w-2xl border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-5 text-base leading-relaxed shadow-[var(--shadow-hard-sm)]">
-          <p>
-            {t.merci1}{" "}
+                <span className="shrink-0 font-mono text-xs text-[color:var(--color-accent-strong)]">
+                  #{d.id}
+                </span>
+                <span className="text-[15px] leading-snug">{d.title[lang]}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="text-sm text-[color:var(--color-ink-muted)]">
+            {t.details}{" "}
             <a
-              href="https://claude.com/claude-code"
+              href={`${REPO_URL}/blob/main/DECISIONS.md`}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline decoration-2 underline-offset-4 hover:decoration-[color:var(--color-accent)]"
+              className="text-[color:var(--color-ink-fg)] underline decoration-1 underline-offset-[5px] hover:decoration-[color:var(--color-accent-strong)] hover:decoration-2"
             >
-              Claude Code
-            </a>{" "}
-            {t.merci2}
+              DECISIONS.md
+            </a>
+            .
           </p>
-          <p className="mt-4 text-[color:var(--color-muted)]">
-            <em>
-              {t.aEtoffer}
-            </em>
-          </p>
-        </div>
-      </section>
+        </Panel>
 
-      <section className="flex flex-col gap-3">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          Sources
-        </p>
-        <ul className="flex flex-wrap gap-3">
-          {liensExternes(lang).map((link) => (
-            <li key={link.url}>
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-cursor="ouvrir"
-                className="inline-flex items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-3 py-1.5 font-medium uppercase tracking-wider text-sm shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)]"
-              >
-                {link.label}
-                <ArrowUpRight size={14} strokeWidth={2.5} aria-hidden />
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="flex flex-col gap-3 lg:col-span-4">
+            <NodeLabel>{t.remerciements}</NodeLabel>
+          </div>
+          <Card className="flex flex-col gap-4 p-6 text-base leading-relaxed sm:p-8 lg:col-span-8">
+            <p>
+              {t.merci1}{" "}
+              <Link href="https://claude.com/claude-code" external>
+                Claude Code
+              </Link>{" "}
+              {t.merci2}
+            </p>
+            <p className="text-[color:var(--color-muted)]">
+              <em>{t.aEtoffer}</em>
+            </p>
+          </Card>
+        </section>
+
+        <section className="flex flex-col items-center gap-5">
+          <NodeLabel>Sources</NodeLabel>
+          <ul className="flex flex-wrap justify-center gap-2">
+            {liensExternes(lang).map((link) => (
+              <li key={link.url}>
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-cursor="ouvrir"
+                  className={buttonClasses("default", "md")}
+                >
+                  {link.label}
+                  <ArrowUpRight size={14} strokeWidth={1.75} aria-hidden />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
     </PageShell>
   );
 }

@@ -30,17 +30,17 @@ Sauf que ça n'est pas resté entre Dim et moi. D'autres potes ont voulu en êtr
 et le flux s'est ouvert : aujourd'hui chacun peut rejoindre la liste en deux
 clics, et elle grandit match après match.
 
-<div className="relative w-[calc(100vw-3rem)] sm:w-[calc(100vw-5rem)] lg:w-[calc(100vw-6rem)] -rotate-[0.3deg] border-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] shadow-[var(--shadow-hard)]">
-  <a href="/projets/coupe-du-monde-dim/dashboard.html" target="_blank" rel="noopener noreferrer" data-cursor="ouvrir" className="absolute right-3 top-3 z-20 inline-flex items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-wider text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard)] transition-transform hover:-translate-y-0.5 sm:text-sm">⤢ Plein écran</a>
+<div className="relative left-1/2 w-[min(1200px,calc(100vw-2.5rem))] -translate-x-1/2 overflow-hidden rounded-[24px] bg-[color:var(--color-ink)] p-2">
+  <a href="/projets/coupe-du-monde-dim/dashboard.html" target="_blank" rel="noopener noreferrer" data-cursor="ouvrir" className="absolute right-4 top-4 z-20 inline-flex h-[38px] items-center gap-2 rounded-full bg-[color:var(--color-accent)] px-4 font-mono text-xs uppercase tracking-[0.04em] text-[color:var(--color-accent-fg)] transition-colors hover:bg-[color:var(--color-accent-strong)]">⤢ Plein écran</a>
   <iframe
     src="/projets/coupe-du-monde-dim/dashboard.html"
     title="Dashboard live des récaps Coupe du Monde 2026 envoyés sur WhatsApp"
-    className="block h-[760px] w-full"
+    className="block h-[760px] w-full rounded-[18px]"
     loading="lazy"
   />
 </div>
 
-<p className="mt-3 font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)]">↑ En direct, scores tirés de l'API ESPN. <a href="/projets/coupe-du-monde-dim/dashboard.html" target="_blank" rel="noopener noreferrer" className="font-black text-[color:var(--color-fg)] underline decoration-2 underline-offset-2" data-cursor="ouvrir">Ouvrir en plein écran ↗</a></p>
+<p className="mt-3 text-center font-mono text-xs uppercase tracking-[0.04em] text-[color:var(--color-muted)]">↑ En direct, scores tirés de l'API ESPN. <a href="/projets/coupe-du-monde-dim/dashboard.html" target="_blank" rel="noopener noreferrer" className="text-[color:var(--color-fg)] underline decoration-[color:var(--color-accent-strong)] underline-offset-4" data-cursor="ouvrir">Ouvrir en plein écran ↗</a></p>
 
 ## Comment c'est fabriqué
 

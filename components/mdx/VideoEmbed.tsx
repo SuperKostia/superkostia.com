@@ -5,8 +5,8 @@ type VideoEmbedProps = {
 
 export function VideoEmbed({ src, title }: VideoEmbedProps) {
   return (
-    <div className="my-10 border-2 border-[color:var(--color-border)] shadow-[var(--shadow-hard)]">
-      <div className="relative aspect-video w-full">
+    <div className="my-10 rounded-[24px] bg-[color:var(--color-surface)] p-2">
+      <div className="relative aspect-video w-full overflow-hidden rounded-[16px] bg-[color:var(--color-ink)]">
         <iframe
           src={src}
           title={title}

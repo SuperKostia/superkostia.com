@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUp, ArrowUpRight, LockOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { buttonClasses } from "@/components/ui/Button";
+import { NodeLabel } from "@/components/ui/NodeLabel";
 import { notifyTelegram } from "./actions";
 import type { Lang } from "@/lib/i18n";
 import { useLang } from "@/lib/useLang";
@@ -18,6 +20,11 @@ const TEXTES = {
     deverrouiller: "Déverrouiller les contacts",
     ouvert: "Déverrouillé · à toi",
     reverrouiller: "Reverrouiller",
+    idees: "Idées pour démarrer",
+    idee1: "Un projet à monter ensemble",
+    idee2: "Une question sur Axiom Academic",
+    idee3: "Un café à Athènes",
+    idee4: "Juste dire bonjour",
   },
   en: {
     nomCourt: "A name, even a short one.",
@@ -29,6 +36,11 @@ const TEXTES = {
     deverrouiller: "Unlock the contacts",
     ouvert: "Unlocked · over to you",
     reverrouiller: "Lock again",
+    idees: "Ideas to get started",
+    idee1: "A project to build together",
+    idee2: "A question about Axiom Academic",
+    idee3: "A coffee in Athens",
+    idee4: "Just saying hi",
   },
 } satisfies Record<Lang, Record<string, string>>;
 
@@ -62,7 +74,6 @@ export function ContactGate({ channels }: ContactGateProps) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setStage(stored ? "unlocked" : "locked");
     } catch {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStage("locked");
     }
   }, []);
@@ -127,7 +138,7 @@ function GatePlaceholder() {
   return (
     <div
       aria-hidden
-      className="h-[420px] border-2 border-dashed border-[color:var(--color-border)] bg-[color:var(--color-bg)]"
+      className="mx-auto h-[460px] w-full max-w-[760px] rounded-[28px] bg-[color:var(--color-surface)]"
     />
   );
 }
@@ -140,68 +151,108 @@ type LockedFormProps = {
   t: Textes;
 };
 
+const champ =
+  "w-full rounded-[14px] bg-[color:var(--color-surface)] px-4 py-3 text-base text-[color:var(--color-fg)] placeholder:text-[color:var(--color-muted)]";
+
+/** La porte, façon bloc de prompt : une grande carte, le champ, l'envoi en pilule rose. */
 function LockedForm({ onSubmit, error, t }: LockedFormProps) {
+  const motifRef = useRef<HTMLTextAreaElement>(null);
+  const idees = [t.idee1, t.idee2, t.idee3, t.idee4];
+
+  function proposer(idee: string) {
+    const champMotif = motifRef.current;
+    if (!champMotif) return;
+    champMotif.value = idee;
+    champMotif.focus();
+  }
+
   return (
-    <form
-      onSubmit={onSubmit}
-      className="flex flex-col gap-5 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-6 shadow-[var(--shadow-hard)] sm:p-8"
-    >
-      <div className="flex flex-col gap-2">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          {t.cle}
-        </p>
-        <p className="font-[family-name:var(--font-space-grotesk)] text-2xl leading-snug sm:text-3xl">
-          {t.consigne}
-        </p>
+    <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <NodeLabel>{t.cle}</NodeLabel>
+        <p className="max-w-[48ch] text-balance text-lg leading-snug sm:text-xl">{t.consigne}</p>
       </div>
 
-      <Field label={t.nom} error={null}>
-        <input
-          name="name"
-          type="text"
-          required
-          minLength={2}
-          autoComplete="name"
-          className="w-full border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-4 py-3 text-base text-[color:var(--color-fg)] shadow-[var(--shadow-hard-sm)] focus:outline-none"
-        />
-      </Field>
-
-      <Field label={t.pourquoi} error={null}>
-        <textarea
-          name="motif"
-          required
-          minLength={5}
-          maxLength={500}
-          rows={4}
-          className="w-full resize-y border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-4 py-3 text-base text-[color:var(--color-fg)] shadow-[var(--shadow-hard-sm)] focus:outline-none"
-        />
-      </Field>
-
-      {/* Honeypot invisible */}
-      <div
-        aria-hidden
-        className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden"
+      <form
+        onSubmit={onSubmit}
+        className="relative flex flex-col gap-3 rounded-[28px] bg-[color:var(--color-surface)] p-3 sm:p-4"
       >
-        <label>
-          Site web
-          <input type="text" name="website" tabIndex={-1} autoComplete="off" />
-        </label>
-      </div>
+        <div className="flex flex-col gap-4 rounded-[20px] bg-[color:var(--color-bg)] p-4 sm:p-5">
+          <Field label={t.nom} error={null}>
+            <input
+              name="name"
+              type="text"
+              required
+              minLength={2}
+              autoComplete="name"
+              className={champ}
+            />
+          </Field>
 
-      {error ? (
-        <p className="border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-3 py-2 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-fg)]">
-          {error}
-        </p>
-      ) : null}
+          <Field label={t.pourquoi} error={null}>
+            <textarea
+              ref={motifRef}
+              name="motif"
+              required
+              minLength={5}
+              maxLength={500}
+              rows={4}
+              className={cn(champ, "resize-y")}
+            />
+          </Field>
 
-      <button
-        type="submit"
-        data-cursor="cliquer"
-        className="inline-flex items-center justify-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-6 py-3 font-medium uppercase tracking-wider text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0"
-      >
-        {t.deverrouiller}
-      </button>
-    </form>
+          {/* Honeypot invisible */}
+          <div
+            aria-hidden
+            className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden"
+          >
+            <label>
+              Site web
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+            </label>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            {error ? (
+              <p
+                role="alert"
+                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.04em] text-[color:var(--color-fg)]"
+              >
+                <span aria-hidden className="node-dot" />
+                {error}
+              </p>
+            ) : (
+              <span />
+            )}
+            <button
+              type="submit"
+              data-cursor="cliquer"
+              className={buttonClasses("accent", "md", "ml-auto")}
+            >
+              {t.deverrouiller}
+              <ArrowUp size={16} strokeWidth={1.75} aria-hidden />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 px-1 pb-1">
+          <p className="sr-only">{t.idees}</p>
+          <ul className="flex flex-wrap justify-center gap-2">
+            {idees.map((idee) => (
+              <li key={idee}>
+                <button
+                  type="button"
+                  onClick={() => proposer(idee)}
+                  className={buttonClasses("default", "sm", "h-9 px-3.5")}
+                >
+                  {idee}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -213,8 +264,9 @@ type UnlockedViewProps = {
 
 function UnlockedView({ channels, onReset, t }: UnlockedViewProps) {
   return (
-    <div className="flex flex-col gap-4">
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
+    <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-5">
+      <p className="inline-flex items-center gap-2 self-center rounded-full bg-[color:var(--color-surface)] px-4 py-2 font-mono text-xs uppercase tracking-[0.04em]">
+        <LockOpen size={14} strokeWidth={1.75} aria-hidden />
         {t.ouvert}
       </p>
       <ul className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -228,24 +280,32 @@ function UnlockedView({ channels, onReset, t }: UnlockedViewProps) {
                 rel="noopener noreferrer"
                 data-cursor="ouvrir"
                 className={cn(
-                  "group flex h-full flex-col justify-between gap-6 border-2 border-[color:var(--color-border)] p-8 shadow-[var(--shadow-hard)] transition-transform hover:-translate-x-1 hover:-translate-y-1 sm:p-10",
+                  "group relative flex h-full min-h-[240px] flex-col justify-between gap-6 overflow-hidden rounded-[28px] p-8 transition-colors sm:p-10",
                   isAccent
-                    ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
-                    : "bg-[color:var(--color-bg)] text-[color:var(--color-fg)]",
+                    ? "bg-dots-ink bg-[color:var(--color-ink)] text-[color:var(--color-ink-fg)]"
+                    : "bg-[color:var(--color-surface)] text-[color:var(--color-fg)] hover:bg-[color:var(--color-surface-2)]",
                 )}
               >
                 <div className="flex items-start justify-between gap-4">
-                  <span className="font-mono text-xs uppercase tracking-[0.2em] opacity-70">
+                  <span
+                    className={cn(
+                      "inline-flex h-7 items-center gap-2 rounded-full px-3 font-mono text-[11px] uppercase tracking-[0.04em]",
+                      isAccent
+                        ? "bg-[color:var(--color-ink-surface)]"
+                        : "bg-[color:var(--color-surface-2)]",
+                    )}
+                  >
+                    <span aria-hidden className="node-dot" />
                     {c.handle}
                   </span>
-                  <ArrowUpRight
-                    size={22}
-                    strokeWidth={2.5}
+                  <span
                     aria-hidden
-                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  />
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  >
+                    <ArrowUpRight size={20} strokeWidth={1.75} />
+                  </span>
                 </div>
-                <span className="font-[family-name:var(--font-space-grotesk)] text-5xl font-black uppercase leading-[0.9] tracking-tight sm:text-6xl">
+                <span className="font-display text-5xl font-medium leading-[0.9] tracking-[-0.02em] sm:text-6xl">
                   {c.label}
                 </span>
               </a>
@@ -256,7 +316,7 @@ function UnlockedView({ channels, onReset, t }: UnlockedViewProps) {
       <button
         type="button"
         onClick={onReset}
-        className="self-start font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted)] underline decoration-2 underline-offset-4 hover:text-[color:var(--color-fg)]"
+        className={buttonClasses("ghost", "sm", "self-center text-[color:var(--color-muted)]")}
       >
         {t.reverrouiller}
       </button>
@@ -273,7 +333,7 @@ type FieldProps = {
 function Field({ label, children }: FieldProps) {
   return (
     <label className="flex flex-col gap-2">
-      <span className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
+      <span className="font-mono text-xs uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
         {label}
       </span>
       {children}

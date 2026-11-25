@@ -3,6 +3,8 @@ import NextLink from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { MDXContent } from "@/components/mdx/MDXContent";
+import { Container } from "@/components/ui/Container";
+import { NodeLabel } from "@/components/ui/NodeLabel";
 import { getHobbies, getHobbyBySlug, ROUTES_DEDIEES } from "@/lib/mdx";
 import { alternates, chemin, imagesPartage, LOCALE_OG, type Lang } from "@/lib/i18n";
 
@@ -52,36 +54,33 @@ export async function HobbyDetail({ lang, slug }: { lang: Lang; slug: string }) 
     : undefined;
 
   return (
-    <article
-      className="px-6 py-10 sm:px-10 lg:px-12"
-      style={accentStyle}
-    >
-      <NextLink
-        href={chemin(lang, "/hobbies")}
-        className="mb-8 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)] hover:text-[color:var(--color-fg)]"
-      >
-        <ArrowLeft size={14} strokeWidth={2.5} aria-hidden />
-        {lang === "en" ? "All hobbies" : "Tous les hobbies"}
-      </NextLink>
-
-      <header className="mb-12 flex flex-col gap-4 border-b-2 border-[color:var(--color-border)] pb-8">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          Hobby
-        </p>
-        <h1 className="font-[family-name:var(--font-space-grotesk)] text-5xl font-black uppercase leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
-          {frontmatter.title}
-        </h1>
-        {frontmatter.sousTitre ? (
-          <p className="font-[family-name:var(--font-space-grotesk)] text-2xl leading-snug text-[color:var(--color-muted)]">
-            {frontmatter.sousTitre}
+    <article className="flex flex-col" style={accentStyle}>
+      <header className="relative isolate overflow-hidden">
+        <div aria-hidden className="bg-dots-fade absolute inset-0 -z-10" />
+        <Container className="flex flex-col items-center gap-5 pb-14 pt-12 text-center sm:pb-20 sm:pt-16">
+          <NextLink
+            href={chemin(lang, "/hobbies")}
+            className="inline-flex h-8 items-center gap-2 rounded-full bg-[color:var(--color-surface)] px-3 font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-muted)] transition-colors hover:bg-[color:var(--color-surface-2)] hover:text-[color:var(--color-fg)]"
+          >
+            <ArrowLeft size={13} strokeWidth={1.75} aria-hidden />
+            {lang === "en" ? "All hobbies" : "Tous les hobbies"}
+          </NextLink>
+          <NodeLabel>Hobby</NodeLabel>
+          <h1 className="max-w-[16ch] text-balance text-[clamp(2.75rem,7vw,5.5rem)] font-medium leading-[0.9] tracking-[-0.015em]">
+            {frontmatter.title}
+          </h1>
+          {frontmatter.sousTitre ? (
+            <p className="text-2xl leading-snug tracking-[-0.01em]">{frontmatter.sousTitre}</p>
+          ) : null}
+          <p className="max-w-[56ch] text-balance text-base leading-snug text-[color:var(--color-muted)] sm:text-lg">
+            {frontmatter.summary}
           </p>
-        ) : null}
-        <p className="max-w-2xl text-lg leading-relaxed text-[color:var(--color-muted)]">
-          {frontmatter.summary}
-        </p>
+        </Container>
       </header>
 
-      <MDXContent source={body} lang={lang} />
+      <Container size="prose" className="pb-24">
+        <MDXContent source={body} lang={lang} />
+      </Container>
     </article>
   );
 }

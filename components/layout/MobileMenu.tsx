@@ -7,6 +7,8 @@ import { Menu, X } from "lucide-react";
 import { NAV_PIED, NAV_PRINCIPALE, chemin, langueDuChemin } from "@/lib/i18n";
 import { ThemeToggle } from "./ThemeToggle";
 import { LangSwitch } from "./LangSwitch";
+import { LogoMark } from "./LogoMark";
+import { buttonClasses } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export function MobileMenu() {
@@ -35,9 +37,9 @@ export function MobileMenu() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={en ? "Open menu" : "Ouvrir le menu"}
-        className="inline-flex h-10 w-10 items-center justify-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] text-[color:var(--color-fg)] shadow-[var(--shadow-hard-sm)] md:hidden"
+        className="inline-flex h-[42px] w-[42px] items-center justify-center rounded-full bg-[color:var(--color-surface-2)] text-[color:var(--color-fg)] lg:hidden"
       >
-        <Menu size={18} strokeWidth={2.5} aria-hidden />
+        <Menu size={18} strokeWidth={1.75} aria-hidden />
       </button>
 
       {open ? (
@@ -45,68 +47,79 @@ export function MobileMenu() {
           role="dialog"
           aria-modal="true"
           aria-label={en ? "Main menu" : "Menu principal"}
-          className="fixed inset-0 z-50 flex h-[100dvh] flex-col overflow-y-auto bg-[color:var(--color-bg)] text-[color:var(--color-fg)]"
+          className="fixed inset-0 z-50 flex h-[100dvh] flex-col overflow-y-auto bg-[color:var(--color-bg)] p-3 text-[color:var(--color-fg)]"
         >
-          <div className="sticky top-0 z-10 flex items-center justify-between border-b-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-6 py-4">
+          <div className="flex h-[54px] items-center justify-between rounded-full bg-[color:var(--color-surface)] px-1.5">
             <NextLink
               href={chemin(lang, "/")}
               onClick={close}
-              className="font-[family-name:var(--font-space-grotesk)] text-xl font-black uppercase tracking-tight"
+              className="flex items-center gap-2.5 rounded-full py-1 pl-3 pr-2"
             >
-              superkostia
+              <LogoMark />
+              <span className="font-display text-[19px] font-medium tracking-[-0.01em]">superkostia</span>
             </NextLink>
             <button
               type="button"
               onClick={close}
               aria-label={en ? "Close menu" : "Fermer le menu"}
-              className="inline-flex h-10 w-10 items-center justify-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] shadow-[var(--shadow-hard-sm)]"
+              className="inline-flex h-[42px] w-[42px] items-center justify-center rounded-full bg-[color:var(--color-surface-2)]"
             >
-              <X size={18} strokeWidth={2.5} aria-hidden />
+              <X size={18} strokeWidth={1.75} aria-hidden />
             </button>
           </div>
 
-          <nav className="flex flex-1 flex-col">
-            <ul>
+          <nav className="bg-dots mt-3 flex flex-1 flex-col rounded-[28px] p-3">
+            <ul className="flex flex-col gap-2">
               {NAV_PRINCIPALE.map((item) => {
                 const href = chemin(lang, item.cheminFr);
                 const active = pathname === href || pathname.startsWith(href + "/");
                 return (
-                  <li
-                    key={item.cheminFr}
-                    className="border-b-2 border-[color:var(--color-border)]"
-                  >
+                  <li key={item.cheminFr}>
                     <NextLink
                       href={href}
                       onClick={close}
                       className={cn(
-                        "flex items-center px-6 py-5 font-[family-name:var(--font-space-grotesk)] text-4xl font-black uppercase leading-none tracking-tight sm:py-6 sm:text-5xl",
-                        active && "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]",
+                        "flex items-center justify-between rounded-[20px] px-5 py-5 text-4xl font-medium leading-none tracking-[-0.015em]",
+                        active
+                          ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
+                          : "bg-[color:var(--color-surface)]",
                       )}
+                      style={{ fontStretch: "108%" }}
                     >
                       {item.label[lang]}
+                      <span aria-hidden className="node-dot" />
                     </NextLink>
                   </li>
                 );
               })}
             </ul>
 
-            <ul className="mt-auto flex flex-wrap items-center gap-4 px-6 py-5 text-sm uppercase tracking-wider">
-              {NAV_PIED.map((item) => (
-                <li key={item.cheminFr}>
-                  <NextLink
-                    href={chemin(lang, item.cheminFr)}
-                    onClick={close}
-                    className="underline decoration-2 underline-offset-4 hover:decoration-[color:var(--color-accent)]"
-                  >
-                    {item.label[lang]}
-                  </NextLink>
+            <div className="mt-auto flex flex-col gap-3 pt-6">
+              <NextLink
+                href={chemin(lang, "/contact")}
+                onClick={close}
+                className={buttonClasses("accent", "lg", "w-full")}
+              >
+                {en ? "Get in touch" : "M'écrire"}
+              </NextLink>
+              <ul className="flex flex-wrap items-center gap-1">
+                {NAV_PIED.filter((i) => i.cheminFr !== "/contact").map((item) => (
+                  <li key={item.cheminFr}>
+                    <NextLink
+                      href={chemin(lang, item.cheminFr)}
+                      onClick={close}
+                      className={buttonClasses("ghost", "md")}
+                    >
+                      {item.label[lang]}
+                    </NextLink>
+                  </li>
+                ))}
+                <li className="ml-auto flex items-center gap-1">
+                  <LangSwitch onClick={close} />
+                  <ThemeToggle />
                 </li>
-              ))}
-              <li className="ml-auto flex items-center gap-2">
-                <LangSwitch onClick={close} />
-                <ThemeToggle />
-              </li>
-            </ul>
+              </ul>
+            </div>
           </nav>
         </div>
       ) : null}

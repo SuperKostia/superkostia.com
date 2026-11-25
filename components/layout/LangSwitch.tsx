@@ -18,7 +18,7 @@ export function LangSwitch({ onClick }: { onClick?: () => void }) {
       onClick={onClick}
       aria-label={autre === "en" ? "Read in English" : "Lire en français"}
       title={autre === "en" ? "Read in English" : "Lire en français"}
-      className="inline-flex h-10 min-w-10 items-center justify-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-2 font-mono text-xs font-bold uppercase tracking-[0.15em] text-[color:var(--color-fg)] shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)]"
+      className="inline-flex h-[42px] min-w-[42px] items-center justify-center rounded-full px-3 font-mono text-[13px] uppercase tracking-[0.03em] text-[color:var(--color-fg)] transition-colors hover:bg-[color:var(--color-surface-2)]"
     >
       {autre}
     </NextLink>

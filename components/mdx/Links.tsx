@@ -1,4 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
+import { buttonClasses } from "@/components/ui/Button";
+import { NodeLabel } from "@/components/ui/NodeLabel";
 
 type Link = {
   label: string;
@@ -13,12 +15,10 @@ type LinksProps = {
 export function Links({ items = [], label = "Liens" }: LinksProps) {
   if (items.length === 0) return null;
   return (
-    <div className="my-8 flex flex-col gap-3">
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-        {label}
-      </p>
-      <ul className="flex flex-wrap gap-3">
-        {items.map((item) => {
+    <div className="my-8 flex flex-col gap-4">
+      <NodeLabel>{label}</NodeLabel>
+      <ul className="flex flex-wrap gap-2">
+        {items.map((item, i) => {
           const external = /^https?:\/\//.test(item.url);
           return (
             <li key={item.url}>
@@ -26,10 +26,10 @@ export function Links({ items = [], label = "Liens" }: LinksProps) {
                 href={item.url}
                 target={external ? "_blank" : undefined}
                 rel={external ? "noopener noreferrer" : undefined}
-                className="inline-flex items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-3 py-1.5 font-medium uppercase tracking-wider text-sm shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)]"
+                className={buttonClasses(i === 0 ? "accent" : "default", "md")}
               >
                 <span>{item.label}</span>
-                <ArrowUpRight size={14} strokeWidth={2.5} aria-hidden />
+                <ArrowUpRight size={14} strokeWidth={1.75} aria-hidden />
               </a>
             </li>
           );

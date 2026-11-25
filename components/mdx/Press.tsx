@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
+import { NodeLabel } from "@/components/ui/NodeLabel";
 
 type PressProps = {
   children?: ReactNode;
@@ -9,10 +10,8 @@ type PressProps = {
 
 export function Press({ children, label = "Presse" }: PressProps) {
   return (
-    <div className="my-8 flex flex-col gap-3">
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-        {label}
-      </p>
+    <div className="my-8 flex flex-col gap-4">
+      <NodeLabel>{label}</NodeLabel>
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">{children}</ul>
     </div>
   );
@@ -33,37 +32,28 @@ export function PressItem({ name, logo, url, date }: PressItemProps) {
         target="_blank"
         rel="noopener noreferrer"
         data-cursor="lire"
-        className="group flex h-full items-center gap-4 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] p-4 shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
+        className="group flex h-full items-center gap-4 rounded-[20px] bg-[color:var(--color-surface)] p-3 pr-5 transition-colors hover:bg-[color:var(--color-surface-2)]"
       >
-        <div className="relative h-14 w-28 shrink-0 overflow-hidden bg-white">
+        <div className="relative h-14 w-24 shrink-0 overflow-hidden rounded-[12px] bg-white">
           <Image
             src={logo}
             alt={name}
             fill
-            sizes="112px"
-            className="object-contain p-1"
+            sizes="96px"
+            className="object-contain p-2"
           />
         </div>
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <p className="truncate font-medium uppercase tracking-wider">
-            {name}
-          </p>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <p className="truncate font-medium">{name}</p>
           {date ? (
-            <p className="truncate font-mono text-xs uppercase tracking-[0.15em] text-[color:var(--color-muted)]">
+            <p className="truncate font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
               {date}
             </p>
           ) : null}
         </div>
-        <span className="hidden shrink-0 items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard-sm)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 sm:inline-flex">
-          Lire l&apos;article
-          <ArrowUpRight size={14} strokeWidth={2.5} aria-hidden />
+        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] transition-colors group-hover:bg-[color:var(--color-accent-strong)]">
+          <ArrowUpRight size={16} strokeWidth={1.75} aria-hidden />
         </span>
-        <ArrowUpRight
-          size={18}
-          strokeWidth={2.5}
-          aria-hidden
-          className="shrink-0 text-[color:var(--color-fg)] sm:hidden"
-        />
       </a>
     </li>
   );

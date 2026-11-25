@@ -7,13 +7,14 @@ type QuoteProps = {
 
 export function Quote({ children, attribution }: QuoteProps) {
   return (
-    <figure className="my-10">
-      <blockquote className="border-l-4 border-[color:var(--color-accent)] bg-[color:var(--color-bg)] px-6 py-5 font-[family-name:var(--font-space-grotesk)] text-2xl leading-snug">
+    <figure className="bg-dots-ink my-10 rounded-[24px] bg-[color:var(--color-ink)] px-6 py-7 text-[color:var(--color-ink-fg)] sm:px-8 sm:py-9">
+      <blockquote className="font-display text-2xl font-medium leading-snug tracking-[-0.01em] sm:text-[1.75rem] [&>p]:my-0">
         {children}
       </blockquote>
       {attribution ? (
-        <figcaption className="mt-2 pl-6 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          — {attribution}
+        <figcaption className="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)]">
+          <span aria-hidden className="node-dot" />
+          {attribution}
         </figcaption>
       ) : null}
     </figure>

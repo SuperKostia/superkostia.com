@@ -3,6 +3,8 @@ import NextLink from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { MDXContent } from "@/components/mdx/MDXContent";
+import { Container } from "@/components/ui/Container";
+import { buttonClasses } from "@/components/ui/Button";
 import { getEcrits, getEcritBySlug } from "@/lib/mdx";
 import { alternates, chemin, imagesPartage, LOCALE_OG, type Lang } from "@/lib/i18n";
 
@@ -46,31 +48,42 @@ export async function EcritDetail({ lang, slug }: { lang: Lang; slug: string }) 
   const { frontmatter, body } = ecrit;
 
   return (
-    <article className="px-6 py-10 sm:px-10 lg:px-12">
-      <NextLink
-        href={chemin(lang, "/ecrits")}
-        className="mb-8 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)] hover:text-[color:var(--color-fg)]"
-      >
-        <ArrowLeft size={14} strokeWidth={2.5} aria-hidden />
-        {lang === "en" ? "All writing" : "Tous les écrits"}
-      </NextLink>
-
-      <header className="mb-12 flex flex-col gap-4 border-b-2 border-[color:var(--color-border)] pb-8">
-        <div className="flex flex-wrap items-center gap-4 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
-          <time dateTime={frontmatter.date}>{frontmatter.date}</time>
-          {frontmatter.tempsLecture ? (
-            <span>· {lang === "en" ? "read" : "lecture"} {frontmatter.tempsLecture}</span>
-          ) : null}
-        </div>
-        <h1 className="font-[family-name:var(--font-space-grotesk)] text-5xl font-black uppercase leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
-          {frontmatter.title}
-        </h1>
-        <p className="max-w-2xl text-lg leading-relaxed text-[color:var(--color-muted)]">
-          {frontmatter.summary}
-        </p>
+    <article className="flex flex-col">
+      <header className="relative isolate overflow-hidden">
+        <div aria-hidden className="bg-dots-fade absolute inset-0 -z-10" />
+        <Container className="flex flex-col items-center gap-6 pb-14 pt-10 text-center sm:pb-20 sm:pt-14">
+          <NextLink
+            href={chemin(lang, "/ecrits")}
+            className={buttonClasses("ghost", "sm", "text-[color:var(--color-muted)]")}
+          >
+            <ArrowLeft size={14} strokeWidth={1.75} aria-hidden />
+            {lang === "en" ? "All writing" : "Tous les écrits"}
+          </NextLink>
+          <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-[12px] uppercase tracking-[0.05em] text-[color:var(--color-muted)]">
+            <span aria-hidden className="node-dot" />
+            <time dateTime={frontmatter.date}>{frontmatter.date}</time>
+            {frontmatter.tempsLecture ? (
+              <>
+                <span aria-hidden className="node-dot" />
+                <span>
+                  {lang === "en" ? "read" : "lecture"} {frontmatter.tempsLecture}
+                </span>
+              </>
+            ) : null}
+            <span aria-hidden className="node-dot" />
+          </div>
+          <h1 className="max-w-[18ch] text-balance text-[clamp(2.5rem,6vw,4.75rem)] font-medium leading-[0.92] tracking-[-0.015em]">
+            {frontmatter.title}
+          </h1>
+          <p className="max-w-[52ch] text-balance text-lg leading-snug text-[color:var(--color-muted)]">
+            {frontmatter.summary}
+          </p>
+        </Container>
       </header>
 
-      <MDXContent source={body} lang={lang} />
+      <Container size="prose" className="pb-24">
+        <MDXContent source={body} lang={lang} />
+      </Container>
     </article>
   );
 }

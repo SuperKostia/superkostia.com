@@ -33,8 +33,6 @@ export function DisplayTitle() {
 
   useEffect(() => {
     // Exception ciblée : on tire une variation au mount côté client uniquement.
-    // Le getSnapshot de useSyncExternalStore doit être stable, ce qui rend
-    // l'approche ref-based setState suffisante ici.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIndex(Math.floor(Math.random() * VARIATIONS.fr.length));
   }, []);
@@ -43,11 +41,11 @@ export function DisplayTitle() {
 
   return (
     <h1
-      className="font-[family-name:var(--font-space-grotesk)] text-[12vw] font-black uppercase leading-[0.85] tracking-tight sm:text-[10vw] lg:text-[8vw]"
+      className="max-w-[16ch] text-balance text-center text-[clamp(2.75rem,6.6vw,5.75rem)] font-medium leading-[0.9] tracking-[-0.02em]"
       suppressHydrationWarning
     >
       {start}{" "}
-      <span className="inline-block bg-[color:var(--color-accent)] px-3 text-[color:var(--color-accent-fg)] -rotate-1">
+      <span className="whitespace-nowrap rounded-[0.22em] bg-[color:var(--color-accent)] px-[0.14em] text-[color:var(--color-accent-fg)] [box-decoration-break:clone]">
         {accent}
       </span>{" "}
       {end}

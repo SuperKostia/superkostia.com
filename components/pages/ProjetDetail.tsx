@@ -5,6 +5,8 @@ import NextLink from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Tag } from "@/components/ui/Tag";
+import { Container } from "@/components/ui/Container";
+import { buttonClasses } from "@/components/ui/Button";
 import { MDXContent } from "@/components/mdx/MDXContent";
 import { ProjetHero } from "@/components/projet/ProjetHero";
 import { ProjetKeyboardNav } from "@/components/projet/ProjetKeyboardNav";
@@ -121,71 +123,75 @@ export async function ProjetDetail({
   const nextSlug = nextProjet?.frontmatter.slug;
 
   return (
-    <article className="px-6 py-10 sm:px-10 lg:px-12">
-      <NextLink
-        href={chemin(lang, "/projets")}
-        className="mb-8 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)] hover:text-[color:var(--color-fg)]"
-      >
-        <ArrowLeft size={14} strokeWidth={2.5} aria-hidden />
-        {lang === "en" ? "All projects" : "Tous les projets"}
-      </NextLink>
+    <article className="flex flex-col">
+      <header className="relative isolate overflow-hidden">
+        <div aria-hidden className="bg-dots-fade absolute inset-0 -z-10" />
+        <Container className="flex flex-col items-center gap-6 pb-14 pt-10 text-center sm:pb-20 sm:pt-14">
+          <NextLink
+            href={chemin(lang, "/projets")}
+            className={buttonClasses("ghost", "sm", "self-center text-[color:var(--color-muted)] hover:text-[color:var(--color-fg)]")}
+          >
+            <ArrowLeft size={14} strokeWidth={1.75} aria-hidden />
+            {lang === "en" ? "All projects" : "Tous les projets"}
+          </NextLink>
 
-      <header className="mb-12 flex flex-col gap-4 border-b-2 border-[color:var(--color-border)] pb-8">
-        <div className="flex flex-wrap items-center gap-2">
-          <Tag tone="accent">{libelleType(lang, frontmatter.type)}</Tag>
-          <Tag>{libelleStatut(lang, frontmatter.status)}</Tag>
-          <Tag>{frontmatter.year}</Tag>
-          {(frontmatter.tags ?? []).map((tag) => (
-            <Tag key={tag}>#{tag}</Tag>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-4 sm:gap-5">
           <LogoProjet
             titre={frontmatter.title}
             logo={logoProjet(slug)}
-            className="h-14 w-14 text-xl shadow-[var(--shadow-hard-sm)] sm:h-20 sm:w-20 sm:text-3xl"
+            className="mt-2 h-16 w-16 rounded-[16px] text-2xl sm:h-20 sm:w-20 sm:text-3xl"
           />
-          <h1 className="font-[family-name:var(--font-space-grotesk)] text-5xl font-black uppercase leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <Tag tone="accent">{libelleType(lang, frontmatter.type)}</Tag>
+            <Tag>{libelleStatut(lang, frontmatter.status)}</Tag>
+            <Tag>{frontmatter.year}</Tag>
+            {(frontmatter.tags ?? []).map((tag) => (
+              <Tag key={tag}>#{tag}</Tag>
+            ))}
+          </div>
+
+          <h1 className="max-w-[18ch] text-balance text-[clamp(2.75rem,7vw,5.5rem)] font-medium leading-[0.9] tracking-[-0.015em]">
             {frontmatter.title}
           </h1>
-        </div>
 
-        {frontmatter.tagline ? (
-          <p className="max-w-2xl text-xl font-bold leading-tight text-[color:var(--color-fg)] sm:text-2xl">
-            {frontmatter.tagline}
+          {frontmatter.tagline ? (
+            <p className="max-w-[38ch] text-balance text-xl font-medium leading-snug tracking-[-0.01em] sm:text-2xl">
+              {frontmatter.tagline}
+            </p>
+          ) : null}
+
+          {flux ? (
+            <p className="inline-flex h-8 items-center gap-2 rounded-full bg-[color:var(--color-accent)] px-4 font-mono text-[12px] uppercase tracking-[0.04em] text-[color:var(--color-accent-fg)]">
+              {flux}
+            </p>
+          ) : null}
+
+          <p className="max-w-[60ch] text-balance text-base leading-relaxed text-[color:var(--color-muted)] sm:text-lg">
+            {frontmatter.summary}
           </p>
-        ) : null}
-
-        {flux ? (
-          <p className="inline-flex w-fit items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--color-accent-fg)]">
-            {flux}
-          </p>
-        ) : null}
-
-        <p className="max-w-2xl text-lg leading-relaxed text-[color:var(--color-muted)]">
-          {frontmatter.summary}
-        </p>
+        </Container>
       </header>
 
-      {showHero && primaryLink ? (
-        <ProjetHero
-          title={frontmatter.title}
-          url={primaryLink.url}
-          screenshotSrc={`/images/projets/${slug}.jpg`}
-          lang={lang}
-        />
-      ) : null}
+      <Container size="default" className="pb-8">
+        {showHero && primaryLink ? (
+          <ProjetHero
+            title={frontmatter.title}
+            url={primaryLink.url}
+            screenshotSrc={`/images/projets/${slug}.jpg`}
+            lang={lang}
+          />
+        ) : null}
 
-      <MDXContent source={body} lang={lang} />
+        <MDXContent source={body} lang={lang} className="mx-auto max-w-[720px]" />
 
-      {prevProjet && nextProjet && prevProjet !== nextProjet ? (
-        <ProjetPrevNext
-          prev={prevProjet.frontmatter}
-          next={nextProjet.frontmatter}
-          lang={lang}
-        />
-      ) : null}
+        {prevProjet && nextProjet && prevProjet !== nextProjet ? (
+          <ProjetPrevNext
+            prev={prevProjet.frontmatter}
+            next={nextProjet.frontmatter}
+            lang={lang}
+          />
+        ) : null}
+      </Container>
 
       <ProjetKeyboardNav
         prevHref={prevSlug ? chemin(lang, `/projets/${prevSlug}`) : undefined}

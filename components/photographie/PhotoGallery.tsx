@@ -108,20 +108,20 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
       {series.map((s) => (
         <section
           key={s.slug}
-          className="border-t border-[color:var(--photo-border)] px-6 py-16 sm:px-12"
+          className="mx-auto w-full max-w-[1360px] px-5 py-14 sm:px-8 sm:py-20"
         >
-          <header className="mb-8 flex flex-col gap-1">
+          <header className="mb-8 flex flex-col gap-2 border-t border-[color:var(--photo-border)] pt-8">
             <h2 className="font-[family-name:var(--font-garamond)] text-3xl italic text-[color:var(--photo-fg)] sm:text-4xl">
               {s.title}
             </h2>
             {s.date || s.description ? (
-              <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-[color:var(--photo-fg-muted)]">
+              <p className="font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--photo-fg-muted)]">
                 {[s.date, s.description].filter(Boolean).join(" · ")}
               </p>
             ) : null}
           </header>
 
-          <ul className="-mx-6 flex snap-x snap-mandatory gap-2 overflow-x-auto px-6 pb-2 scroll-smooth sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
+          <ul className="-mx-5 flex snap-x snap-mandatory gap-2 overflow-x-auto px-5 pb-2 scroll-smooth sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
             {s.photos.map((photo) => {
               const globalIndex = allPhotos.findIndex(
                 (p) => p.src === photo.src,
@@ -136,7 +136,7 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
                     onClick={() => setLightboxIndex(globalIndex)}
                     aria-label={`${a.ouvrir} ${photo.alt}`}
                     data-cursor="ouvrir"
-                    className="group relative block aspect-[4/3] w-full overflow-hidden"
+                    className="group relative block aspect-[4/3] w-full overflow-hidden rounded-[14px]"
                   >
                     <Image
                       src={photo.src}
@@ -228,9 +228,9 @@ function Lightbox({
         type="button"
         onClick={onClose}
         aria-label={a.fermer}
-        className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center text-[color:var(--photo-fg)] hover:text-[color:var(--photo-fg-muted)]"
+        className="absolute right-4 top-4 z-10 inline-flex h-[42px] w-[42px] items-center justify-center rounded-full bg-[color:var(--color-surface)] text-[color:var(--photo-fg)] transition-colors hover:bg-[color:var(--color-surface-2)]"
       >
-        <X size={22} strokeWidth={1.5} aria-hidden />
+        <X size={18} strokeWidth={1.75} aria-hidden />
       </button>
 
       <button
@@ -277,9 +277,9 @@ function Lightbox({
                 aria-label={`${a.aller} ${p.alt}`}
                 aria-current={isActive}
                 className={cn(
-                  "group relative block h-14 overflow-hidden transition-all duration-300 sm:h-16",
+                  "group relative block h-14 overflow-hidden rounded-[8px] transition-all duration-300 sm:h-16",
                   isActive
-                    ? "w-24 border-2 border-[color:var(--photo-fg)] opacity-100 sm:w-28"
+                    ? "w-24 opacity-100 outline outline-2 outline-offset-2 outline-[color:var(--color-accent-strong)] sm:w-28"
                     : "w-16 opacity-40 blur-[1.5px] hover:w-24 hover:opacity-90 hover:blur-0 sm:w-20 sm:hover:w-28",
                 )}
               >
@@ -298,7 +298,7 @@ function Lightbox({
 
       <footer className="flex shrink-0 items-center justify-between gap-4 border-t border-[color:var(--photo-border)] px-6 py-3">
         <ExifLine exif={photo.exif} tags={photo.tags} />
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[color:var(--photo-fg-muted)]">
+        <p className="font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--photo-fg-muted)]">
           {currentIndex + 1} / {photos.length} · ← → · esc
         </p>
       </footer>
@@ -321,7 +321,7 @@ function PhotoPile({ photos, onOpen, paused = false }: PhotoPileProps) {
     const picked = shuffle(photos).slice(0, Math.min(PILE_SIZE, photos.length));
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSample(picked);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setLayouts(generatePileLayouts(picked.length));
   }, [photos]);
 
@@ -341,7 +341,7 @@ function PhotoPile({ photos, onOpen, paused = false }: PhotoPileProps) {
     return (
       <section
         aria-hidden
-        className="relative h-[85vh] w-full overflow-hidden bg-[color:var(--photo-bg)] sm:h-[90vh]"
+        className="bg-dots relative h-[85vh] w-full overflow-hidden bg-[color:var(--photo-bg)] sm:h-[90vh]"
       />
     );
   }
@@ -351,7 +351,7 @@ function PhotoPile({ photos, onOpen, paused = false }: PhotoPileProps) {
       aria-label={a.pile}
       aria-hidden={paused}
       className={cn(
-        "relative h-[85vh] w-full overflow-hidden bg-[color:var(--photo-bg)] transition-opacity duration-200 sm:h-[90vh]",
+        "bg-dots relative h-[85vh] w-full overflow-hidden bg-[color:var(--photo-bg)] transition-opacity duration-200 sm:h-[90vh]",
         paused && "invisible opacity-0",
       )}
     >
@@ -378,12 +378,12 @@ function PhotoPile({ photos, onOpen, paused = false }: PhotoPileProps) {
             }}
           >
             <div
-              className="relative aspect-[4/5] w-full bg-white p-2 shadow-[6px_6px_0_rgba(0,0,0,0.15)] transition-transform duration-300 ease-out group-hover:scale-110"
+              className="relative aspect-[4/5] w-full rounded-[10px] bg-white p-2 shadow-[0_12px_32px_rgba(0,0,0,0.14)] transition-transform duration-300 ease-out group-hover:scale-110"
               style={{
                 transform: "rotate(0deg)",
               }}
             >
-              <div className="relative h-full w-full overflow-hidden">
+              <div className="relative h-full w-full overflow-hidden rounded-[6px]">
                 <Image
                   src={photo.src}
                   alt={photo.alt}
@@ -409,7 +409,7 @@ function EmptyState() {
       <p className="font-[family-name:var(--font-garamond)] text-3xl italic text-[color:var(--photo-fg)] sm:text-4xl">
         Pas encore de photos.
       </p>
-      <p className="max-w-xl font-mono text-xs uppercase tracking-[0.15em] text-[color:var(--photo-fg-muted)]">
+      <p className="max-w-xl font-mono text-xs uppercase tracking-[0.04em] text-[color:var(--photo-fg-muted)]">
         Déposer des .jpg dans{" "}
         <code className="font-mono normal-case">
           public/images/photographie/&lt;serie-slug&gt;/

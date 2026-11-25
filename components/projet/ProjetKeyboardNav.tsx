@@ -59,7 +59,7 @@ export function ProjetKeyboardNav({
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed bottom-6 right-6 z-30 hidden animate-[fade-in_400ms_ease-out] border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-3 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-fg)] shadow-[var(--shadow-hard-sm)] md:inline-flex md:items-center"
+      className="pointer-events-none fixed bottom-6 right-6 z-30 hidden h-9 animate-[fade-in_400ms_ease-out] rounded-full bg-[color:var(--color-ink)] px-4 font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-ink-fg)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.5)] md:inline-flex md:items-center"
     >
       <span className="inline-block w-8 text-center animate-[keynav-arrows_1.4s_ease-in-out_infinite]">
         ← →

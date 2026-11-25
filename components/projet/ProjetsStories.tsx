@@ -6,6 +6,7 @@ import NextLink from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Pause, Play } from "lucide-react";
 import type { Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { buttonClasses } from "@/components/ui/Button";
 import { LogoProjet } from "./LogoProjet";
 
 /** Durée d'affichage d'une story avant de passer à la suivante. */
@@ -81,7 +82,7 @@ function lireVus(): Set<string> {
   }
 }
 
-/** Les projets façon stories Instagram, dans la DA brutaliste : angles droits, ombre dure, jaune acide. */
+/** Les projets façon stories Instagram, posés sur un panneau sombre pointillé (décision #014). */
 export function ProjetsStories({
   projets,
   lang,
@@ -276,12 +277,12 @@ export function ProjetsStories({
     <section
       aria-roledescription="carousel"
       aria-label={t.region}
-      className="flex flex-col gap-6"
+      className="bg-dots-ink -mx-2 flex flex-col gap-6 overflow-hidden rounded-[28px] bg-[color:var(--color-ink)] px-3 py-5 text-[color:var(--color-ink-fg)] sm:mx-0 sm:rounded-[32px] sm:p-6 lg:p-8"
     >
-      {/* Rangée de vignettes, l'équivalent des ronds Instagram : carrées, DA oblige. */}
+      {/* Rangée de vignettes, les ronds Instagram. */}
       <ol
         ref={rangeeRef}
-        className="relative -mx-6 flex gap-3 overflow-x-auto px-6 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0"
+        className="relative flex gap-3 overflow-x-auto px-1 pb-1 pt-1 [scrollbar-width:none]"
       >
         {projets.map((p, i) => {
           const nouveau = vus !== null && !vus.has(p.slug);
@@ -299,26 +300,28 @@ export function ProjetsStories({
               >
                 <span
                   className={cn(
-                    "relative block h-16 w-16 border-[3px] p-[3px] transition-transform group-hover:-translate-y-0.5",
+                    "relative block h-16 w-16 rounded-full p-[3px] transition-transform group-hover:-translate-y-0.5",
                     i === index
-                      ? "border-[color:var(--color-fg)] shadow-[var(--shadow-hard-sm)]"
+                      ? "ring-2 ring-[color:var(--color-accent)]"
                       : nouveau
-                        ? "border-[color:var(--color-accent)]"
-                        : "border-[color:var(--color-border)]/30",
+                        ? "ring-2 ring-[color:var(--color-accent-strong)]/70"
+                        : "ring-1 ring-[color:var(--color-ink-line)]",
                   )}
                 >
-                  <LogoProjet
-                    titre={p.titre}
-                    logo={p.logo}
-                    className="h-full w-full text-lg"
-                  />
+                  <span className="block h-full w-full overflow-hidden rounded-full">
+                    <LogoProjet
+                      titre={p.titre}
+                      logo={p.logo}
+                      className="h-full w-full text-lg ring-0"
+                    />
+                  </span>
                 </span>
                 <span
                   className={cn(
-                    "w-full truncate text-center font-mono text-[10px] uppercase tracking-[0.1em]",
+                    "w-full truncate text-center font-mono text-[10px] uppercase tracking-[0.04em]",
                     i === index
-                      ? "text-[color:var(--color-fg)]"
-                      : "text-[color:var(--color-muted)]",
+                      ? "text-[color:var(--color-ink-fg)]"
+                      : "text-[color:var(--color-ink-muted)]",
                   )}
                 >
                   {p.titre}
@@ -364,7 +367,7 @@ export function ProjetsStories({
               tabIndex={-1}
               aria-hidden
               onClick={() => aller(i)}
-              className="absolute left-1/2 top-1/2 hidden h-[52%] w-[var(--w)] border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 lg:block"
+              className="absolute left-1/2 top-1/2 hidden h-[52%] w-[var(--w)] overflow-hidden rounded-[18px] bg-[color:var(--color-ink-surface)] text-[color:var(--color-ink-fg)] opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 lg:block"
               style={{
                 transform: `translate(${POSITION_VIGNETTE[decalage]}, -50%)`,
               }}
@@ -392,7 +395,7 @@ export function ProjetsStories({
             if (e.pointerType === "mouse") setSurvol(false);
           }}
           className={cn(
-            "relative z-10 flex aspect-[9/16] max-h-[calc(100dvh-5.5rem)] w-full max-w-[420px] touch-pan-y select-none flex-col overflow-hidden border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] shadow-[var(--shadow-hard)] [-webkit-touch-callout:none] lg:h-full lg:max-h-none lg:w-auto lg:max-w-none",
+            "relative z-10 flex aspect-[9/16] max-h-[calc(100dvh-5.5rem)] w-full max-w-[420px] touch-pan-y select-none flex-col overflow-hidden rounded-[24px] bg-[color:var(--color-surface)] text-[color:var(--color-fg)] shadow-[0_24px_60px_-20px_rgba(0,0,0,0.6)] [-webkit-touch-callout:none] dark:bg-[color:var(--color-ink-surface)] dark:ring-1 dark:ring-[color:var(--color-ink-line)] lg:h-full lg:max-h-none lg:w-auto lg:max-w-none",
             glisse === 0 &&
               (sens === 1
                 ? "animate-[story-droite_320ms_cubic-bezier(0.2,0.8,0.2,1)]"
@@ -408,15 +411,15 @@ export function ProjetsStories({
           }
         >
           {/* Bandeau : barre de progression segmentée, type, période, pause */}
-          <div className="flex shrink-0 flex-col gap-2.5 border-b-2 border-[color:var(--color-border)] p-2.5">
+          <div className="flex shrink-0 flex-col gap-3 p-3">
             <div className="flex gap-1">
               {projets.map((p, i) => (
                 <span
                   key={p.slug}
-                  className="h-1.5 flex-1 border border-[color:var(--color-border)] bg-[color:var(--color-bg)]"
+                  className="h-[3px] flex-1 overflow-hidden rounded-full bg-[color:var(--color-line)]"
                 >
                   <span
-                    className="block h-full bg-[color:var(--color-accent)]"
+                    className="block h-full rounded-full bg-[color:var(--color-accent-strong)]"
                     style={{
                       width: `${i < index ? 100 : i === index ? progres * 100 : 0}%`,
                     }}
@@ -433,34 +436,34 @@ export function ProjetsStories({
                   className="h-9 w-9 text-sm"
                 />
                 <span className="flex min-w-0 flex-col leading-tight">
-                  <span className="truncate font-mono text-xs font-bold uppercase tracking-wider">
+                  <span className="truncate font-mono text-xs uppercase tracking-[0.04em]">
                     {courant.titre}
                   </span>
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
                     {courant.periode}
                   </span>
                 </span>
               </div>
-              <span className="ml-auto shrink-0 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-[color:var(--color-accent-fg)]">
+              <span className="ml-auto inline-flex h-7 shrink-0 items-center rounded-full bg-[color:var(--color-accent)] px-3 font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-accent-fg)]">
                 {courant.type}
               </span>
               <button
                 type="button"
                 onClick={() => setEnPause((p) => !p)}
                 aria-label={enPause ? t.lecture : t.pause}
-                className="inline-flex h-8 w-8 items-center justify-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] shadow-[var(--shadow-hard-sm)]"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-surface-2)] transition-colors hover:bg-[color:var(--color-line)] dark:bg-[color:var(--color-ink-line)]"
               >
                 {enPause ? (
-                  <Play size={14} strokeWidth={2.5} aria-hidden />
+                  <Play size={13} strokeWidth={1.75} aria-hidden />
                 ) : (
-                  <Pause size={14} strokeWidth={2.5} aria-hidden />
+                  <Pause size={13} strokeWidth={1.75} aria-hidden />
                 )}
               </button>
             </div>
           </div>
 
           {/* Visuel : la capture du site en entier (paysage) */}
-          <div className="relative aspect-[16/10] w-full shrink-0 border-b-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)]">
+          <div className="relative mx-3 aspect-[16/10] shrink-0 overflow-hidden rounded-[16px] bg-[color:var(--color-accent)]">
             {courant.image ? (
               <Image
                 src={courant.image}
@@ -472,7 +475,7 @@ export function ProjetsStories({
                 draggable={false}
               />
             ) : (
-              <span className="absolute inset-x-0 bottom-0 p-4 font-[family-name:var(--font-space-grotesk)] text-5xl font-black uppercase leading-[0.85] tracking-tight text-[color:var(--color-accent-fg)] [overflow-wrap:anywhere]">
+              <span className="absolute inset-x-0 bottom-0 p-4 font-display text-4xl font-medium leading-[0.9] tracking-[-0.015em] text-[color:var(--color-accent-fg)] [overflow-wrap:anywhere]">
                 {courant.titre}
               </span>
             )}
@@ -480,7 +483,7 @@ export function ProjetsStories({
 
           {/* Texte et actions */}
           <div className="flex min-h-0 flex-1 flex-col gap-3 p-4 sm:p-5">
-            <h2 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-black uppercase leading-[0.95] tracking-tight lg:text-4xl">
+            <h2 className="text-3xl font-medium leading-[0.95] tracking-[-0.015em] lg:text-4xl">
               {courant.titre}
             </h2>
             <p className="line-clamp-6 text-sm leading-relaxed text-[color:var(--color-muted)] lg:line-clamp-[9] lg:text-base">
@@ -490,9 +493,9 @@ export function ProjetsStories({
               <NextLink
                 href={courant.href}
                 data-cursor="lire"
-                className="inline-flex items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-3 py-2 font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--color-accent-fg)] shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
+                className={buttonClasses("accent", "md")}
               >
-                {t.fiche} <ArrowRight size={14} strokeWidth={2.5} aria-hidden />
+                {t.fiche} <ArrowRight size={14} strokeWidth={1.75} aria-hidden />
               </NextLink>
               {courant.site ? (
                 <a
@@ -500,10 +503,10 @@ export function ProjetsStories({
                   target="_blank"
                   rel="noopener noreferrer"
                   data-cursor="ouvrir"
-                  className="inline-flex items-center gap-2 border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-3 py-2 font-mono text-xs font-bold uppercase tracking-wider shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
+                  className={buttonClasses("default", "md", "dark:bg-[color:var(--color-ink-line)]")}
                 >
                   {t.site}{" "}
-                  <ArrowUpRight size={14} strokeWidth={2.5} aria-hidden />
+                  <ArrowUpRight size={14} strokeWidth={1.75} aria-hidden />
                 </a>
               ) : null}
             </div>
@@ -515,25 +518,25 @@ export function ProjetsStories({
           type="button"
           onClick={() => aller(index - 1, -1)}
           aria-label={t.precedent}
-          className="absolute left-1/2 top-1/2 z-20 hidden h-11 w-11 items-center justify-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] shadow-[var(--shadow-hard-sm)] hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)] lg:flex"
+          className="absolute left-1/2 top-1/2 z-20 hidden h-11 w-11 items-center justify-center rounded-full bg-[color:var(--color-ink-surface)] text-[color:var(--color-ink-fg)] transition-colors hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)] lg:flex"
           style={{
             transform:
               "translate(calc(-1 * (var(--W) / 2 + var(--g) / 2) - 50%), -50%)",
           }}
         >
-          <ArrowLeft size={18} strokeWidth={2.5} aria-hidden />
+          <ArrowLeft size={18} strokeWidth={1.75} aria-hidden />
         </button>
         <button
           type="button"
           onClick={() => aller(index + 1, 1)}
           aria-label={t.suivant}
-          className="absolute left-1/2 top-1/2 z-20 hidden h-11 w-11 items-center justify-center border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] shadow-[var(--shadow-hard-sm)] hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)] lg:flex"
+          className="absolute left-1/2 top-1/2 z-20 hidden h-11 w-11 items-center justify-center rounded-full bg-[color:var(--color-ink-surface)] text-[color:var(--color-ink-fg)] transition-colors hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)] lg:flex"
           style={{
             transform:
               "translate(calc(var(--W) / 2 + var(--g) / 2 - 50%), -50%)",
           }}
         >
-          <ArrowRight size={18} strokeWidth={2.5} aria-hidden />
+          <ArrowRight size={18} strokeWidth={1.75} aria-hidden />
         </button>
       </div>
     </section>
@@ -543,7 +546,7 @@ export function ProjetsStories({
 function VignetteContenu({ projet }: { projet: StoryProjet }) {
   return (
     <span className="relative flex h-full w-full flex-col">
-      <span className="relative block aspect-[16/10] w-full shrink-0 border-b-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)]">
+      <span className="relative block aspect-[16/10] w-full shrink-0 bg-[color:var(--color-accent)]">
         {projet.image ? (
           <Image
             src={projet.image}
@@ -561,10 +564,10 @@ function VignetteContenu({ projet }: { projet: StoryProjet }) {
           />
         </span>
       </span>
-      <span className="block p-2.5 pt-7 text-left font-[family-name:var(--font-space-grotesk)] text-base font-black uppercase leading-tight">
+      <span className="block p-2.5 pt-7 text-left text-base font-medium leading-tight tracking-[-0.01em]" style={{ fontStretch: "108%" }}>
         {projet.titre}
       </span>
-      <span className="line-clamp-5 px-2.5 text-left text-[11px] leading-snug text-[color:var(--color-muted)]">
+      <span className="line-clamp-5 px-2.5 text-left text-[11px] leading-snug text-[color:var(--color-ink-muted)]">
         {projet.resume}
       </span>
     </span>

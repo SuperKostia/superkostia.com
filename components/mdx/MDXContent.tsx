@@ -46,11 +46,13 @@ function composantsAnglais() {
 type MDXContentProps = {
   source: string;
   lang?: Lang;
+  /** Largeur et placement de la colonne de lecture (par défaut 720 px, calée à gauche). */
+  className?: string;
 };
 
-export function MDXContent({ source, lang = "fr" }: MDXContentProps) {
+export function MDXContent({ source, lang = "fr", className = "max-w-[720px]" }: MDXContentProps) {
   return (
-    <div className="prose-brut max-w-[65ch]">
+    <div className={`text-[17px] leading-relaxed ${className}`}>
       <MDXRemote
         source={source}
         components={{
@@ -58,6 +60,10 @@ export function MDXContent({ source, lang = "fr" }: MDXContentProps) {
           ...CUSTOM_COMPONENTS,
           ...(lang === "en" ? composantsAnglais() : {}),
         }}
+        // Le contenu est écrit par nous, dans le dépôt : les props en JavaScript
+        // (`items={[…]}` de <Stack> et <Links>) doivent passer. Les expressions
+        // dangereuses restent bloquées (blockDangerousJS par défaut).
+        options={{ blockJS: false }}
       />
     </div>
   );

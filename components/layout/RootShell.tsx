@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Archivo, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { ThemeScript } from "@/components/layout/ThemeScript";
 import { Header } from "@/components/layout/Header";
@@ -9,14 +9,17 @@ import { KonamiListener } from "@/components/layout/KonamiListener";
 import { CustomCursor } from "@/components/layout/CustomCursor";
 import { LOCALE_OG, SLOGAN, chemin, type Lang } from "@/lib/i18n";
 
-const inter = Inter({
-  variable: "--font-inter",
+/** Archivo variable avec l'axe de largeur : élargie à 108 % pour les titres (décision #014). */
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
+  axes: ["wdth"],
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+/** Mono des étiquettes, boutons et métadonnées. */
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
 });
@@ -60,7 +63,7 @@ export function RootShell({ lang, children }: { lang: Lang; children: ReactNode 
   return (
     <html
       lang={lang}
-      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${archivo.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       {/* Ce composant est le corps des deux layouts racine : le <head> y a sa place. */}

@@ -40,31 +40,27 @@ export function Social({ platform, handle, url, cta }: SocialProps) {
       target="_blank"
       rel="noopener noreferrer"
       data-cursor="ouvrir"
-      className="group my-8 flex items-stretch border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)] shadow-[var(--shadow-hard-sm)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
+      className="group my-8 flex items-center gap-4 rounded-[24px] bg-[color:var(--color-surface)] p-3 pr-4 transition-colors hover:bg-[color:var(--color-surface-2)] sm:pr-5"
     >
-      <div className="flex aspect-square h-20 shrink-0 items-center justify-center border-r-2 border-[color:var(--color-border)] bg-[color:var(--color-fg)] text-[color:var(--color-bg)] transition-colors group-hover:bg-[color:var(--color-accent)] group-hover:text-[color:var(--color-accent-fg)]">
-        <Mark width={32} height={32} />
+      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[16px] bg-[color:var(--color-ink)] text-[color:var(--color-ink-fg)] transition-colors group-hover:bg-[color:var(--color-accent)] group-hover:text-[color:var(--color-accent-fg)]">
+        <Mark width={28} height={28} />
       </div>
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 px-5 py-3">
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)]">
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
+          <span aria-hidden className="node-dot" />
           {label}
         </span>
-        <span className="truncate font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
+        <span className="truncate font-display text-2xl font-medium leading-tight tracking-[-0.015em]">
           {handle}
         </span>
       </div>
-      <div className="hidden shrink-0 items-center border-l-2 border-[color:var(--color-border)] bg-[color:var(--color-accent)] px-5 font-mono text-xs uppercase tracking-[0.15em] text-[color:var(--color-accent-fg)] sm:flex">
-        <span className="mr-2">{ctaText}</span>
-        <ArrowUpRight size={16} strokeWidth={2.5} aria-hidden />
-      </div>
-      <div className="flex shrink-0 items-center pr-4 sm:hidden">
-        <ArrowUpRight
-          size={20}
-          strokeWidth={2.5}
-          aria-hidden
-          className="text-[color:var(--color-fg)]"
-        />
-      </div>
+      <span className="hidden shrink-0 items-center gap-2 rounded-full bg-[color:var(--color-accent)] px-4 py-3 font-mono text-[12px] uppercase tracking-[0.04em] text-[color:var(--color-accent-fg)] transition-colors group-hover:bg-[color:var(--color-accent-strong)] sm:inline-flex">
+        {ctaText}
+        <ArrowUpRight size={15} strokeWidth={1.75} aria-hidden />
+      </span>
+      <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] sm:hidden">
+        <ArrowUpRight size={16} strokeWidth={1.75} aria-hidden />
+      </span>
     </a>
   );
 }

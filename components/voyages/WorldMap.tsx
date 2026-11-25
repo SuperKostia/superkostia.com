@@ -12,13 +12,15 @@ import type { Topology } from "topojson-specification";
 
 import { ALPHA2_TO_NUMERIC } from "@/lib/iso-countries";
 import type { NomadsTrip } from "@/lib/nomads";
-import { WaterField } from "@/components/ui/WaterField";
 
 type WorldMapProps = {
   trips: NomadsTrip[];
   visitedAlpha2: string[];
   ariaLabel?: string;
 };
+
+/** Rose vif des villes : plus soutenu que le rose des pays pour ressortir dessus. */
+const ROSE_VILLE = "#ff5a8c";
 
 const WIDTH = 960;
 const HEIGHT = 500;
@@ -28,6 +30,12 @@ const countriesFC = feature(
   topo,
   topo.objects.countries,
 ) as FeatureCollection<Geometry, GeoJsonProperties>;
+
+/** Antarctique (ISO 010) retiré : personne n'y est allé, et il mangeait le bas du cadre. */
+const PAYS = countriesFC.features.filter((f) => String(f.id ?? "") !== "010");
+
+/** Cadre recadré sur les terres habitées (de l'Arctique à la Terre de Feu). */
+const VIEWBOX = "0 24 960 422";
 
 const projection = geoEqualEarth()
   .scale(170)
@@ -65,74 +73,60 @@ export function WorldMap({
     }
   }
 
+  // Carte nue (pas de cadre) : elle se pose sur un panneau sombre pointillé
+  // qui fait office d'océan. Pays visités en rose pâle, autres en gris encre,
+  // villes en points rose vif cerclés d'encre.
   return (
-    <div className="relative isolate overflow-hidden border-2 border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
-      <WaterField density={4} />
-      <svg
-        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-        preserveAspectRatio="xMidYMid meet"
-        className="block h-auto w-full"
-        role="img"
-        aria-label={ariaLabel}
-      >
-        <rect
-          x={0}
-          y={0}
-          width={WIDTH}
-          height={HEIGHT}
-          fill="transparent"
-        />
+    <svg
+      viewBox={VIEWBOX}
+      preserveAspectRatio="xMidYMid meet"
+      className="block h-auto w-full"
+      role="img"
+      aria-label={ariaLabel}
+    >
+      <g>
+        {PAYS.map((f, i) => {
+          const d = pathGen(f);
+          if (!d) return null;
+          const id = String(f.id ?? "");
+          const isVisited = visitedNumeric.has(id);
+          // Certaines features de world-atlas n'ont pas d'`id` (ex. Antarctique).
+          // On fallback sur l'index pour garantir l'unicité de la key React.
+          return (
+            <path
+              key={id || `anon-${i}`}
+              d={d}
+              fill={isVisited ? "var(--color-accent)" : "var(--color-ink-surface)"}
+              stroke="var(--color-ink)"
+              strokeWidth={0.6}
+              vectorEffect="non-scaling-stroke"
+            />
+          );
+        })}
+      </g>
 
-        <g>
-          {countriesFC.features.map((f, i) => {
-            const d = pathGen(f);
-            if (!d) return null;
-            const id = String(f.id ?? "");
-            const isVisited = visitedNumeric.has(id);
-            // Certaines features de world-atlas n'ont pas d'`id` (ex. Antarctique).
-            // On fallback sur l'index pour garantir l'unicité de la key React.
-            return (
-              <path
-                key={id || `anon-${i}`}
-                d={d}
-                fill={
-                  isVisited ? "var(--color-fg)" : "var(--color-bg)"
-                }
-                stroke="var(--color-border)"
-                strokeWidth={0.5}
-                vectorEffect="non-scaling-stroke"
-              />
-            );
-          })}
-        </g>
-
-        <g>
-          {[...dedupedPlaces.values()].map((p) => {
-            const xy = projection([p.lng, p.lat]);
-            if (!xy) return null;
-            const [x, y] = xy;
-            const size = 5 + Math.min(6, p.count * 0.8);
-            return (
-              <g key={`${p.place}-${p.lat}-${p.lng}`}>
-                <rect
-                  x={x - size / 2}
-                  y={y - size / 2}
-                  width={size}
-                  height={size}
-                  fill="var(--color-accent)"
-                  stroke="var(--color-border)"
-                  strokeWidth={1.25}
-                  vectorEffect="non-scaling-stroke"
-                >
-                  <title>{`${p.place}, ${p.country}${
-                    p.count > 1 ? ` · ${p.count}×` : ""
-                  }`}</title>
-                </rect>
-              </g>
-            );
-          })}
-        </g>
-      </svg>
-    </div>
+      <g>
+        {[...dedupedPlaces.values()].map((p) => {
+          const xy = projection([p.lng, p.lat]);
+          if (!xy) return null;
+          const [x, y] = xy;
+          const rayon = 2.6 + Math.min(4, p.count * 0.55);
+          return (
+            <circle
+              key={`${p.place}-${p.lat}-${p.lng}`}
+              cx={x}
+              cy={y}
+              r={rayon}
+              fill={ROSE_VILLE}
+              stroke="var(--color-ink)"
+              strokeWidth={1.25}
+              vectorEffect="non-scaling-stroke"
+            >
+              <title>{`${p.place}, ${p.country}${p.count > 1 ? ` · ${p.count}×` : ""}`}</title>
+            </circle>
+          );
+        })}
+      </g>
+    </svg>
   );
 }

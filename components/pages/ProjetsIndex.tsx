@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import NextLink from "next/link";
+import { ArrowRight } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { Card } from "@/components/ui/Card";
 import { Tag } from "@/components/ui/Tag";
@@ -67,56 +69,79 @@ export async function ProjetsIndex({ lang }: { lang: Lang }) {
   });
 
   return (
-    <PageShell eyebrow="Index" title={t.titre} intro={<p>{t.intro}</p>}>
+    <PageShell eyebrow="Index" title={t.titre} intro={<p>{t.intro}</p>} size="wide">
       {projets.length === 0 ? (
-        <p className="font-mono text-sm uppercase tracking-wider text-[color:var(--color-muted)]">
+        <p className="text-center font-mono text-sm uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
           <code>content/projets/</code> : 0.
         </p>
       ) : (
         <ProjetsVue projets={stories} lang={lang}>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {projets.map((entry) => (
-              <li key={entry.frontmatter.slug} className="group">
-                <NextLink
-                  href={chemin(lang, `/projets/${entry.frontmatter.slug}`)}
-                  data-cursor="ouvrir"
-                  className="block h-full"
-                >
-                  <Card
-                    as="article"
-                    className="flex h-full flex-col gap-3 transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-[color:var(--color-accent)] group-hover:text-[color:var(--color-accent-fg)]"
+            {projets.map((entry) => {
+              const fm = entry.frontmatter;
+              const capture = captureProjet(fm.slug);
+              return (
+                <li key={fm.slug} className="group">
+                  <NextLink
+                    href={chemin(lang, `/projets/${fm.slug}`)}
+                    data-cursor="ouvrir"
+                    className="block h-full rounded-[24px]"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="flex items-center gap-2">
-                        <LogoProjet
-                          titre={entry.frontmatter.title}
-                          logo={logoProjet(entry.frontmatter.slug)}
-                          className="h-8 w-8 text-xs"
-                        />
-                        <Tag
-                          tone={
-                            entry.frontmatter.type === "pro"
-                              ? "accent"
-                              : "default"
-                          }
-                        >
-                          {libelleType(lang, entry.frontmatter.type)}
-                        </Tag>
-                      </span>
-                      <span className="font-mono text-xs uppercase tracking-wider text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
-                        {formatPeriode(lang, entry.frontmatter)}
-                      </span>
-                    </div>
-                    <h2 className="font-[family-name:var(--font-space-grotesk)] text-2xl font-black uppercase leading-tight tracking-tight">
-                      {entry.frontmatter.title}
-                    </h2>
-                    <p className="text-sm leading-relaxed text-[color:var(--color-muted)] group-hover:text-[color:var(--color-accent-fg)]">
-                      {entry.frontmatter.summary}
-                    </p>
-                  </Card>
-                </NextLink>
-              </li>
-            ))}
+                    <Card
+                      as="article"
+                      className="flex h-full flex-col gap-4 p-3 transition-colors group-hover:bg-[color:var(--color-surface-2)]"
+                    >
+                      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[16px] bg-[color:var(--color-surface-2)]">
+                        {capture ? (
+                          <Image
+                            src={capture}
+                            alt=""
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px"
+                            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                          />
+                        ) : (
+                          <span aria-hidden className="bg-dots absolute inset-0" />
+                        )}
+                      </div>
+                      <div className="flex flex-1 flex-col gap-3 px-2 pb-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="flex items-center gap-2">
+                            <LogoProjet
+                              titre={fm.title}
+                              logo={logoProjet(fm.slug)}
+                              className="h-8 w-8 text-xs"
+                            />
+                            <Tag tone={fm.type === "pro" ? "accent" : "default"}>
+                              {libelleType(lang, fm.type)}
+                            </Tag>
+                          </span>
+                          <span className="font-mono text-[11px] uppercase tracking-[0.04em] text-[color:var(--color-muted)]">
+                            {formatPeriode(lang, fm)}
+                          </span>
+                        </div>
+                        <h2 className="text-2xl font-medium leading-[1.05] tracking-[-0.015em]">
+                          {fm.title}
+                        </h2>
+                        <p className="text-sm leading-relaxed text-[color:var(--color-muted)]">
+                          {fm.summary}
+                        </p>
+                        <span className="mt-auto inline-flex items-center gap-2 pt-1 font-mono text-[12px] uppercase tracking-[0.04em]">
+                          <span aria-hidden className="node-dot" />
+                          {lang === "en" ? "See the project" : "Voir la fiche"}
+                          <ArrowRight
+                            size={14}
+                            strokeWidth={1.75}
+                            aria-hidden
+                            className="transition-transform group-hover:translate-x-0.5"
+                          />
+                        </span>
+                      </div>
+                    </Card>
+                  </NextLink>
+                </li>
+              );
+            })}
           </ul>
         </ProjetsVue>
       )}
