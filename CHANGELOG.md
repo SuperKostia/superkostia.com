@@ -8,6 +8,13 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Style : refonte totale dans une DA inspirée de n8n (2026-11-25)
+- Nouvelle DA sur tout le site (décision #014) : fond blanc cassé à trame de points, cartes rondes grises, panneaux sombres arrondis, pilules mono capitales, accent rose, titres Archivo élargis, étiquettes Geist Mono. Mode sombre repris dans la même logique.
+- En-tête en pilule flottante avec bouton « M'écrire », menu mobile en cartes, pied de page en panneau sombre.
+- Accueil refait : héros centré, journée de Kostia dessinée comme un workflow (chaque outil mène à sa rubrique), bandeau de logos des projets phares, séance Adler en panneau sombre, tuiles chiffrées (Athènes, pays, km, dernière ville), quatre rubriques en cartes à icône pixel, appel final. Le marquee et le ticker disparaissent.
+- Projets, À propos, Contact, Colophon, Écrits, Hobbies, Voyages, Photo et images de partage repris dans la nouvelle DA.
+- Nouvelle marque : un nœud qui se divise en deux.
+
 ### Fix : MapLibre 6.18 sur le dashboard Choose France (2026-11-12)
 - Faille CVE-2026-85061 corrigée : MapLibre 4.7.1 affichait le crédit du fond de carte sans le filtrer, ce qui laissait un fond de carte compromis exécuter du code dans la page. Passage à la 6.18.0, dernière version, qui filtre ce texte. Vérifié par un essai d'injection : exécuté en 4.7.1, bloqué en 6.18, sur ordinateur et en Safari mobile simulé.
 - MapLibre n'est plus chargé depuis unpkg : script, worker et feuille de style sont servis par le site (`public/projets/choose-france-2026/vendor/maplibre-gl-6.18.0/`, copie non modifiée du paquet npm). Cf. décision #013.

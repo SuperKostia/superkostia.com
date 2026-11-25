@@ -271,3 +271,22 @@ warp (turbulence 19s) ───────────────────�
 **Pourquoi pas le CDN.** En version 4, une empreinte (`integrity`) protégeait le fichier unique chargé depuis unpkg. En version 6, le worker est chargé par la bibliothèque elle-même, sans empreinte possible : rester sur le CDN aurait retiré cette protection. Servir les fichiers depuis le site la conserve et supprime une dépendance à un tiers au chargement.
 
 **Conséquence.** Une mise à jour de MapLibre se fait à la main : nouveau dossier `maplibre-gl-<version>/` et trois chemins à changer dans `dashboard.html`. Aucune dépendance npm ajoutée (règle 4). Le dashboard reste un seul fichier HTML, seule la bibliothèque a changé d'adresse.
+
+## #014 : DA « atelier » inspirée de n8n, à la place du brutalisme
+
+**Date** : 2026-11-25
+**Statut** : Acté. Supplante #003 (accent jaune acide) et la section 2 du cahier des charges ; adapte #002 (la photo garde son calme, mais dans les nouveaux tokens).
+
+**Contexte.** Kostia adore la nouvelle direction artistique de n8n.io et demande une refonte totale du site dans cette DA.
+
+**Décision.**
+1. Fond blanc cassé `#fafafa` avec trame de points, encre `#161616`, gris de surface en paliers (`#f0f0f0`, `#e3e3e3`, filets `#d9d9d9`). Un seul accent rose poudré `#ffbcca` pour les actions et les états actifs, un rose franc `#ff91ac` pour les points de connexion et les guillemets.
+2. Panneaux sombres arrondis (`#212121`, trame de points sombre) pour les moments forts : séance Adler, cartes des rubriques, carte du monde, pied de page.
+3. Formes : pilules à rayon plein pour tout ce qui se clique, cartes à 24 px, panneaux à 32 px. Plus de bordures épaisses ni d'ombres dures, plus de rotations.
+4. Typographie : les polices de n8n (Baumer Uniwidth et Baumer Mono) ne sont pas libres. On prend **Archivo** (Google Fonts, variable avec axe de largeur, élargie à 108 % pour les titres, graisse 500, interlignage 0,9) et **Geist Mono** pour les étiquettes, boutons et métadonnées, en capitales. Chargées par `next/font`, servies par le site.
+5. Motifs repris de l'esprit n8n, en dessins maison : le héros de l'accueil dessine la journée de Kostia comme un workflow (déclencheur, agent « Kostia », outils branchés en pointillés vers chaque rubrique), les rubriques ont des icônes en matrice de points, les étiquettes de section sont encadrées de deux points roses. La marque devient un nœud qui se divise en deux (`LogoMark`), sans rien reprendre du logo de n8n.
+6. Le mode sombre reste une DA à part entière : fond `#121212`, panneaux `#1b1b1b`, même rose.
+
+**Raison.** Demande explicite de Kostia. Le brutalisme d'origine (règle 2 de CLAUDE.md) est abandonné en connaissance de cause ; la règle est réécrite pour protéger la nouvelle DA de la même façon.
+
+**Conséquence.** Les primitives vivent dans `components/ui/` (`Button`/`ButtonLink`/`buttonClasses`, `Card`, `Tag`, `NodeLabel`, `Container`, `Panel`, `Link`) et les utilitaires CSS dans `styles/globals.css` (`bg-dots`, `bg-dots-ink`, `bg-dots-fade`, `label-mono`, `node-dot`). Le `WaterField` quitte l'accueil.

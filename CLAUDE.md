@@ -25,10 +25,10 @@ Ce projet doit fonctionner à **0 € d'usage**. Interdit :
 
 Si une idée nécessite une API payante, **ne pas l'implémenter** et le signaler explicitement dans la réponse pour décision humaine.
 
-### 2. Direction artistique brutaliste — ne jamais l'adoucir
-Le site assume une esthétique brutaliste/expérimentale. Quand un pattern gagne en complexité, la tendance naturelle est de régulariser, arrondir, "rendre propre". **C'est l'opposé de ce qu'il faut**. En cas de doute, pousser vers plus d'audace, pas moins.
+### 2. Direction artistique « atelier » façon n8n : la tenir
+Depuis la décision #014, le site suit une DA inspirée de n8n.io : fond blanc cassé à trame de points, cartes rondes grises sans bordure ni ombre, panneaux sombres arrondis pour les moments forts, pilules mono capitales, titres Archivo élargis en graisse 500, un seul accent rose réservé aux actions. Ne pas revenir aux bordures épaisses, aux ombres dures ni au jaune acide. Utiliser les primitives de `components/ui/` plutôt que de recomposer les styles à la main.
 
-Référence : section 2 du cahier des charges.
+Référence : décision #014 (supplante la section 2 du cahier des charges).
 
 ### 3. Français par défaut, anglais en miroir
 Interface, labels, placeholders, messages d'erreur, commentaires de code de haut niveau, noms de composants côté contenu : tout en français. Les termes techniques React/Next restent en anglais (ex : `useState`, `ServerComponent`).
@@ -56,7 +56,7 @@ Si un pattern apparaît 2 fois, il devient un composant dans `components/ui/` ou
 - `alt` sur toutes les images.
 
 ### 8. Mobile-first sans sacrifier l'ADN desktop
-Le mobile garde la puissance typographique et brutaliste. Pas de "version mobile diminuée".
+Le mobile garde la puissance typographique et la DA. Pas de "version mobile diminuée".
 
 ## Conventions
 

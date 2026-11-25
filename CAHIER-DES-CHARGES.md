@@ -26,6 +26,8 @@
 
 ## 2. Direction artistique : brutaliste / créatif / expérimental
 
+> **Supplantée le 25/11/2026 par la décision #014** (DA « atelier » inspirée de n8n). Section gardée pour l'historique.
+
 ### 2.1 Principes esthétiques
 
 - **Typographie comme élément graphique principal**. Mix assumé de polices : une grotesque très neutre (Inter, Helvetica Now, ou système) pour le corps + une display expressive pour les titres (Space Grotesk, PP Neue Montreal, JetBrains Mono, ou similaire). Tailles extrêmes (très grand, très petit), jamais "moyen mou".

@@ -129,6 +129,12 @@ Statuts : `[ ]` à faire · `[~]` en cours · `[x]` fait · `[-]` annulé / repo
 - [x] 18 fiches traduites (`*.en.mdx`) : 15 projets, 2 hobbies, 1 écrit
 - [x] Bouton FR / EN, hreflang, canonical, sitemap bilingue, images de partage par langue
 
+## Refonte DA n8n (cf. #014)
+
+- [x] Tokens, polices, primitives `components/ui/`, en-tête, pied de page, menu mobile
+- [x] Accueil refait (workflow, logos, séance Adler, chiffres, rubriques)
+- [x] Toutes les pages reprises dans la nouvelle DA
+
 ## Parking lot (idées non-planifiées)
 
 - Version EN (à trancher — cf. CDC §13).
