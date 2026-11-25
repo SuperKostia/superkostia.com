@@ -6,6 +6,14 @@ Jusqu'à la 0.6.0 (mise en ligne), les versions suivaient un schéma interne `0.
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-11-25 — La carte des voyages sur MapLibre
+
+### Feat : carte MapLibre 6.19.0 (décision #015)
+- La carte de `/hobbies/voyages` passe sur MapLibre, comme les autres sites : vrai fond de carte OpenFreeMap (positron en clair, dark en sombre, qui suit le bouton de thème), zoom jusqu'aux rues, bouton globe.
+- Tout le reste est gardé : pays visités en rose, villes et lieux photo, fiches pays et ville, filtre par année, photos et visionneuse. La liste des pays visités dans la fiche donne un accès au clavier.
+- Gestes coopératifs (⌘ ou Ctrl + molette, deux doigts sur téléphone) : la page défile normalement par-dessus la carte.
+- Vérifié dans Chrome et dans Safari iPhone simulé (WebKit), sans erreur.
+
 ## [1.1.0] — 2026-11-25 — Carte des voyages interactive
 
 ### Feat : la carte des voyages devient interactive et reliée aux photos

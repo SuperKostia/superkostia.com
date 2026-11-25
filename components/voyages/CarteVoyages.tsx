@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import NextLink from "next/link";
-import { Camera, Minus, Plus, RotateCcw, X } from "lucide-react";
+import { Camera, Globe2, Minus, Plus, RotateCcw, X } from "lucide-react";
+import type { GeoJSONSource, MapLibreMap as CarteML, MapMouseEvent } from "maplibre-gl";
 import { Visionneuse, type PhotoVisionneuse } from "@/components/ui/Visionneuse";
 import { chemin, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -18,23 +19,19 @@ export type PointCarte = {
   type: "ville" | "photo";
   nom: string;
   pays: string;
-  x: number;
-  y: number;
+  lng: number;
+  lat: number;
   sejours: Sejour[];
   photos: string[];
   proche?: { nom: string; km: number };
 };
 
 export type PaysCarte = {
-  id: string;
   code: string;
   nomAnglais: string;
-  d: string;
   visite: boolean;
   visites: number;
-  /** Cliquable : visité ou avec des photos. */
-  actif: boolean;
-  /** Cadre [x0, y0, x1, y1] de la plus grande terre du pays, pour zoomer dessus. */
+  /** Cadre [ouest, sud, est, nord] de la plus grande terre du pays, pour zoomer dessus. */
   cadre: [number, number, number, number];
 };
 
@@ -60,16 +57,21 @@ const TEXTES = {
     tout: "Tout",
     annees: "Filtrer par année",
     photos: "Photos",
+    globe: "Globe",
     zoomPlus: "Zoomer",
     zoomMoins: "Dézoomer",
     recentrer: "Vue d'ensemble",
-    astuce: "Pincer ou ⌘ + molette pour zoomer, glisser pour se déplacer",
+    gesteMac: "⌘ + molette pour zoomer",
+    gesteWindows: "Ctrl + molette pour zoomer",
+    gesteMobile: "Deux doigts pour déplacer la carte",
+    credits: "Afficher les crédits",
     introTitre: "Clique sur un pays ou une ville.",
     introTexte: "Les séjours, les dates et les photos prises sur place s'ouvrent ici.",
     legendePays: "Pays visité",
     legendeVille: "Ville (plus c'est gros, plus j'y suis retourné)",
     legendePhoto: "Photos prises hors des villes",
     photosPlacees: (n: number) => `${n} photos placées sur la carte`,
+    paysVisites: "Pays visités",
     pays: "Pays",
     ville: "Ville",
     lieuPhoto: "Photos",
@@ -90,23 +92,27 @@ const TEXTES = {
     datesSejours: "Séjours",
     precedente: "Photo précédente",
     suivante: "Photo suivante",
-    rien: "Aucun voyage cette année-là.",
   },
   en: {
     aria: "World map of Kostia's travels",
     tout: "All",
     annees: "Filter by year",
     photos: "Photos",
+    globe: "Globe",
     zoomPlus: "Zoom in",
     zoomMoins: "Zoom out",
     recentrer: "Whole world",
-    astuce: "Pinch or ⌘ + scroll to zoom, drag to move around",
+    gesteMac: "Use ⌘ + scroll to zoom",
+    gesteWindows: "Use Ctrl + scroll to zoom",
+    gesteMobile: "Use two fingers to move the map",
+    credits: "Show credits",
     introTitre: "Click a country or a city.",
     introTexte: "Stays, dates and the photos taken there open here.",
     legendePays: "Visited country",
     legendeVille: "City (the bigger, the more often I went back)",
     legendePhoto: "Photos taken away from cities",
     photosPlacees: (n: number) => `${n} photos placed on the map`,
+    paysVisites: "Visited countries",
     pays: "Country",
     ville: "City",
     lieuPhoto: "Photos",
@@ -127,58 +133,64 @@ const TEXTES = {
     datesSejours: "Stays",
     precedente: "Previous photo",
     suivante: "Next photo",
-    rien: "No trip that year.",
   },
 };
 
-/* ---------- Géométrie de la vue ---------- */
+/* ---------- Carte ---------- */
 
-type Vue = { x: number; y: number; w: number; h: number };
+/** Fond OpenFreeMap, comme sur les autres sites ; « dark » quand le site est en sombre. */
+const STYLES = {
+  clair: "https://tiles.openfreemap.org/styles/positron",
+  sombre: "https://tiles.openfreemap.org/styles/dark",
+};
 
-const BASE: Vue = { x: 0, y: 24, w: 960, h: 422 };
-const ZOOM_MAX = 14;
+const ROSE = "#ffbcca";
+const ROSE_FRANC = "#ff91ac";
+const ROSE_VILLE = "#ff5a8c";
+const ENCRE = "#161616";
 
-function borner(v: Vue): Vue {
-  const w = Math.min(BASE.w, Math.max(BASE.w / ZOOM_MAX, v.w));
-  const h = (w * BASE.h) / BASE.w;
-  if (w >= BASE.w) return { ...BASE };
-  const x = Math.min(BASE.x + BASE.w - w * 0.7, Math.max(BASE.x - w * 0.3, v.x));
-  const y = Math.min(BASE.y + BASE.h - h * 0.7, Math.max(BASE.y - h * 0.3, v.y));
-  return { x, y, w, h };
-}
+const COUCHES_POINTS = ["villes", "lieux-photo"];
 
 const annee = (iso: string) => parseInt(iso.slice(0, 4), 10);
+const sombreActif = () => document.documentElement.classList.contains("dark");
+const mouvementReduit = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 type Selection = { type: "pays"; code: string } | { type: "point"; id: string } | null;
 type Survol = { titre: string; sous?: string; x: number; y: number } | null;
+type Cible = { type: "point"; id: string } | { type: "pays"; code: string } | null;
 
-/* ---------- Composant ---------- */
-
-export function CarteVoyages({ donnees, lang }: { donnees: DonneesCarte; lang: Lang }) {
+export function CarteVoyages({
+  donnees,
+  lang,
+  repli,
+}: {
+  donnees: DonneesCarte;
+  lang: Lang;
+  /** Carte fixe affichée si le navigateur n'a pas WebGL 2. */
+  repli: React.ReactNode;
+}) {
   const t = TEXTES[lang];
   const locale = lang === "en" ? "en-GB" : "fr-FR";
 
-  const [vue, setVue] = useState<Vue>(BASE);
-  const vueRef = useRef<Vue>(BASE);
   const [selection, setSelection] = useState<Selection>(null);
   const [anneeChoisie, setAnneeChoisie] = useState<number | null>(null);
   const [photosVisibles, setPhotosVisibles] = useState(true);
+  const [globe, setGlobe] = useState(false);
   const [survol, setSurvol] = useState<Survol>(null);
+  const [erreur, setErreur] = useState(false);
+  const [pret, setPret] = useState(false);
   const [visionneuse, setVisionneuse] = useState<{ liste: PhotoCarte[]; index: number } | null>(
     null,
   );
 
-  const cadreRef = useRef<HTMLDivElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
-  const animation = useRef<number | null>(null);
-  const pointeurs = useRef(new Map<number, { x: number; y: number }>());
-  const geste = useRef<{ depart: Vue; pts: Array<{ x: number; y: number }> } | null>(null);
-  const aBouge = useRef(false);
-
-  const appliquer = useCallback((v: Vue) => {
-    vueRef.current = v;
-    setVue(v);
-  }, []);
+  const conteneurRef = useRef<HTMLDivElement>(null);
+  const pointParIdRef = useRef(new Map<string, PointCarte>());
+  const paysParCodeRef = useRef(new Map<string, PaysCarte>());
+  const nomPaysRef = useRef<(code: string) => string>((c) => c);
+  const choisirPaysRef = useRef<(code: string) => void>(() => {});
+  const choisirPointRef = useRef<(p: PointCarte) => void>(() => {});
+  const carteRef = useRef<CarteML | null>(null);
+  const etat = useRef({ selection, anneeChoisie, photosVisibles, globe });
 
   /* --- Index --- */
 
@@ -190,21 +202,18 @@ export function CarteVoyages({ donnees, lang }: { donnees: DonneesCarte; lang: L
     }
   }, [locale]);
 
-  const paysParCode = useMemo(
-    () => new Map(donnees.pays.filter((p) => p.code).map((p) => [p.code, p])),
-    [donnees.pays],
-  );
+  const paysParCode = useMemo(() => new Map(donnees.pays.map((p) => [p.code, p])), [donnees.pays]);
   const pointParId = useMemo(() => new Map(donnees.points.map((p) => [p.id, p])), [donnees.points]);
   const photoParId = useMemo(() => new Map(donnees.photos.map((p) => [p.id, p])), [donnees.photos]);
 
   const nomPays = useCallback(
     (code: string) => {
-      const repli = paysParCode.get(code)?.nomAnglais || code;
-      if (!code || !nomsPays) return repli;
+      const repliNom = paysParCode.get(code)?.nomAnglais || code;
+      if (!code || !nomsPays) return repliNom;
       try {
-        return nomsPays.of(code) ?? repli;
+        return nomsPays.of(code) ?? repliNom;
       } catch {
-        return repli;
+        return repliNom;
       }
     },
     [nomsPays, paysParCode],
@@ -217,194 +226,428 @@ export function CarteVoyages({ donnees, lang }: { donnees: DonneesCarte; lang: L
   }, [donnees.points]);
 
   const pointActif = useCallback(
-    (p: PointCarte) => {
-      if (anneeChoisie == null) return true;
-      if (p.type === "ville")
-        return p.sejours.some((s) => annee(s.debut) === anneeChoisie || annee(s.fin) === anneeChoisie);
+    (p: PointCarte, an: number | null) => {
+      if (an == null) return true;
+      if (p.type === "ville") return p.sejours.some((s) => annee(s.debut) === an || annee(s.fin) === an);
       return p.photos.some((id) => {
         const d = photoParId.get(id)?.date;
-        return d ? annee(d) === anneeChoisie : false;
+        return d ? annee(d) === an : false;
       });
     },
-    [anneeChoisie, photoParId],
+    [photoParId],
   );
 
-  const paysActifsAnnee = useMemo(() => {
-    if (anneeChoisie == null) return null;
-    const s = new Set<string>();
-    for (const p of donnees.points) if (p.type === "ville" && pointActif(p)) s.add(p.pays);
-    return s;
-  }, [anneeChoisie, donnees.points, pointActif]);
+  /* --- Données des couches --- */
 
-  /* --- Animation de la vue --- */
+  const geojsonPoints = useCallback(
+    (an: number | null) => ({
+      type: "FeatureCollection" as const,
+      features: donnees.points.map((p) => ({
+        type: "Feature" as const,
+        properties: {
+          id: p.id,
+          type: p.type,
+          n: p.sejours.length,
+          photos: p.photos.length,
+          actif: pointActif(p, an),
+        },
+        geometry: { type: "Point" as const, coordinates: [p.lng, p.lat] },
+      })),
+    }),
+    [donnees.points, pointActif],
+  );
 
-  const animerVers = useCallback(
-    (cible: Vue) => {
-      const fin = borner(cible);
-      if (animation.current) cancelAnimationFrame(animation.current);
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        appliquer(fin);
+  /** Pays éteints par le filtre d'année (visités, mais pas cette année-là). */
+  const paysEteints = useCallback(
+    (an: number | null) => {
+      if (an == null) return new Set<string>();
+      const allumes = new Set(
+        donnees.points.filter((p) => p.type === "ville" && pointActif(p, an)).map((p) => p.pays),
+      );
+      return new Set(donnees.pays.map((p) => p.code).filter((c) => !allumes.has(c)));
+    },
+    [donnees.pays, donnees.points, pointActif],
+  );
+
+  const toutVoir = useCallback(
+    (carte: CarteML, anime = true) => {
+      if (etat.current.globe) {
+        carte.easeTo({ center: [25, 28], zoom: 1.7, duration: anime && !mouvementReduit() ? 900 : 0 });
         return;
       }
-      const debut = vueRef.current;
-      const t0 = performance.now();
-      const duree = 480;
-      const pas = (now: number) => {
-        const k = Math.min(1, (now - t0) / duree);
-        const e = 1 - Math.pow(1 - k, 3);
-        appliquer({
-          x: debut.x + (fin.x - debut.x) * e,
-          y: debut.y + (fin.y - debut.y) * e,
-          w: debut.w + (fin.w - debut.w) * e,
-          h: debut.h + (fin.h - debut.h) * e,
-        });
-        if (k < 1) animation.current = requestAnimationFrame(pas);
-      };
-      animation.current = requestAnimationFrame(pas);
+      const lngs = donnees.points.map((p) => p.lng);
+      const lats = donnees.points.map((p) => p.lat);
+      if (!lngs.length) return;
+      carte.fitBounds(
+        [
+          [Math.min(...lngs), Math.min(...lats)],
+          [Math.max(...lngs), Math.max(...lats)],
+        ],
+        { padding: 36, maxZoom: 3, animate: anime && !mouvementReduit() },
+      );
     },
-    [appliquer],
+    [donnees.points],
   );
 
-  const cadrer = useCallback(
-    ([x0, y0, x1, y1]: [number, number, number, number]) => {
-      const marge = 1.5;
-      let w = Math.max((x1 - x0) * marge, ((y1 - y0) * marge * BASE.w) / BASE.h, BASE.w / ZOOM_MAX);
-      w = Math.min(w, BASE.w);
-      const h = (w * BASE.h) / BASE.w;
-      animerVers({ x: (x0 + x1) / 2 - w / 2, y: (y0 + y1) / 2 - h / 2, w, h });
+  /** Reporte l'état React (année, photos, sélection) sur la carte. */
+  const appliquerEtat = useCallback(
+    (carte: CarteML) => {
+      if (!carte.getSource("points")) return;
+      const { anneeChoisie: an, photosVisibles: ph, selection: sel } = etat.current;
+      (carte.getSource("points") as GeoJSONSource).setData(geojsonPoints(an));
+      const eteints = paysEteints(an);
+      for (const p of donnees.pays) {
+        carte.setFeatureState({ source: "pays", id: p.code }, { eteint: eteints.has(p.code) });
+        carte.setFeatureState(
+          { source: "pays", id: p.code },
+          { choisi: sel?.type === "pays" && sel.code === p.code },
+        );
+      }
+      for (const p of donnees.points) {
+        carte.setFeatureState(
+          { source: "points", id: p.id },
+          { choisi: sel?.type === "point" && sel.id === p.id },
+        );
+      }
+      const vis = ph ? "visible" : "none";
+      for (const c of ["lieux-photo", "lieux-photo-centre", "villes-anneau"]) {
+        if (carte.getLayer(c)) carte.setLayoutProperty(c, "visibility", vis);
+      }
     },
-    [animerVers],
+    [donnees.pays, donnees.points, geojsonPoints, paysEteints],
   );
 
-  const zoomer = useCallback(
-    (facteur: number, ecranX?: number, ecranY?: number, depuis: Vue = vueRef.current) => {
-      const rect = svgRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const fx = ecranX == null ? 0.5 : (ecranX - rect.left) / rect.width;
-      const fy = ecranY == null ? 0.5 : (ecranY - rect.top) / rect.height;
-      const px = depuis.x + fx * depuis.w;
-      const py = depuis.y + fy * depuis.h;
-      const w = Math.min(BASE.w, Math.max(BASE.w / ZOOM_MAX, depuis.w / facteur));
-      const h = (w * BASE.h) / BASE.w;
-      return borner({ x: px - fx * w, y: py - fy * h, w, h });
+  /** Pose (ou repose, après un changement de thème) les couches du site sur le fond. */
+  const ajouterCouches = useCallback(
+    (carte: CarteML) => {
+      if (carte.getSource("pays")) return;
+      const sombre = sombreActif();
+      const premierTexte = carte.getStyle().layers.find((l) => l.type === "symbol")?.id;
+
+      carte.addSource("pays", { type: "geojson", data: "/donnees/pays-visites", promoteId: "code" });
+      carte.addLayer(
+        {
+          id: "pays-remplissage",
+          type: "fill",
+          source: "pays",
+          paint: {
+            "fill-color": [
+              "case",
+              ["boolean", ["feature-state", "choisi"], false],
+              ROSE_FRANC,
+              ["boolean", ["feature-state", "survol"], false],
+              ROSE_FRANC,
+              ROSE,
+            ],
+            // Les contours (1:50m) s'effacent en zoomant : de près, le fond de
+            // carte et ses côtes détaillées prennent le relais.
+            "fill-opacity": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              4,
+              ["case", ["boolean", ["feature-state", "eteint"], false], 0.12, sombre ? 0.5 : 0.62],
+              7,
+              ["case", ["boolean", ["feature-state", "eteint"], false], 0.04, 0.14],
+            ],
+          },
+        },
+        premierTexte,
+      );
+      carte.addLayer(
+        {
+          id: "pays-contour",
+          type: "line",
+          source: "pays",
+          paint: {
+            "line-color": ROSE_FRANC,
+            "line-width": ["case", ["boolean", ["feature-state", "choisi"], false], 2.2, 0.6],
+            "line-opacity": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              4,
+              ["case", ["boolean", ["feature-state", "eteint"], false], 0.25, 0.9],
+              7,
+              0,
+            ],
+          },
+        },
+        premierTexte,
+      );
+
+      carte.addSource("points", {
+        type: "geojson",
+        data: geojsonPoints(etat.current.anneeChoisie),
+        promoteId: "id",
+      });
+      const opacite = ["case", ["get", "actif"], 1, 0.22] as unknown as number;
+      // Lieux photo : carré blanc arrondi façon pastille, point rose au centre.
+      carte.addLayer({
+        id: "lieux-photo",
+        type: "circle",
+        source: "points",
+        filter: ["==", ["get", "type"], "photo"],
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 1, 5, 8, 8],
+          "circle-color": "#ffffff",
+          "circle-stroke-color": [
+            "case",
+            ["boolean", ["feature-state", "choisi"], false],
+            ROSE_VILLE,
+            ENCRE,
+          ],
+          "circle-stroke-width": ["case", ["boolean", ["feature-state", "choisi"], false], 3, 1.5],
+          "circle-opacity": opacite,
+          "circle-stroke-opacity": opacite,
+        },
+      });
+      carte.addLayer({
+        id: "lieux-photo-centre",
+        type: "circle",
+        source: "points",
+        filter: ["==", ["get", "type"], "photo"],
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 1, 2, 8, 3.2],
+          "circle-color": ROSE_VILLE,
+          "circle-opacity": opacite,
+        },
+      });
+      // Villes : rose vif, plus grosses quand j'y suis retourné ; anneau blanc si photos.
+      const rayon = ["+", 3.6, ["min", 5, ["*", ["get", "n"], 0.55]]];
+      carte.addLayer({
+        id: "villes-anneau",
+        type: "circle",
+        source: "points",
+        filter: ["all", ["==", ["get", "type"], "ville"], [">", ["get", "photos"], 0]],
+        paint: {
+          "circle-radius": ["+", rayon, 3] as unknown as number,
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-stroke-color": sombre ? "#ffffff" : ENCRE,
+          "circle-stroke-width": 1.5,
+          "circle-stroke-opacity": opacite,
+        },
+      });
+      carte.addLayer({
+        id: "villes",
+        type: "circle",
+        source: "points",
+        filter: ["==", ["get", "type"], "ville"],
+        paint: {
+          "circle-radius": rayon as unknown as number,
+          "circle-color": ROSE_VILLE,
+          "circle-stroke-color": [
+            "case",
+            ["boolean", ["feature-state", "choisi"], false],
+            sombre ? "#ffffff" : ENCRE,
+            sombre ? ENCRE : "#ffffff",
+          ],
+          "circle-stroke-width": ["case", ["boolean", ["feature-state", "choisi"], false], 3, 1.5],
+          "circle-opacity": opacite,
+          "circle-stroke-opacity": opacite,
+        },
+      });
+
+      appliquerEtat(carte);
     },
-    [],
+    [geojsonPoints, appliquerEtat],
   );
 
-  /* --- Molette (⌘/Ctrl ou pincement du trackpad) --- */
+  /* --- Création de la carte --- */
 
   useEffect(() => {
-    const svg = svgRef.current;
-    if (!svg) return;
-    const surMolette = (e: WheelEvent) => {
-      if (!(e.ctrlKey || e.metaKey)) return;
-      e.preventDefault();
-      if (animation.current) cancelAnimationFrame(animation.current);
-      const v = zoomer(Math.exp(-e.deltaY * 0.01), e.clientX, e.clientY);
-      if (v) appliquer(v);
-    };
-    svg.addEventListener("wheel", surMolette, { passive: false });
-    return () => svg.removeEventListener("wheel", surMolette);
-  }, [appliquer, zoomer]);
+    let annule = false;
+    let observateur: MutationObserver | null = null;
 
-  /* --- Glisser et pincer --- */
+    (async () => {
+      const ml = await import("@/lib/maplibre");
+      if (annule || !conteneurRef.current) return;
+      let carte: CarteML;
+      try {
+        carte = new ml.MapLibreMap({
+          container: conteneurRef.current,
+          style: sombreActif() ? STYLES.sombre : STYLES.clair,
+          center: [20, 25],
+          zoom: 1.1,
+          minZoom: 0.6,
+          maxZoom: 15,
+          renderWorldCopies: false,
+          cooperativeGestures: true,
+          dragRotate: false,
+          pitchWithRotate: false,
+          touchPitch: false,
+          attributionControl: { compact: true },
+          locale: {
+            "CooperativeGesturesHandler.MacHelpText": t.gesteMac,
+            "CooperativeGesturesHandler.WindowsHelpText": t.gesteWindows,
+            "CooperativeGesturesHandler.MobileHelpText": t.gesteMobile,
+            "AttributionControl.ToggleAttribution": t.credits,
+          },
+        });
+      } catch {
+        setErreur(true);
+        return;
+      }
+      carte.touchZoomRotate.disableRotation();
+      carteRef.current = carte;
 
-  const demarrerGeste = () => {
-    geste.current = {
-      depart: vueRef.current,
-      pts: [...pointeurs.current.values()].map((p) => ({ ...p })),
-    };
-  };
+      carte.on("style.load", () => {
+        if (etat.current.globe) carte.setProjection({ type: "globe" });
+        ajouterCouches(carte);
+      });
+      carte.once("load", () => {
+        // Crédit OpenStreetMap replié derrière son « i » : il reste à un clic.
+        carte
+          .getContainer()
+          .querySelector(".maplibregl-ctrl-attrib")
+          ?.classList.remove("maplibregl-compact-show");
+        toutVoir(carte, false);
+        setPret(true);
+      });
 
-  const surPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (e.pointerType === "mouse" && e.button !== 0) return;
-    pointeurs.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pointeurs.current.size === 1) aBouge.current = false;
-    if (animation.current) cancelAnimationFrame(animation.current);
-    demarrerGeste();
-  };
+      const sousLaSouris = (e: MapMouseEvent): Cible => {
+        const { x, y } = e.point;
+        const zone: [[number, number], [number, number]] = [
+          [x - 7, y - 7],
+          [x + 7, y + 7],
+        ];
+        const couches = COUCHES_POINTS.filter((c) => carte.getLayer(c));
+        const point = couches.length ? carte.queryRenderedFeatures(zone, { layers: couches })[0] : undefined;
+        if (point) return { type: "point", id: String(point.properties?.id ?? "") };
+        if (!carte.getLayer("pays-remplissage")) return null;
+        const pays = carte.queryRenderedFeatures(e.point, { layers: ["pays-remplissage"] })[0];
+        return pays ? { type: "pays", code: String(pays.properties?.code ?? "") } : null;
+      };
 
-  const surPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (!pointeurs.current.has(e.pointerId) || !geste.current) return;
-    pointeurs.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const { depart, pts } = geste.current;
-    const actuels = [...pointeurs.current.values()];
+      let paysSurvole: string | null = null;
+      const survolerPays = (code: string | null) => {
+        if (paysSurvole === code) return;
+        if (paysSurvole) carte.setFeatureState({ source: "pays", id: paysSurvole }, { survol: false });
+        paysSurvole = code;
+        if (code) carte.setFeatureState({ source: "pays", id: code }, { survol: true });
+      };
 
-    if (actuels.length === 1 && pts.length === 1) {
-      const dx = actuels[0].x - pts[0].x;
-      const dy = actuels[0].y - pts[0].y;
-      if (!aBouge.current && Math.hypot(dx, dy) > 5) {
-        aBouge.current = true;
-        svgRef.current?.setPointerCapture(e.pointerId);
+      carte.on("mousemove", (e) => {
+        const cible = sousLaSouris(e);
+        carte.getCanvas().style.cursor = cible ? "pointer" : "";
+        survolerPays(cible?.type === "pays" ? cible.code : null);
+        if (!cible) return setSurvol(null);
+        const { x, y } = e.point;
+        if (cible.type === "point") {
+          const p = pointParIdRef.current.get(cible.id);
+          if (!p) return setSurvol(null);
+          setSurvol({
+            titre: p.type === "ville" ? p.nom : `${t.lieuPhoto} · ${nomPaysRef.current(p.pays)}`,
+            sous: [
+              p.type === "ville" ? t.sejours(p.sejours.length) : "",
+              p.photos.length ? t.nbPhotos(p.photos.length) : "",
+            ]
+              .filter(Boolean)
+              .join(" · "),
+            x,
+            y,
+          });
+        } else {
+          const p = paysParCodeRef.current.get(cible.code);
+          setSurvol({
+            titre: nomPaysRef.current(cible.code),
+            sous: p?.visites ? t.voyages(p.visites) : undefined,
+            x,
+            y,
+          });
+        }
+      });
+      carte.getCanvas().addEventListener("mouseleave", () => {
+        survolerPays(null);
         setSurvol(null);
-      }
-      if (aBouge.current) {
-        const upp = depart.w / rect.width;
-        appliquer(borner({ ...depart, x: depart.x - dx * upp, y: depart.y - dy * upp }));
-      }
-    } else if (actuels.length >= 2 && pts.length >= 2) {
-      aBouge.current = true;
-      const d0 = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-      const d1 = Math.hypot(actuels[0].x - actuels[1].x, actuels[0].y - actuels[1].y);
-      const mx = (actuels[0].x + actuels[1].x) / 2;
-      const my = (actuels[0].y + actuels[1].y) / 2;
-      const v = zoomer(d1 / Math.max(1, d0), mx, my, depart);
-      if (v) appliquer(v);
-    }
-  };
+      });
+      carte.on("click", (e) => {
+        const cible = sousLaSouris(e);
+        if (!cible) return;
+        if (cible.type === "point") {
+          const p = pointParIdRef.current.get(cible.id);
+          if (p) choisirPointRef.current(p);
+        } else choisirPaysRef.current(cible.code);
+      });
 
-  const surPointerFin = (e: React.PointerEvent<SVGSVGElement>) => {
-    pointeurs.current.delete(e.pointerId);
-    if (pointeurs.current.size > 0) demarrerGeste();
-    else geste.current = null;
-  };
+      // Le fond suit le bouton clair / sombre du site.
+      observateur = new MutationObserver(() => {
+        const url = sombreActif() ? STYLES.sombre : STYLES.clair;
+        carte.setStyle(url, { diff: false });
+      });
+      observateur.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    })();
 
-  /* --- Sélection --- */
+    return () => {
+      annule = true;
+      observateur?.disconnect();
+      carteRef.current?.remove();
+      carteRef.current = null;
+    };
+    // La carte se crée une seule fois ; les gestionnaires lisent l'état par des refs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const choisirPays = (code: string) => {
-    if (aBouge.current) return;
-    const p = paysParCode.get(code);
+
+  /* --- Sélection et mouvements --- */
+
+  const choisirPays = useCallback((code: string) => {
+    const p = paysParCodeRef.current.get(code);
+    const carte = carteRef.current;
     if (!p) return;
     setSelection({ type: "pays", code });
-    cadrer(p.cadre);
-  };
+    if (!carte) return;
+    const [w, s, e, n] = p.cadre;
+    carte.fitBounds(
+      [
+        [w, s],
+        [e, n],
+      ],
+      { padding: 40, maxZoom: 6, duration: mouvementReduit() ? 0 : 900 },
+    );
+  }, []);
 
-  const choisirPoint = (p: PointCarte) => {
-    if (aBouge.current) return;
+  const choisirPoint = useCallback((p: PointCarte) => {
     setSelection({ type: "point", id: p.id });
-    const w = Math.min(vueRef.current.w, BASE.w / 5);
-    const h = (w * BASE.h) / BASE.w;
-    animerVers({ x: p.x - w / 2, y: p.y - h / 2, w, h });
-  };
+    const carte = carteRef.current;
+    if (!carte) return;
+    carte.flyTo({
+      center: [p.lng, p.lat],
+      zoom: Math.max(carte.getZoom(), p.type === "photo" ? 8 : 6.5),
+      duration: mouvementReduit() ? 0 : 1100,
+      essential: true,
+    });
+  }, []);
+
+  // Références à jour pour les gestionnaires posés une seule fois sur la carte.
+  useEffect(() => {
+    etat.current = { selection, anneeChoisie, photosVisibles, globe };
+    pointParIdRef.current = pointParId;
+    paysParCodeRef.current = paysParCode;
+    nomPaysRef.current = nomPays;
+    choisirPaysRef.current = choisirPays;
+    choisirPointRef.current = choisirPoint;
+  });
+
+  useEffect(() => {
+    const carte = carteRef.current;
+    if (carte && pret) appliquerEtat(carte);
+  }, [selection, anneeChoisie, photosVisibles, pret, appliquerEtat]);
+
+  useEffect(() => {
+    const carte = carteRef.current;
+    if (!carte || !pret) return;
+    carte.setProjection({ type: globe ? "globe" : "mercator" });
+    if (etat.current.selection == null) toutVoir(carte);
+  }, [globe, pret, toutVoir]);
 
   const fermer = () => setSelection(null);
 
-  const survoler = (e: React.PointerEvent, titre: string, sous?: string) => {
-    if (e.pointerType !== "mouse" || geste.current) return;
-    const rect = cadreRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    setSurvol({ titre, sous, x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
-
-  const surTouche = (e: React.KeyboardEvent, action: () => void) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      aBouge.current = false;
-      action();
-    }
-  };
-
   /* --- Rendu --- */
 
-  const k = BASE.w / vue.w;
-  const zoome = k > 1.05;
-  const echelle = Math.pow(k, 0.85);
-  const villes = donnees.points.filter((p) => p.type === "ville");
-  const lieuxPhoto = donnees.points.filter((p) => p.type === "photo");
-  const selPays = selection?.type === "pays" ? selection.code : null;
   const selPoint = selection?.type === "point" ? pointParId.get(selection.id) : undefined;
+  const villes = donnees.points.filter((p) => p.type === "ville");
+  const paysVisites = donnees.pays.filter((p) => p.visite).sort((a, b) => b.visites - a.visites);
 
   const ouvrirPhotos = (ids: string[], index: number) => {
     const liste = ids.map((id) => photoParId.get(id)).filter((p): p is PhotoCarte => !!p);
@@ -425,9 +668,12 @@ export function CarteVoyages({ donnees, lang }: { donnees: DonneesCarte; lang: L
     }
   };
 
+  const pilule =
+    "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 font-mono text-[11px] uppercase tracking-[0.04em] transition-colors";
+
   return (
     <div className="overflow-hidden rounded-[28px] bg-[color:var(--color-ink)] p-2 text-[color:var(--color-ink-fg)] sm:rounded-[32px] sm:p-3">
-      {/* Barre : années + photos */}
+      {/* Barre : années, globe, photos */}
       <div className="flex items-center gap-2 p-1">
         <div
           role="group"
@@ -443,7 +689,7 @@ export function CarteVoyages({ donnees, lang }: { donnees: DonneesCarte; lang: L
                 aria-pressed={actif}
                 onClick={() => setAnneeChoisie(a)}
                 className={cn(
-                  "inline-flex h-8 shrink-0 items-center rounded-full px-3 font-mono text-[11px] uppercase tracking-[0.04em] transition-colors",
+                  pilule,
                   actif
                     ? "bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)]"
                     : "bg-[color:var(--color-ink-surface)] hover:bg-[color:var(--color-ink-line)]",
@@ -456,10 +702,25 @@ export function CarteVoyages({ donnees, lang }: { donnees: DonneesCarte; lang: L
         </div>
         <button
           type="button"
+          aria-pressed={globe}
+          onClick={() => setGlobe((g) => !g)}
+          className={cn(
+            pilule,
+            "hidden sm:inline-flex",
+            globe
+              ? "bg-[color:var(--color-ink-fg)] text-[color:var(--color-ink)]"
+              : "bg-[color:var(--color-ink-surface)] text-[color:var(--color-ink-muted)] hover:bg-[color:var(--color-ink-line)]",
+          )}
+        >
+          <Globe2 size={13} strokeWidth={1.75} aria-hidden />
+          {t.globe}
+        </button>
+        <button
+          type="button"
           aria-pressed={photosVisibles}
           onClick={() => setPhotosVisibles((v) => !v)}
           className={cn(
-            "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 font-mono text-[11px] uppercase tracking-[0.04em] transition-colors",
+            pilule,
             photosVisibles
               ? "bg-[color:var(--color-ink-fg)] text-[color:var(--color-ink)]"
               : "bg-[color:var(--color-ink-surface)] text-[color:var(--color-ink-muted)] hover:bg-[color:var(--color-ink-line)]",
@@ -472,227 +733,23 @@ export function CarteVoyages({ donnees, lang }: { donnees: DonneesCarte; lang: L
 
       <div className="mt-2 flex flex-col gap-2 lg:flex-row lg:items-stretch">
         {/* La carte */}
-        <div
-          ref={cadreRef}
-          className="bg-dots-ink relative min-w-0 flex-1 overflow-hidden rounded-[20px]"
-          onPointerLeave={() => setSurvol(null)}
-        >
-          <svg
-            ref={svgRef}
-            viewBox={`${vue.x} ${vue.y} ${vue.w} ${vue.h}`}
-            preserveAspectRatio="xMidYMid meet"
-            role="img"
-            aria-label={t.aria}
-            className={cn(
-              "block h-auto w-full select-none",
-              zoome ? "cursor-grab active:cursor-grabbing" : "",
-            )}
-            style={{ aspectRatio: `${BASE.w} / ${BASE.h}`, touchAction: zoome ? "none" : "pan-y" }}
-            onPointerDown={surPointerDown}
-            onPointerMove={surPointerMove}
-            onPointerUp={surPointerFin}
-            onPointerCancel={surPointerFin}
-            onDoubleClick={(e) => {
-              const v = zoomer(2, e.clientX, e.clientY);
-              if (v) animerVers(v);
-            }}
-            onClick={(e) => {
-              if (e.target === svgRef.current && !aBouge.current) fermer();
-            }}
-          >
-            <g>
-              {donnees.pays.map((p) => {
-                const filtre = paysActifsAnnee ? paysActifsAnnee.has(p.code) : p.visite;
-                const choisi = selPays === p.code;
-                const fill = choisi
-                  ? "var(--color-accent-strong)"
-                  : p.visite
-                    ? "var(--color-accent)"
-                    : "var(--color-ink-surface)";
-                const opacite = p.visite && paysActifsAnnee && !filtre ? 0.28 : 1;
-                if (!p.actif) {
-                  return (
-                    <path
-                      key={p.id}
-                      d={p.d}
-                      fill={fill}
-                      stroke="var(--color-ink)"
-                      strokeWidth={0.6}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  );
-                }
-                const nom = nomPays(p.code);
-                return (
-                  <path
-                    key={p.id}
-                    d={p.d}
-                    fill={fill}
-                    fillOpacity={opacite}
-                    stroke="var(--color-ink)"
-                    strokeWidth={0.6}
-                    vectorEffect="non-scaling-stroke"
-                    role="button"
-                    tabIndex={0}
-                    aria-label={nom}
-                    aria-pressed={choisi}
-                    className="cursor-pointer outline-none transition-[fill] duration-150 hover:fill-[color:var(--color-accent-strong)] focus-visible:fill-[color:var(--color-accent-strong)]"
-                    onClick={() => choisirPays(p.code)}
-                    onKeyDown={(e) => surTouche(e, () => choisirPays(p.code))}
-                    onPointerMove={(e) =>
-                      survoler(e, nom, p.visites ? t.voyages(p.visites) : undefined)
-                    }
-                    onPointerLeave={() => setSurvol(null)}
-                  />
-                );
-              })}
-            </g>
-
-            {/* Lieux de photos hors des villes */}
-            {photosVisibles ? (
-              <g>
-                {lieuxPhoto.map((p) => {
-                  const actif = pointActif(p);
-                  const choisi = selPoint?.id === p.id;
-                  const r = 3.4 / echelle;
-                  const nom = nomPays(p.pays);
-                  return (
-                    <g
-                      key={p.id}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`${t.lieuPhoto} · ${nom} · ${t.nbPhotos(p.photos.length)}`}
-                      className="cursor-pointer outline-none"
-                      opacity={actif ? 1 : 0.25}
-                      onClick={() => choisirPoint(p)}
-                      onKeyDown={(e) => surTouche(e, () => choisirPoint(p))}
-                      onPointerMove={(e) => survoler(e, `${t.lieuPhoto} · ${nom}`, t.nbPhotos(p.photos.length))}
-                      onPointerLeave={() => setSurvol(null)}
-                    >
-                      <circle cx={p.x} cy={p.y} r={r * 2.6} fill="transparent" />
-                      {choisi ? (
-                        <circle
-                          cx={p.x}
-                          cy={p.y}
-                          r={r * 2}
-                          fill="none"
-                          stroke="#ffffff"
-                          strokeWidth={1.5}
-                          vectorEffect="non-scaling-stroke"
-                        />
-                      ) : null}
-                      <rect
-                        x={p.x - r}
-                        y={p.y - r}
-                        width={r * 2}
-                        height={r * 2}
-                        rx={r * 0.45}
-                        fill="#ffffff"
-                        stroke="var(--color-ink)"
-                        strokeWidth={1.2}
-                        vectorEffect="non-scaling-stroke"
-                      />
-                      <circle cx={p.x} cy={p.y} r={r * 0.42} fill="#ff5a8c" />
-                    </g>
-                  );
-                })}
-              </g>
-            ) : null}
-
-            {/* Villes */}
-            <g>
-              {villes.map((p) => {
-                const actif = pointActif(p);
-                const choisi = selPoint?.id === p.id;
-                const r = (2.6 + Math.min(4, p.sejours.length * 0.55)) / echelle;
-                const avecPhotos = photosVisibles && p.photos.length > 0;
-                return (
-                  <g
-                    key={p.id}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`${p.nom}, ${nomPays(p.pays)} · ${t.sejours(p.sejours.length)}${p.photos.length ? ` · ${t.nbPhotos(p.photos.length)}` : ""}`}
-                    className="cursor-pointer outline-none [&:focus-visible>circle:last-child]:stroke-white"
-                    opacity={actif ? 1 : 0.22}
-                    onClick={() => choisirPoint(p)}
-                    onKeyDown={(e) => surTouche(e, () => choisirPoint(p))}
-                    onPointerMove={(e) =>
-                      survoler(
-                        e,
-                        p.nom,
-                        [t.sejours(p.sejours.length), p.photos.length ? t.nbPhotos(p.photos.length) : ""]
-                          .filter(Boolean)
-                          .join(" · "),
-                      )
-                    }
-                    onPointerLeave={() => setSurvol(null)}
-                  >
-                    <circle cx={p.x} cy={p.y} r={r + 5 / echelle} fill="transparent" />
-                    {avecPhotos ? (
-                      <circle
-                        cx={p.x}
-                        cy={p.y}
-                        r={r + 2.2 / echelle}
-                        fill="none"
-                        stroke="#ffffff"
-                        strokeWidth={1.4}
-                        vectorEffect="non-scaling-stroke"
-                      />
-                    ) : null}
-                    {choisi ? (
-                      <circle
-                        cx={p.x}
-                        cy={p.y}
-                        r={r + 5 / echelle}
-                        fill="none"
-                        stroke="var(--color-accent-strong)"
-                        strokeWidth={2}
-                        vectorEffect="non-scaling-stroke"
-                      />
-                    ) : null}
-                    <circle
-                      cx={p.x}
-                      cy={p.y}
-                      r={r}
-                      fill="#ff5a8c"
-                      stroke="var(--color-ink)"
-                      strokeWidth={1.25}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  </g>
-                );
-              })}
-            </g>
-
-            {/* Noms des villes une fois zoomé */}
-            {k >= 2.4 ? (
-              <g aria-hidden className="pointer-events-none">
-                {villes
-                  .filter((p) => pointActif(p))
-                  .map((p) => (
-                    <text
-                      key={p.id}
-                      x={p.x + (8 + Math.min(4, p.sejours.length * 0.55)) / echelle}
-                      y={p.y + 3.6 / k}
-                      fontSize={11 / k}
-                      fill="var(--color-ink-fg)"
-                      stroke="var(--color-ink)"
-                      strokeWidth={3 / k}
-                      paintOrder="stroke"
-                      style={{ fontFamily: "var(--font-archivo)" }}
-                    >
-                      {p.nom}
-                    </text>
-                  ))}
-              </g>
-            ) : null}
-          </svg>
+        <div className="relative h-[420px] min-w-0 flex-1 overflow-hidden rounded-[20px] bg-[color:var(--color-ink-surface)] sm:h-[480px] lg:h-[560px]">
+          {erreur ? (
+            <div className="bg-dots-ink flex h-full items-center p-4">{repli}</div>
+          ) : (
+            <div
+              ref={conteneurRef}
+              role="region"
+              aria-label={t.aria}
+              className={cn("h-full w-full transition-opacity duration-500", pret ? "opacity-100" : "opacity-0")}
+            />
+          )}
 
           {/* Info-bulle */}
           {survol ? (
             <div
               aria-hidden
-              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-[calc(100%+12px)] whitespace-nowrap rounded-full bg-[color:var(--color-ink-fg)] px-3 py-1.5 text-[13px] text-[color:var(--color-ink)] shadow-lg"
+              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-[calc(100%+12px)] whitespace-nowrap rounded-full bg-[color:var(--color-ink)] px-3 py-1.5 text-[13px] text-[color:var(--color-ink-fg)] shadow-lg"
               style={{ left: survol.x, top: survol.y }}
             >
               {survol.titre}
@@ -705,33 +762,25 @@ export function CarteVoyages({ donnees, lang }: { donnees: DonneesCarte; lang: L
           ) : null}
 
           {/* Commandes de zoom */}
-          <div className="absolute bottom-3 right-3 flex flex-col gap-1.5">
-            <BoutonCarte
-              label={t.zoomPlus}
-              onClick={() => {
-                const v = zoomer(1.8);
-                if (v) animerVers(v);
-              }}
-            >
-              <Plus size={16} strokeWidth={1.75} aria-hidden />
-            </BoutonCarte>
-            <BoutonCarte
-              label={t.zoomMoins}
-              onClick={() => {
-                const v = zoomer(1 / 1.8);
-                if (v) animerVers(v);
-              }}
-            >
-              <Minus size={16} strokeWidth={1.75} aria-hidden />
-            </BoutonCarte>
-            <BoutonCarte label={t.recentrer} onClick={() => animerVers(BASE)} inactif={!zoome}>
-              <RotateCcw size={14} strokeWidth={1.75} aria-hidden />
-            </BoutonCarte>
-          </div>
-
-          <p className="pointer-events-none absolute bottom-3 left-4 hidden font-mono text-[10px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)] lg:block">
-            {t.astuce}
-          </p>
+          {!erreur ? (
+            <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5">
+              <BoutonCarte label={t.zoomPlus} onClick={() => carteRef.current?.zoomIn()}>
+                <Plus size={16} strokeWidth={1.75} aria-hidden />
+              </BoutonCarte>
+              <BoutonCarte label={t.zoomMoins} onClick={() => carteRef.current?.zoomOut()}>
+                <Minus size={16} strokeWidth={1.75} aria-hidden />
+              </BoutonCarte>
+              <BoutonCarte
+                label={t.recentrer}
+                onClick={() => {
+                  setSelection(null);
+                  if (carteRef.current) toutVoir(carteRef.current);
+                }}
+              >
+                <RotateCcw size={14} strokeWidth={1.75} aria-hidden />
+              </BoutonCarte>
+            </div>
+          ) : null}
         </div>
 
         {/* La fiche */}
@@ -740,41 +789,40 @@ export function CarteVoyages({ donnees, lang }: { donnees: DonneesCarte; lang: L
           className="relative rounded-[20px] bg-[color:var(--color-ink-surface)] lg:w-[340px] lg:shrink-0"
         >
           <div className="flex h-full flex-col p-5 lg:absolute lg:inset-0 lg:overflow-y-auto">
-          {selection == null ? (
-            <Intro t={t} nbPhotos={donnees.photos.length} />
-          ) : selection.type === "pays" ? (
-            <FichePays
-              code={selection.code}
-              t={t}
-              nom={nomPays(selection.code)}
-              pays={paysParCode.get(selection.code)}
-              villes={villes.filter((v) => v.pays === selection.code)}
-              photos={donnees.photos.filter((p) => p.pays === selection.code).map((p) => p.id)}
-              photoParId={photoParId}
-              onFermer={fermer}
-              onVille={(v) => {
-                aBouge.current = false;
-                choisirPoint(v);
-              }}
-              onPhoto={ouvrirPhotos}
-              lang={lang}
-            />
-          ) : selPoint ? (
-            <FichePoint
-              point={selPoint}
-              t={t}
-              nomPays={nomPays(selPoint.pays)}
-              plage={plage}
-              photoParId={photoParId}
-              onFermer={fermer}
-              onPays={() => {
-                aBouge.current = false;
-                choisirPays(selPoint.pays);
-              }}
-              onPhoto={ouvrirPhotos}
-              lang={lang}
-            />
-          ) : null}
+            {selection == null ? (
+              <Intro
+                t={t}
+                nbPhotos={donnees.photos.length}
+                pays={paysVisites.map((p) => ({ code: p.code, nom: nomPays(p.code) }))}
+                onPays={choisirPays}
+              />
+            ) : selection.type === "pays" ? (
+              <FichePays
+                code={selection.code}
+                t={t}
+                nom={nomPays(selection.code)}
+                pays={paysParCode.get(selection.code)}
+                villes={villes.filter((v) => v.pays === selection.code)}
+                photos={donnees.photos.filter((p) => p.pays === selection.code).map((p) => p.id)}
+                photoParId={photoParId}
+                onFermer={fermer}
+                onVille={choisirPoint}
+                onPhoto={ouvrirPhotos}
+                lang={lang}
+              />
+            ) : selPoint ? (
+              <FichePoint
+                point={selPoint}
+                t={t}
+                nomPays={nomPays(selPoint.pays)}
+                plage={plage}
+                photoParId={photoParId}
+                onFermer={fermer}
+                onPays={() => choisirPays(selPoint.pays)}
+                onPhoto={ouvrirPhotos}
+                lang={lang}
+              />
+            ) : null}
           </div>
         </aside>
       </div>
@@ -941,16 +989,26 @@ function GrillePhotos({
   );
 }
 
-function Intro({ t, nbPhotos }: { t: T; nbPhotos: number }) {
+function Intro({
+  t,
+  nbPhotos,
+  pays,
+  onPays,
+}: {
+  t: T;
+  nbPhotos: number;
+  pays: Array<{ code: string; nom: string }>;
+  onPays: (code: string) => void;
+}) {
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)]">
         <span aria-hidden className="node-dot" />
         {t.photosPlacees(nbPhotos)}
       </span>
       <p className="text-2xl font-medium leading-[1.05] tracking-[-0.015em]">{t.introTitre}</p>
       <p className="text-sm text-[color:var(--color-ink-muted)]">{t.introTexte}</p>
-      <ul className="mt-auto flex flex-col gap-2.5 pt-4 text-sm">
+      <ul className="flex flex-col gap-2.5 pt-2 text-sm">
         <li className="flex items-center gap-3">
           <span aria-hidden className="h-3.5 w-5 rounded-[4px] bg-[color:var(--color-accent)]" />
           {t.legendePays}
@@ -969,13 +1027,31 @@ function Intro({ t, nbPhotos }: { t: T; nbPhotos: number }) {
         </li>
         <li className="flex items-center gap-3">
           <span aria-hidden className="flex w-5 justify-center">
-            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-[4px] bg-white">
+            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white ring-1 ring-[color:var(--color-ink)]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#ff5a8c]" />
             </span>
           </span>
           {t.legendePhoto}
         </li>
       </ul>
+      {pays.length ? (
+        <>
+          <SousTitre>{t.paysVisites}</SousTitre>
+          <ul className="flex flex-wrap gap-1.5">
+            {pays.map((p) => (
+              <li key={p.code}>
+                <button
+                  type="button"
+                  onClick={() => onPays(p.code)}
+                  className="inline-flex h-8 items-center rounded-full bg-[color:var(--color-ink)] px-3 text-[13px] transition-colors hover:bg-[color:var(--color-accent)] hover:text-[color:var(--color-accent-fg)]"
+                >
+                  {p.nom}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
     </div>
   );
 }

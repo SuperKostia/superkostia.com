@@ -292,3 +292,19 @@ warp (turbulence 19s) ───────────────────�
 **Conséquence.** Les primitives vivent dans `components/ui/` (`Button`/`ButtonLink`/`buttonClasses`, `Card`, `Tag`, `NodeLabel`, `Container`, `Panel`, `Link`) et les utilitaires CSS dans `styles/globals.css` (`bg-dots`, `bg-dots-ink`, `bg-dots-fade`, `label-mono`, `node-dot`). Le `WaterField` quitte l'accueil.
 
 **Ajout du 25/11/2026.** Le curseur personnalisé (point qui devient une étiquette « lire », « ouvrir ») est retiré : pointeur du système, comme sur n8n.
+
+## #015 : la carte des voyages passe sur MapLibre (fond OpenFreeMap)
+
+**Date** : 2026-11-25
+**Statut** : Acté. Complète #013.
+
+**Contexte.** La carte interactive de `/hobbies/voyages` était d'abord un SVG maison (d3-geo). Kostia demande MapLibre, comme sur ses autres sites (mumexpat, axiom-website, ib-tutor), en dernière version.
+
+**Décision.**
+1. MapLibre GL JS **6.19.0** (dernière au 25/11/2026), en paquet npm, importé par `lib/maplibre.ts` uniquement côté client et en import dynamique (pas de poids sur les autres pages).
+2. Le worker est servi par le site depuis `public/vendor/maplibre-gl-<version>/` (copié par `node scripts/copier-maplibre.mjs`) : la bibliothèque le cherche à côté de son propre fichier, ce qui ne tient pas une fois empaqueté par Next. Le chemin suit `getVersion()` : une mise à jour sans recopie se voit tout de suite.
+3. Fond OpenFreeMap comme ailleurs : `positron` en clair, `dark` en sombre, qui suit le bouton de thème. Gestes coopératifs (⌘ ou Ctrl + molette, deux doigts sur téléphone) pour ne pas piéger le défilement de la page. Bouton globe.
+4. Contours des pays visités en Natural Earth 1:50m, servis par `app/donnees/pays-visites` (anneaux recousus à la ligne de changement de date), qui s'effacent en zoomant au profit des côtes du fond.
+5. Sans WebGL 2, la carte fixe en SVG (`CarteMiniature`) prend la place.
+
+**Conséquence.** Une dépendance npm de plus (`maplibre-gl`), justifiée par la demande et alignée sur les autres sites. Le dashboard Choose France reste sur sa copie 6.18.0 (#013), à monter séparément.
