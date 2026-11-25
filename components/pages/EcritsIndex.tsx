@@ -78,7 +78,7 @@ export async function EcritsIndex({ lang }: { lang: Lang }) {
                     href={n.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    data-cursor="lire"
+                   
                     className="bg-dots-ink group flex h-full min-h-[220px] flex-col justify-between gap-8 rounded-[24px] bg-[color:var(--color-ink)] p-6 text-[color:var(--color-ink-fg)] sm:p-7"
                   >
                     <div className="flex items-center justify-between gap-3">
@@ -119,7 +119,7 @@ export async function EcritsIndex({ lang }: { lang: Lang }) {
                 <li key={entry.frontmatter.slug}>
                   <NextLink
                     href={chemin(lang, `/ecrits/${entry.frontmatter.slug}`)}
-                    data-cursor="lire"
+                   
                     className="group flex flex-col gap-3 rounded-[24px] bg-[color:var(--color-surface)] p-6 transition-colors hover:bg-[color:var(--color-surface-2)] sm:flex-row sm:items-center sm:gap-8 sm:p-7"
                   >
                     <time

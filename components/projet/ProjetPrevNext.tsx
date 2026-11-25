@@ -52,7 +52,7 @@ function CartePrevNext({
   return (
     <NextLink
       href={href}
-      data-cursor="ouvrir"
+     
       className={cn(
         "group flex flex-col gap-4 rounded-[24px] bg-[color:var(--color-surface)] p-6 transition-colors hover:bg-[color:var(--color-surface-2)] sm:p-8",
         suivant && "items-end text-right",

@@ -226,7 +226,7 @@ function LockedForm({ onSubmit, error, t }: LockedFormProps) {
             )}
             <button
               type="submit"
-              data-cursor="cliquer"
+             
               className={buttonClasses("accent", "md", "ml-auto")}
             >
               {t.deverrouiller}
@@ -278,7 +278,7 @@ function UnlockedView({ channels, onReset, t }: UnlockedViewProps) {
                 href={c.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                data-cursor="ouvrir"
+               
                 className={cn(
                   "group relative flex h-full min-h-[240px] flex-col justify-between gap-6 overflow-hidden rounded-[28px] p-8 transition-colors sm:p-10",
                   isAccent

@@ -135,7 +135,7 @@ export function PhotoGallery({ series }: PhotoGalleryProps) {
                     type="button"
                     onClick={() => setLightboxIndex(globalIndex)}
                     aria-label={`${a.ouvrir} ${photo.alt}`}
-                    data-cursor="ouvrir"
+                   
                     className="group relative block aspect-[4/3] w-full overflow-hidden rounded-[14px]"
                   >
                     <Image
@@ -365,7 +365,7 @@ function PhotoPile({ photos, onOpen, paused = false }: PhotoPileProps) {
             type="button"
             onClick={() => onOpen(globalIndex)}
             aria-label={`${a.ouvrir} ${photo.alt}`}
-            data-cursor="ouvrir"
+           
             className="group absolute block origin-center"
             style={{
               top: `${layout.top}%`,

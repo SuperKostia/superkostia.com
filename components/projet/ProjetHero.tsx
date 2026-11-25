@@ -25,7 +25,7 @@ export function ProjetHero({ title, url, screenshotSrc, lang }: ProjetHeroProps)
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      data-cursor="ouvrir"
+     
       className="group relative mb-16 block overflow-hidden rounded-[24px] bg-[color:var(--color-surface)] p-2 transition-colors hover:bg-[color:var(--color-surface-2)] sm:rounded-[28px] sm:p-3"
     >
       <div className="flex items-center gap-3 px-2 pb-2.5 pt-1 sm:px-3 sm:pb-3">

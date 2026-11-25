@@ -196,7 +196,7 @@ export async function Voyages({ lang }: { lang: Lang }) {
               href={nomads.profileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              data-cursor="ouvrir"
+             
               className="text-[color:var(--color-fg)] underline decoration-[color:var(--color-accent-strong)] decoration-2 underline-offset-[5px]"
             >
               {t.depuis}
@@ -356,7 +356,7 @@ export async function Voyages({ lang }: { lang: Lang }) {
               href={nomads.profileUrl}
               external
               variant="accent"
-              data-cursor="ouvrir"
+             
               className="mt-3"
             >
               {t.profil}
@@ -365,7 +365,7 @@ export async function Voyages({ lang }: { lang: Lang }) {
           </Panel>
         ) : (
           <div className="flex justify-center">
-            <ButtonLink href={nomads.profileUrl} external variant="accent" data-cursor="ouvrir">
+            <ButtonLink href={nomads.profileUrl} external variant="accent">
               {t.profil}
               <ArrowUpRight size={15} strokeWidth={1.75} aria-hidden />
             </ButtonLink>

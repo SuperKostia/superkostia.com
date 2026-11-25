@@ -75,7 +75,7 @@ export function AdlerNotification() {
         <button
           type="button"
           onClick={ouvrir}
-          data-cursor="ouvrir"
+         
           className="block w-full rounded-[16px] bg-[color:var(--color-ink-surface)] p-4 text-left transition-colors hover:bg-[color:var(--color-ink-line)]"
         >
           <span className="block font-mono text-[11px] uppercase tracking-[0.05em] text-[color:var(--color-ink-muted)]">

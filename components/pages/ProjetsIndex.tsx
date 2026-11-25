@@ -84,7 +84,7 @@ export async function ProjetsIndex({ lang }: { lang: Lang }) {
                 <li key={fm.slug} className="group">
                   <NextLink
                     href={chemin(lang, `/projets/${fm.slug}`)}
-                    data-cursor="ouvrir"
+                   
                     className="block h-full rounded-[24px]"
                   >
                     <Card

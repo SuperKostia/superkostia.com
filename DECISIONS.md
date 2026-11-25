@@ -290,3 +290,5 @@ warp (turbulence 19s) ───────────────────�
 **Raison.** Demande explicite de Kostia. Le brutalisme d'origine (règle 2 de CLAUDE.md) est abandonné en connaissance de cause ; la règle est réécrite pour protéger la nouvelle DA de la même façon.
 
 **Conséquence.** Les primitives vivent dans `components/ui/` (`Button`/`ButtonLink`/`buttonClasses`, `Card`, `Tag`, `NodeLabel`, `Container`, `Panel`, `Link`) et les utilitaires CSS dans `styles/globals.css` (`bg-dots`, `bg-dots-ink`, `bg-dots-fade`, `label-mono`, `node-dot`). Le `WaterField` quitte l'accueil.
+
+**Ajout du 25/11/2026.** Le curseur personnalisé (point qui devient une étiquette « lire », « ouvrir ») est retiré : pointeur du système, comme sur n8n.

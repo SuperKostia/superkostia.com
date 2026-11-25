@@ -8,6 +8,12 @@ Les versions suivent un schéma interne `0.PHASE.ITER` tant que le site n'est pa
 
 Phase 3 presque complète. Reste : chunk 3b (filtres `/projets`) + capsules timeline de `/a-propos`.
 
+### Content : Kostia.ai (2026-11-25)
+- Nouvelle fiche `content/projets/kostia-ai.mdx` (+ `.en.mdx`, perso, mise en avant), capture et logo ; ajout en tête des projets phares de la page À propos.
+
+### Style : curseur du système (2026-11-25)
+- Le curseur personnalisé est retiré partout (composant, styles, attributs `data-cursor`).
+
 ### Style : refonte totale dans une DA inspirée de n8n (2026-11-25)
 - Nouvelle DA sur tout le site (décision #014) : fond blanc cassé à trame de points, cartes rondes grises, panneaux sombres arrondis, pilules mono capitales, accent rose, titres Archivo élargis, étiquettes Geist Mono. Mode sombre repris dans la même logique.
 - En-tête en pilule flottante avec bouton « M'écrire », menu mobile en cartes, pied de page en panneau sombre.

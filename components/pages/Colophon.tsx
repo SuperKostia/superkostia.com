@@ -227,7 +227,7 @@ export function Colophon({ lang }: { lang: Lang }) {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  data-cursor="ouvrir"
+                 
                   className={buttonClasses("default", "md")}
                 >
                   {link.label}

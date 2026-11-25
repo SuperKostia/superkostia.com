@@ -6,7 +6,6 @@ import { ThemeScript } from "@/components/layout/ThemeScript";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { KonamiListener } from "@/components/layout/KonamiListener";
-import { CustomCursor } from "@/components/layout/CustomCursor";
 import { LOCALE_OG, SLOGAN, chemin, type Lang } from "@/lib/i18n";
 
 /** Archivo variable avec l'axe de largeur : élargie à 108 % pour les titres (décision #014). */
@@ -73,7 +72,6 @@ export function RootShell({ lang, children }: { lang: Lang; children: ReactNode 
       </head>
       <body className="min-h-full flex flex-col">
         <KonamiListener />
-        <CustomCursor />
         <Header lang={lang} />
         <main className="flex flex-1 flex-col">{children}</main>
         <Footer lang={lang} />

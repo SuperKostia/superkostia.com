@@ -72,7 +72,7 @@ export async function HobbiesIndex({ lang }: { lang: Lang }) {
               <li key={slug}>
                 <NextLink
                   href={chemin(lang, `/hobbies/${slug}`)}
-                  data-cursor="ouvrir"
+                 
                   className="group flex h-full flex-col overflow-hidden rounded-[24px] bg-[color:var(--color-surface)] p-2 transition-colors hover:bg-[color:var(--color-surface-2)]"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden rounded-[18px]">

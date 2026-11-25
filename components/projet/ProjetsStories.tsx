@@ -492,7 +492,7 @@ export function ProjetsStories({
             <div className="mt-auto flex flex-wrap gap-2 pt-1">
               <NextLink
                 href={courant.href}
-                data-cursor="lire"
+               
                 className={buttonClasses("accent", "md")}
               >
                 {t.fiche} <ArrowRight size={14} strokeWidth={1.75} aria-hidden />
@@ -502,7 +502,7 @@ export function ProjetsStories({
                   href={courant.site}
                   target="_blank"
                   rel="noopener noreferrer"
-                  data-cursor="ouvrir"
+                 
                   className={buttonClasses("default", "md", "dark:bg-[color:var(--color-ink-line)]")}
                 >
                   {t.site}{" "}

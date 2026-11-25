@@ -31,7 +31,7 @@ export function PressItem({ name, logo, url, date }: PressItemProps) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        data-cursor="lire"
+       
         className="group flex h-full items-center gap-4 rounded-[20px] bg-[color:var(--color-surface)] p-3 pr-5 transition-colors hover:bg-[color:var(--color-surface-2)]"
       >
         <div className="relative h-14 w-24 shrink-0 overflow-hidden rounded-[12px] bg-white">

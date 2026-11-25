@@ -39,7 +39,7 @@ export function Social({ platform, handle, url, cta }: SocialProps) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      data-cursor="ouvrir"
+     
       className="group my-8 flex items-center gap-4 rounded-[24px] bg-[color:var(--color-surface)] p-3 pr-4 transition-colors hover:bg-[color:var(--color-surface-2)] sm:pr-5"
     >
       <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[16px] bg-[color:var(--color-ink)] text-[color:var(--color-ink-fg)] transition-colors group-hover:bg-[color:var(--color-accent)] group-hover:text-[color:var(--color-accent-fg)]">
