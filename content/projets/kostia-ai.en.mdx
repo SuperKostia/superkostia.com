@@ -1,0 +1,35 @@
+---
+tags: ["audio", "voice", "ai", "writing"]
+summary: "My notebook of thoughts, to listen to. My LinkedIn posts and newsletter become recordings, read by my AI-cloned voice, in French and English."
+stack: ["Astro", "Cloudflare Workers", "D1", "R2", "Gradium", "Whisper", "WebGL", "Claude Code"]
+links:
+  - label: "kostia.ai"
+    url: "https://kostia.ai/en"
+---
+
+## The pitch
+
+I write a lot: LinkedIn posts, a newsletter, notes. But many of the people who
+follow me don't have time to read. So I built the site where all of it can be
+heard: a notebook of thoughts out loud, on entrepreneurship, education,
+artificial intelligence and life abroad.
+
+## What's inside
+
+- **Recordings** sorted by theme, with their origin (LinkedIn post or
+  newsletter), their date and their length.
+- **My AI-cloned voice**: every text is read by a copy of my voice, made with
+  Gradium. It says so on every recording, plainly.
+- **An English version of every text**, read by the same voice. It keeps my
+  French accent, on purpose.
+- **The text highlighted word by word** as you listen, like karaoke.
+- A player that keeps playing from one page to the next, dotted waveforms, and a
+  3D particle shape on the home page, picked at random on every visit.
+
+## How it's made
+
+Built with Claude Code in a few days. The site runs on a Cloudflare Worker
+(Astro), the entries live in a D1 database and the audio files in R2. The
+highlighting timings come from Gradium at generation time, or from an alignment
+done locally with Whisper. An admin page lets me add, reorder and publish
+recordings without touching the code.

@@ -258,7 +258,7 @@ export async function APropos({ lang }: { lang: Lang }) {
                   href={nomads.profileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  data-cursor="ouvrir"
+                 
                   className="bg-dots-ink group flex h-full flex-col gap-5 rounded-[24px] bg-[color:var(--color-ink)] p-7 text-[color:var(--color-ink-fg)]"
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -448,6 +448,17 @@ type ProjetPhare = {
 /** Ordre = ordre d'affichage : les nouveautés d'abord. */
 const PROJETS_PHARES: ProjetPhare[] = [
   {
+    titre: "Kostia.ai",
+    badge: { fr: "tout nouveau", en: "brand new" },
+    lien: "https://kostia.ai",
+    libelleLien: { fr: "kostia.ai ↗", en: "kostia.ai ↗" },
+    description: {
+      fr: "Mon carnet de pensées, à écouter : mes posts et ma newsletter lus par ma voix clonée par IA, en français et en anglais, avec le texte surligné mot à mot.",
+      en: "My notebook of thoughts, to listen to: my posts and newsletter read by my AI-cloned voice, in French and English, with the text highlighted word by word.",
+    },
+    nouveau: true,
+  },
+  {
     titre: "Europe Explained",
     badge: { fr: "tout nouveau", en: "brand new" },
     lien: "https://europeexplained.eu",
@@ -516,7 +527,7 @@ function CarteProjetPhare({
       href={lien}
       target="_blank"
       rel="noopener noreferrer"
-      data-cursor="ouvrir"
+     
       className="group flex h-full flex-col gap-6 rounded-[24px] bg-[color:var(--color-surface)] p-7 transition-colors hover:bg-[color:var(--color-surface-2)] sm:p-9"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">

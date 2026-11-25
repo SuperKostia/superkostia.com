@@ -1,0 +1,44 @@
+---
+title: "Kostia.ai"
+slug: "kostia-ai"
+type: "perso"
+status: "publie"
+year: 2026
+date: "2026-11-10"
+tags: ["audio", "voix", "ia", "écriture"]
+summary: "Mon carnet de pensées, à écouter. Mes posts LinkedIn et ma newsletter deviennent des enregistrements, lus par ma voix clonée par IA, en français et en anglais."
+stack: ["Astro", "Cloudflare Workers", "D1", "R2", "Gradium", "Whisper", "WebGL", "Claude Code"]
+links:
+  - label: "kostia.ai"
+    url: "https://kostia.ai"
+featured: true
+---
+
+## Le pitch
+
+J'écris beaucoup : des posts LinkedIn, une newsletter, des notes. Mais une bonne
+partie des gens qui me suivent n'ont pas le temps de lire. Alors j'ai fait le
+site où tout ça s'écoute : un carnet de pensées à voix haute, sur
+l'entrepreneuriat, l'éducation, l'intelligence artificielle et la vie à
+l'étranger.
+
+## Ce qu'il y a dedans
+
+- **Des enregistrements** classés par thème, avec leur origine (post LinkedIn ou
+  newsletter), leur date et leur durée.
+- **Ma voix clonée par IA** : chaque texte est lu par une copie de ma voix, faite
+  avec Gradium. C'est affiché sur chaque enregistrement, sans détour.
+- **Une version anglaise de chaque texte**, lue par la même voix. Elle garde
+  mon accent français, c'est voulu.
+- **Le texte surligné mot à mot** pendant l'écoute, comme un karaoké.
+- Un lecteur qui continue de jouer d'une page à l'autre, des formes d'onde en
+  points, et une forme 3D en particules sur l'accueil, tirée au hasard à chaque
+  visite.
+
+## Comment c'est fait
+
+Construit avec Claude Code en quelques jours. Le site tourne sur un Worker
+Cloudflare (Astro), les fiches vivent dans une base D1 et les fichiers audio dans
+R2. Le minutage du surlignage vient de Gradium à la génération, ou d'un
+alignement fait en local avec Whisper. Une page d'administration me permet
+d'ajouter, d'ordonner et de publier les enregistrements sans toucher au code.
