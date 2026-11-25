@@ -6,7 +6,7 @@ import { PhotoGallery } from "@/components/photographie/PhotoGallery";
 import { alternates, chemin, type Lang } from "@/lib/i18n";
 
 /** Les séries portent le nom de leur dossier (français) ; leur titre anglais. */
-const SERIES_EN: Record<string, string> = {
+export const SERIES_EN: Record<string, string> = {
   australie: "Australia",
   dubai: "Dubai",
   grece: "Greece",

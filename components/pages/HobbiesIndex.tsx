@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { buttonClasses } from "@/components/ui/Button";
 import { NodeLabel } from "@/components/ui/NodeLabel";
-import { WorldMap } from "@/components/voyages/WorldMap";
+import { CarteMiniature } from "@/components/voyages/WorldMap";
 import { getHobbies } from "@/lib/mdx";
 import { getAllSeries, type Photo } from "@/lib/photos";
 import { getNomadsProfile, type NomadsProfile } from "@/lib/nomads";
@@ -160,10 +160,9 @@ function VisuelVoyages({ nomads, lang }: { nomads: NomadsProfile | null; lang: L
     <div className="bg-dots-ink absolute inset-0 flex items-center justify-center bg-[color:var(--color-ink)] p-4">
       {nomads ? (
         <div className="w-full">
-          <WorldMap
-            trips={nomads.trips}
-            visitedAlpha2={nomads.countries.map((c) => c.code)}
-            ariaLabel={lang === "en" ? "World map of Kostia's travels" : undefined}
+          <CarteMiniature
+            visites={nomads.countries.map((c) => c.code)}
+            ariaLabel={lang === "en" ? "World map of Kostia's travels" : "Carte du monde des voyages de Kostia"}
           />
         </div>
       ) : null}

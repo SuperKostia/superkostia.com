@@ -116,6 +116,13 @@ h3,
   box-shadow: 0 0 0 6px var(--color-accent);
 }
 
+/* Dans les cartes SVG, le contour carré n'a pas de sens : chaque élément
+   dessine son propre état de focus (remplissage, anneau). */
+svg [tabindex]:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
 /* Respect du prefers-reduced-motion — §8.3 */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -3,6 +3,8 @@ import NextLink from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { getNomadsProfile, type NomadsTrip } from "@/lib/nomads";
 import { WorldMap } from "@/components/voyages/WorldMap";
+import { getAllSeries } from "@/lib/photos";
+import { SERIES_EN } from "@/components/pages/Photographie";
 import { Container } from "@/components/ui/Container";
 import { NodeLabel } from "@/components/ui/NodeLabel";
 import { Panel } from "@/components/ui/Panel";
@@ -30,7 +32,7 @@ const TEXTES = {
     depuis: "depuis nomads.com",
     carteEyebrow: "01 · carte",
     carteTitre: "Là où je suis passé.",
-    legende: "Pays en rose = visités. Points roses = villes. Plus le point est gros, plus j'y suis retourné.",
+    legende: "Clique sur un pays ou une ville : séjours, dates et photos prises sur place. Filtre par année, zoome, déplace-toi.",
     pays: "pays",
     villes: "villes",
     voyages: "voyages",
@@ -65,7 +67,7 @@ const TEXTES = {
     depuis: "from nomads.com",
     carteEyebrow: "01 · map",
     carteTitre: "Where I've been.",
-    legende: "Pink countries = visited. Pink dots = cities. The bigger the dot, the more often I went back.",
+    legende: "Click a country or a city: stays, dates and the photos taken there. Filter by year, zoom in, move around.",
     pays: "countries",
     villes: "cities",
     voyages: "trips",
@@ -139,7 +141,7 @@ function groupTripsByYear(
 }
 
 export async function Voyages({ lang }: { lang: Lang }) {
-  const nomads = await getNomadsProfile();
+  const [nomads, series] = await Promise.all([getNomadsProfile(), getAllSeries()]);
   const t = TEXTES[lang];
   const formatNumber = (n: number) => formatNombre(lang, n);
 
@@ -160,7 +162,12 @@ export async function Voyages({ lang }: { lang: Lang }) {
     );
   }
 
-  const visitedAlpha2 = nomads.countries.map((c) => c.code);
+  const photos = series.flatMap((s) =>
+    s.photos.map((p) => ({
+      ...p,
+      serie: lang === "en" ? (SERIES_EN[s.slug] ?? s.title) : s.title,
+    })),
+  );
   const tripsByYear = groupTripsByYear(nomads.trips);
   const earthLaps = Math.floor(
     nomads.stats.distance_traveled_km / EARTH_EQUATOR_KM,
@@ -227,13 +234,12 @@ export async function Voyages({ lang }: { lang: Lang }) {
             </h2>
             <p className="max-w-[52ch] text-[color:var(--color-muted)]">{t.legende}</p>
           </div>
-          <Panel dots className="px-3 py-6 sm:px-8 sm:py-12 lg:px-14">
-            <WorldMap
-              trips={nomads.trips}
-              visitedAlpha2={visitedAlpha2}
-              ariaLabel={lang === "en" ? "World map of Kostia's travels" : undefined}
-            />
-          </Panel>
+          <WorldMap
+            trips={nomads.trips}
+            countries={nomads.countries}
+            photos={photos}
+            lang={lang}
+          />
         </section>
 
         {/* Équivalent : une phrase, centrée, comme un slogan */}
