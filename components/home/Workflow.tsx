@@ -1,5 +1,7 @@
+"use client";
+
 import NextLink from "next/link";
-import type { ComponentType } from "react";
+import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
 import {
   Brain,
   Camera,
@@ -23,6 +25,10 @@ import { AthensClock } from "./AthensClock";
  *
  * Tout est positionné dans un repère fixe de W × H, en pourcentages : le dessin
  * se met à l'échelle comme une image, textes compris (unités cqw).
+ *
+ * Chaque nœud se saisit à la souris (ou au doigt sur tablette) : les liaisons
+ * suivent, et au lâcher il revient à sa place sur un ressort amorti. Un clic
+ * sans déplacement garde son effet (ouvrir la rubrique).
  */
 
 const W = 1100;
@@ -126,43 +132,192 @@ function lien(lang: Lang, cheminFr: string) {
 const noeud =
   "flex items-center justify-center bg-[color:var(--color-surface)] text-[color:var(--color-fg)] ring-1 ring-[color:var(--color-line)] transition-colors";
 
+type Decalage = { x: number; y: number };
+const ZERO: Decalage = { x: 0, y: 0 };
+
+/** Seuil (px) au-delà duquel un appui devient un glisser, et plus un clic. */
+const SEUIL_GLISSER = 4;
+/** Ressort de retour : raideur et amortissement (masse 1), un léger rebond. */
+const RAIDEUR = 210;
+const AMORTI = 15;
+
+/**
+ * Glisser-déposer élastique : décalage par nœud dans le repère W × H, retour
+ * à zéro sur ressort au lâcher (immédiat si l'utilisateur réduit les animations).
+ */
+function useNoeudsElastiques(cadreRef: React.RefObject<HTMLDivElement | null>) {
+  const [decalages, setDecalages] = useState<Record<string, Decalage>>({});
+  const [saisi, setSaisi] = useState<string | null>(null);
+  const courants = useRef<Record<string, Decalage>>({});
+  const ressorts = useRef<Record<string, number>>({});
+  const geste = useRef<{ id: string; pointeur: number; x: number; y: number; origine: Decalage; bouge: boolean } | null>(null);
+  const dernierGlisse = useRef<string | null>(null);
+
+  const poser = useCallback((id: string, d: Decalage) => {
+    courants.current[id] = d;
+    setDecalages((prev) => ({ ...prev, [id]: d }));
+  }, []);
+
+  const arreterRessort = (id: string) => {
+    if (ressorts.current[id]) cancelAnimationFrame(ressorts.current[id]);
+    delete ressorts.current[id];
+  };
+
+  const relacher = useCallback(
+    (id: string) => {
+      const depart = courants.current[id] ?? ZERO;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        poser(id, ZERO);
+        return;
+      }
+      let pos = { ...depart };
+      let vit = { x: 0, y: 0 };
+      let avant = performance.now();
+      const pas = (maintenant: number) => {
+        const dt = Math.min(0.032, (maintenant - avant) / 1000);
+        avant = maintenant;
+        vit = {
+          x: vit.x + (-RAIDEUR * pos.x - AMORTI * vit.x) * dt,
+          y: vit.y + (-RAIDEUR * pos.y - AMORTI * vit.y) * dt,
+        };
+        pos = { x: pos.x + vit.x * dt, y: pos.y + vit.y * dt };
+        const fini = Math.hypot(pos.x, pos.y) < 0.3 && Math.hypot(vit.x, vit.y) < 4;
+        poser(id, fini ? ZERO : pos);
+        if (fini) delete ressorts.current[id];
+        else ressorts.current[id] = requestAnimationFrame(pas);
+      };
+      ressorts.current[id] = requestAnimationFrame(pas);
+    },
+    [poser],
+  );
+
+  useEffect(() => {
+    const actifs = ressorts.current;
+    return () => Object.values(actifs).forEach((r) => cancelAnimationFrame(r));
+  }, []);
+
+  /** Props à poser sur l'élément saisissable d'un nœud. */
+  const saisir = (id: string) => ({
+    onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
+      arreterRessort(id);
+      e.currentTarget.setPointerCapture(e.pointerId);
+      geste.current = {
+        id,
+        pointeur: e.pointerId,
+        x: e.clientX,
+        y: e.clientY,
+        origine: courants.current[id] ?? ZERO,
+        bouge: false,
+      };
+    },
+    onPointerMove: (e: React.PointerEvent<HTMLElement>) => {
+      const g = geste.current;
+      if (!g || g.id !== id || g.pointeur !== e.pointerId) return;
+      const dx = e.clientX - g.x;
+      const dy = e.clientY - g.y;
+      if (!g.bouge && Math.hypot(dx, dy) < SEUIL_GLISSER) return;
+      if (!g.bouge) {
+        g.bouge = true;
+        setSaisi(id);
+      }
+      const largeur = cadreRef.current?.getBoundingClientRect().width || W;
+      const echelle = W / largeur;
+      poser(id, {
+        x: Math.max(-W * 0.6, Math.min(W * 0.6, g.origine.x + dx * echelle)),
+        y: Math.max(-H * 0.9, Math.min(H * 0.9, g.origine.y + dy * echelle)),
+      });
+    },
+    onPointerUp: (e: React.PointerEvent<HTMLElement>) => {
+      const g = geste.current;
+      if (!g || g.id !== id) return;
+      geste.current = null;
+      if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+      if (g.bouge) {
+        // Le clic qui suit un glisser ne doit pas ouvrir le lien.
+        dernierGlisse.current = id;
+        window.setTimeout(() => {
+          if (dernierGlisse.current === id) dernierGlisse.current = null;
+        }, 0);
+        setSaisi(null);
+        relacher(id);
+      }
+    },
+    onPointerCancel: () => {
+      if (geste.current?.id !== id) return;
+      geste.current = null;
+      setSaisi(null);
+      relacher(id);
+    },
+    onClickCapture: (e: React.MouseEvent) => {
+      if (dernierGlisse.current === id) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+    onDragStart: (e: React.DragEvent) => e.preventDefault(),
+  });
+
+  const pos = (id: string, base: Decalage): Decalage => {
+    const d = decalages[id] ?? ZERO;
+    return { x: base.x + d.x, y: base.y + d.y };
+  };
+
+  return { pos, saisir, saisi };
+}
+
+/** Courbe horizontale douce entre deux prises. */
+function courbe(a: Decalage, b: Decalage) {
+  const mx = (a.x + b.x) / 2;
+  return `M ${a.x} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x} ${b.y}`;
+}
+
+const saisissable = "cursor-grab touch-none select-none active:cursor-grabbing";
+const enMain = "z-20 scale-[1.06] shadow-[0_14px_30px_-10px_rgba(0,0,0,0.35)]";
+
 export function Workflow({ lang }: { lang: Lang }) {
   const t = TEXTES[lang];
+  const cadreRef = useRef<HTMLDivElement>(null);
+  const { pos, saisir, saisi } = useNoeudsElastiques(cadreRef);
+
+  // Positions courantes (place d'origine + décalage du glisser).
+  const declencheur = pos("declencheur", { x: 130, y: 100 });
+  const agent = pos("agent", { x: AGENT.x, y: AGENT.y });
+  const sortie = pos("sortie", { x: 970, y: 100 });
+  const priseDeclencheur = { x: declencheur.x + CARRE / 2, y: declencheur.y };
+  const priseAgentGauche = { x: agent.x - AGENT.w / 2, y: agent.y };
+  const priseAgentDroite = { x: agent.x + AGENT.w / 2, y: agent.y };
+  const priseSortie = { x: sortie.x - CARRE / 2, y: sortie.y };
+  const prisesOutils = Object.fromEntries(
+    Object.entries(PORTS).map(([cle, p]) => [
+      cle,
+      { cle, x: agent.x + (p.x - AGENT.x), y: agent.y + AGENT.h / 2 },
+    ]),
+  ) as Record<Outil["port"], { cle: string; x: number; y: number }>;
 
   return (
     <figure aria-label={t.aria} className="mt-14 w-full sm:mt-20">
       {/* Grand écran : le canevas */}
       <div className="relative mx-auto hidden w-full max-w-[1100px] [container-type:inline-size] md:block">
-        <div className="relative w-full" style={{ aspectRatio: `${W} / ${H}` }}>
+        <div ref={cadreRef} className="relative w-full" style={{ aspectRatio: `${W} / ${H}` }}>
           <svg
             viewBox={`0 0 ${W} ${H}`}
-            className="absolute inset-0 h-full w-full overflow-visible"
+            className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
             aria-hidden
           >
             {/* Liaisons principales */}
-            <path
-              d={`M ${130 + CARRE / 2} 100 H ${AGENT.x - AGENT.w / 2}`}
-              stroke="var(--color-fg)"
-              strokeOpacity="0.35"
-              strokeWidth="1.5"
-              fill="none"
-            />
-            <path
-              d={`M ${AGENT.x + AGENT.w / 2} 100 H ${970 - CARRE / 2}`}
-              stroke="var(--color-fg)"
-              strokeOpacity="0.35"
-              strokeWidth="1.5"
-              fill="none"
-            />
+            <path d={courbe(priseDeclencheur, priseAgentGauche)} stroke="var(--color-fg)" strokeOpacity="0.35" strokeWidth="1.5" fill="none" />
+            <path d={courbe(priseAgentDroite, priseSortie)} stroke="var(--color-fg)" strokeOpacity="0.35" strokeWidth="1.5" fill="none" />
             {/* Outils en pointillés */}
             {OUTILS.map((o) => {
-              const px = PORTS[o.port].x;
-              const y0 = AGENT.y + AGENT.h / 2;
-              const y1 = Y_OUTILS - ROND / 2;
+              const port = prisesOutils[o.port];
+              const t = pos(`outil-${o.id}`, { x: o.x, y: Y_OUTILS });
+              const haut = t.y - ROND / 2;
               return (
                 <path
                   key={o.id}
-                  d={`M ${px} ${y0} C ${px} ${y0 + 90}, ${o.x} ${y1 - 90}, ${o.x} ${y1}`}
+                  d={`M ${port.x} ${port.y} C ${port.x} ${port.y + 90}, ${t.x} ${haut - 90}, ${t.x} ${haut}`}
                   stroke="var(--color-fg)"
                   strokeOpacity="0.35"
                   strokeWidth="1.5"
@@ -173,20 +328,18 @@ export function Workflow({ lang }: { lang: Lang }) {
               );
             })}
             {/* Prises */}
-            {[130 + CARRE / 2, AGENT.x - AGENT.w / 2, AGENT.x + AGENT.w / 2, 970 - CARRE / 2].map(
-              (x, i) => (
-                <circle key={i} cx={x} cy={100} r={4.5} fill="var(--color-accent-strong)" />
-              ),
-            )}
-            {Object.values(PORTS).map((p) => (
+            {[priseDeclencheur, priseAgentGauche, priseAgentDroite, priseSortie].map((p, i) => (
+              <circle key={i} cx={p.x} cy={p.y} r={4.5} fill="var(--color-accent-strong)" />
+            ))}
+            {Object.values(prisesOutils).map((p) => (
               <rect
-                key={p.x}
+                key={p.x + "-" + p.cle}
                 x={p.x - 5}
-                y={AGENT.y + AGENT.h / 2 - 5}
+                y={p.y - 5}
                 width={10}
                 height={10}
                 rx={2}
-                transform={`rotate(45 ${p.x} ${AGENT.y + AGENT.h / 2})`}
+                transform={`rotate(45 ${p.x} ${p.y})`}
                 fill="var(--color-fg)"
                 fillOpacity="0.55"
               />
@@ -194,24 +347,30 @@ export function Workflow({ lang }: { lang: Lang }) {
           </svg>
 
           {/* Libellés des prises de l'agent */}
-          {Object.entries(PORTS).map(([cle, p]) => (
+          {Object.entries(prisesOutils).map(([cle, p]) => (
             <span
               key={cle}
-              className="absolute -translate-x-1/2 rounded-full bg-[color:var(--color-bg)] px-1.5 font-mono text-[clamp(9px,0.95cqw,11px)] uppercase tracking-[0.05em] text-[color:var(--color-muted)]"
-              style={{ left: pc(p.x, W), top: pc(AGENT.y + AGENT.h / 2 + 14, H) }}
+              className="pointer-events-none absolute -translate-x-1/2 rounded-full bg-[color:var(--color-bg)] px-1.5 font-mono text-[clamp(9px,0.95cqw,11px)] uppercase tracking-[0.05em] text-[color:var(--color-muted)]"
+              style={{ left: pc(p.x, W), top: pc(p.y + 14, H) }}
             >
-              {p.label[lang]}
+              {PORTS[cle as Outil["port"]].label[lang]}
             </span>
           ))}
 
           {/* Déclencheur */}
           <div
-            className={cn(noeud, "absolute aspect-square -translate-x-1/2 -translate-y-1/2 rounded-[22%_10px_10px_22%]")}
-            style={{ left: pc(130, W), top: pc(100, H), width: pc(CARRE, W) }}
+            {...saisir("declencheur")}
+            className={cn(
+              noeud,
+              saisissable,
+              "absolute aspect-square -translate-x-1/2 -translate-y-1/2 rounded-[22%_10px_10px_22%] transition-[scale,box-shadow] duration-150",
+              saisi === "declencheur" && enMain,
+            )}
+            style={{ left: pc(declencheur.x, W), top: pc(declencheur.y, H), width: pc(CARRE, W) }}
           >
             <Sunrise className="h-[42%] w-[42%]" strokeWidth={1.6} aria-hidden />
           </div>
-          <Libelle x={130} y={100 + CARRE / 2 + 12}>
+          <Libelle x={declencheur.x} y={declencheur.y + CARRE / 2 + 12}>
             {t.declencheur}
             <span className="mt-0.5 block font-mono text-[0.8em] text-[color:var(--color-muted)]">
               <AthensClock />
@@ -220,10 +379,15 @@ export function Workflow({ lang }: { lang: Lang }) {
 
           {/* Agent */}
           <div
-            className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-start gap-[6%] rounded-[16px] bg-[color:var(--color-ink)] px-[5%] text-[color:var(--color-ink-fg)]"
+            {...saisir("agent")}
+            className={cn(
+              saisissable,
+              "absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-start gap-[6%] rounded-[16px] bg-[color:var(--color-ink)] px-[5%] text-[color:var(--color-ink-fg)] transition-[scale,box-shadow] duration-150",
+              saisi === "agent" && enMain,
+            )}
             style={{
-              left: pc(AGENT.x, W),
-              top: pc(AGENT.y, H),
+              left: pc(agent.x, W),
+              top: pc(agent.y, H),
               width: pc(AGENT.w, W),
               aspectRatio: `${AGENT.w} / ${AGENT.h}`,
             }}
@@ -243,9 +407,15 @@ export function Workflow({ lang }: { lang: Lang }) {
 
           {/* Sortie */}
           <NextLink
+            {...saisir("sortie")}
+            draggable={false}
             href={chemin(lang, "/colophon")}
-            className="group absolute -translate-x-1/2 -translate-y-1/2"
-            style={{ left: pc(970, W), top: pc(100, H), width: pc(CARRE, W) }}
+            className={cn(
+              saisissable,
+              "group absolute -translate-x-1/2 -translate-y-1/2 rounded-[10px_22%_22%_10px] transition-[scale,box-shadow] duration-150",
+              saisi === "sortie" && enMain,
+            )}
+            style={{ left: pc(sortie.x, W), top: pc(sortie.y, H), width: pc(CARRE, W) }}
             aria-label={`superkostia.com : ${t.sortie}`}
           >
             <span
@@ -257,7 +427,7 @@ export function Workflow({ lang }: { lang: Lang }) {
               <Globe className="h-[42%] w-[42%]" strokeWidth={1.6} aria-hidden />
             </span>
           </NextLink>
-          <Libelle x={970} y={100 + CARRE / 2 + 12}>
+          <Libelle x={sortie.x} y={sortie.y + CARRE / 2 + 12}>
             superkostia.com
             <span className="mt-0.5 block text-[0.85em] text-[color:var(--color-muted)]">{t.sortie}</span>
           </Libelle>
@@ -265,17 +435,26 @@ export function Workflow({ lang }: { lang: Lang }) {
           {/* Outils */}
           {OUTILS.map((o) => {
             const Icone = o.icone;
+            const id = `outil-${o.id}`;
+            const p = pos(id, { x: o.x, y: Y_OUTILS });
             return (
               <NextLink
                 key={o.id}
+                {...saisir(id)}
+                draggable={false}
                 href={lien(lang, o.cheminFr)}
-                className="group absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
-                style={{ left: pc(o.x, W), top: pc(Y_OUTILS, H), width: pc(ROND, W) }}
+                className={cn(
+                  saisissable,
+                  "group absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-full",
+                  saisi === id && "z-20",
+                )}
+                style={{ left: pc(p.x, W), top: pc(p.y, H), width: pc(ROND, W) }}
               >
                 <span
                   className={cn(
                     noeud,
-                    "aspect-square w-full rounded-full group-hover:bg-[color:var(--color-accent)] group-hover:text-[color:var(--color-accent-fg)] group-hover:ring-transparent",
+                    "aspect-square w-full rounded-full transition-[scale,box-shadow,background-color] duration-150 group-hover:bg-[color:var(--color-accent)] group-hover:text-[color:var(--color-accent-fg)] group-hover:ring-transparent",
+                    saisi === id && enMain,
                   )}
                 >
                   <Icone className="h-[40%] w-[40%]" strokeWidth={1.6} aria-hidden />

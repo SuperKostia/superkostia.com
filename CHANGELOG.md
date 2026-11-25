@@ -6,6 +6,12 @@ Jusqu'à la 0.6.0 (mise en ligne), les versions suivaient un schéma interne `0.
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-11-25 — Le workflow de l'accueil se manipule
+
+### Feat : nœuds du workflow en glisser-déposer élastique
+- Sur ordinateur et tablette, chaque nœud du schéma de l'accueil (déclencheur, agent Kostia, sortie, outils) se saisit et se déplace ; les liaisons le suivent en courbes. Au lâcher, il revient à sa place sur un ressort amorti, avec un léger rebond (retour immédiat si l'utilisateur réduit les animations).
+- Un clic sans déplacement ouvre toujours la rubrique ; un glisser ne l'ouvre pas. Le contour de focus des liens suit la forme ronde des nœuds.
+
 ## [1.2.1] — 2026-11-25 — BooKeeper retiré
 
 ### Content : retrait du projet BooKeeper
